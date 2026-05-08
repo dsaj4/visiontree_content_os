@@ -176,8 +176,9 @@ cp /opt/visiontree/visiontree_content_os/data/content-system.sqlite \
 - `ai-doubt`
 - `nora`
 - `eli`
-- `frames`
-- `decision-lab`
+- `thinking-lab`
+- `thinking-tree`
+- `visiontree`
 
 生产环境上线前应替换为正式认证方案。
 

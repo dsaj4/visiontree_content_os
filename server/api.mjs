@@ -31,245 +31,627 @@ const personaUsers = [
     id: "u1",
     accountName: "milo",
     displayName: "Milo Reed",
-    role: "产品建设者",
+    role: "负责人：余同洲",
     platform: "X",
     handle: "@milo_reed_vt",
     profileUrl: "https://x.com/milo_reed_vt",
-    positioning: "工程师 / 产品建设者",
-    personaRole: "让用户相信 VisionTree 背后有人在认真做东西。",
-    voice: ["短句", "克制", "偶尔自嘲", "工程判断"],
-    contentTypes: ["开发过程中的真实取舍", "产品细节背后的哲学", "AI 工具的工程师判断", "失败复盘和小 bug 记录"],
-    avoid: ["我们的产品非常伟大", "颠覆行业", "革命性功能上线"],
-    cadence: "每周 8-12 条主帖；每天评论技术圈 / AI 工具圈内容 8-12 条。",
+    positioning: "工程师号 / 产品建设者",
+    personaRole: "发工程师视角的真实技术选择和产品取舍，让人相信 VisionTree 是认真做出来的。",
+    voice: ["短句", "克制", "工程师对工程师说话", "说清楚选项与取舍"],
+    contentTypes: ["真实技术选择", "产品取舍复盘", "我们面临了什么选项", "为什么这样做"],
+    avoid: ["粉丝式吹捧", "宏大品牌口号", "颠覆行业", "只说结论不讲取舍"],
+    cadence: "第一周发 3-4 条工程师视角短帖；在技术圈大号下留下有判断的评论。",
     interactionTarget: "技术圈、AI 工具圈、产品建设讨论。"
   },
   {
     id: "u2",
     accountName: "ai-doubt",
     displayName: "AI Doubt Notes",
-    role: "公开怀疑笔记",
+    role: "负责人：石盛楠",
     platform: "X",
     handle: "@ai_doubt_notes",
     profileUrl: "https://x.com/ai_doubt_notes",
-    positioning: "公开怀疑笔记",
-    personaRole: "制造问题意识，让读者意识到 AI 的假效率和认知外包。",
-    voice: ["犀利", "聪明", "冷静", "不恐吓"],
-    contentTypes: ["AI 让人产出更多但理解更少", "效率崇拜的冷静吐槽", "认知外包观察", "Grudging Admit"],
-    avoid: ["阴谋论", "人身攻击", "AI 毁灭人类式恐慌"],
-    cadence: "每周 8-12 条主帖；每天评论 AI 争议与效率相关内容 6-8 条。",
-    interactionTarget: "AI 争议、效率叙事、认知外包相关讨论。"
+    positioning: "反 AI 怀疑者 / 公开怀疑笔记",
+    personaRole: "用短、刺、有事实的短帖建立批判底色，让人读完停一下。",
+    voice: ["短", "刺", "冷静", "有事实", "不只是情绪"],
+    contentTypes: ["反 AI 短帖", "AI 效率神话拆解", "认知外包观察", "AI 工具发布帖下的短评"],
+    avoid: ["阴谋论", "人身攻击", "AI 毁灭人类式恐慌", "第一周先不发 Grudging Admit"],
+    cadence: "第一周准备 5-6 条反 AI 短帖；每条不超过三四句话。",
+    interactionTarget: "AI 工具发布帖、AI 效率讨论帖、认知外包相关讨论。"
   },
   {
     id: "u3",
     accountName: "nora",
     displayName: "Nora Blake",
-    role: "非技术用户",
+    role: "负责人：许畅",
     platform: "X",
     handle: "@nora_tries_ai",
     profileUrl: "https://x.com/nora_tries_ai",
-    positioning: "普通上班族 / 非技术用户",
-    personaRole: "降低门槛，让普通用户感到“不是只有我跟不上”。",
-    voice: ["真实", "日常", "有一点幽默", "不装懂"],
-    contentTypes: ["AI 工具真实体验", "日常工作里的 AI 尴尬场景", "Nora Tries VisionTree", "普通人的迟疑和小发现"],
-    avoid: ["技术术语堆砌", "专家口吻", "工具评测排行榜"],
-    cadence: "每周 8-10 条主帖；每天回复普通用户、AI 工具体验类内容 5-8 条。",
+    positioning: "普通人试用号 / 非技术用户",
+    personaRole: "真实记录 AI 工具里的困惑、不确定和小发现，不装懂也不做评测。",
+    voice: ["真实", "日常", "不装懂", "有一点普通人的迟疑"],
+    contentTypes: ["AI 工具真实使用感受", "我没看懂这个功能", "省了时间但不确定花得更好", "普通人视角评论"],
+    avoid: ["技术术语堆砌", "专家口吻", "工具排行榜", "假装已经理解"],
+    cadence: "第一周写 2-3 条真实使用感受；在普通人视角的 AI 讨论帖下评论。",
     interactionTarget: "普通用户、AI 工具体验、职场效率焦虑内容。"
   },
   {
     id: "u4",
     accountName: "eli",
     displayName: "Eli Rowan",
-    role: "慢思考者",
+    role: "负责人：陈政霖",
     platform: "X",
     handle: "@eli_rowan_vt",
     profileUrl: "https://x.com/eli_rowan_vt",
-    positioning: "慢思考者 / 概念提出者",
-    personaRole: "给 VisionTree 的叙事加深度。",
+    positioning: "造概念的慢思考号",
+    personaRole: "为 VisionTree 叙事造第一个月的主推概念词，用少量深帖建立思想密度。",
     voice: ["慢", "稳", "有思想密度", "不用感叹号"],
-    contentTypes: ["AI 时代人的处境", "新概念命名", "热点背后的默认假设", "认知、判断、价值相关长帖"],
-    avoid: ["纯热点跟风", "轻飘的金句", "过度学院化黑话"],
-    cadence: "每周 5-7 条主帖；每天评论深度讨论 3-5 条。",
+    contentTypes: ["月度概念词", "同一概念的不同场景切入", "热点背后的默认假设", "认知、判断、价值相关长帖"],
+    avoid: ["发太多", "纯热点跟风", "轻飘金句", "只说同意"],
+    cadence: "第一周发 3 条围绕同一概念词的帖子；在 5-8 个思想类大号评论区出现。",
     interactionTarget: "深度讨论、研究解读、AI 与人的价值边界。"
   },
   {
     id: "u5",
-    accountName: "frames",
-    displayName: "Thinking in Frames",
-    role: "视觉模型账号",
+    accountName: "thinking-lab",
+    displayName: "Thinking Lab",
+    role: "负责人：武新悦",
     platform: "X",
-    handle: "@thinking_frames",
-    profileUrl: "https://x.com/thinking_frames",
-    positioning: "视觉化思维模型账号",
-    personaRole: "用图片提高收藏率和传播率。",
-    voice: ["短", "清楚", "视觉优先", "可收藏"],
-    contentTypes: ["思维模型图解", "决策对比图", "数据图", "概念卡"],
-    avoid: ["一图讲多个概念", "频繁换视觉框架", "长文案压过图"],
-    cadence: "每天 1 张图；用图或一句模型化表达参与讨论。",
-    interactionTarget: "思维模型、概念解释、可视化决策讨论。"
+    handle: "@thinking_lab_vt",
+    profileUrl: "https://x.com/thinking_lab_vt",
+    positioning: "视觉 + 互动实验室",
+    personaRole: "原 Thinking in Frames 和 Decision Lab 合并。用图解释模型，也用两分钟小实验让人动手想。",
+    voice: ["视觉优先", "实验感", "三秒看懂", "少解释多动作"],
+    contentTypes: ["思维模型图解", "决策对比图", "数据可视化", "概念卡", "投票", "偏差识别", "决策挑战"],
+    avoid: ["每天都必须发图", "每天都必须发实验", "一张图塞太多字", "自我介绍式评论"],
+    cadence: "第一周主页留下 5 条：两张图、两个实验、一张概念卡。",
+    interactionTarget: "思维模型、概念解释、互动实验、可收藏图解内容。"
   },
   {
     id: "u6",
-    accountName: "decision-lab",
-    displayName: "The Decision Lab",
-    role: "互动实验账号",
+    accountName: "thinking-tree",
+    displayName: "The Thinking Tree",
+    role: "负责人：马文博",
     platform: "X",
-    handle: "@decision_lab_vt",
-    profileUrl: "https://x.com/decision_lab_vt",
-    positioning: "互动实验账号",
-    personaRole: "让用户动手参与，提升回复和回访。",
-    voice: ["直接", "互动", "实验感", "少解释多提问"],
-    contentTypes: ["两分钟思维实验", "偏差识别题", "决策挑战", "投票 + 第二天分析"],
-    avoid: ["没有明确回复动作", "只讲道理不让用户参与", "恐吓式互动"],
-    cadence: "每天 1 条互动实验；高优先级回复所有参与实验的用户。",
-    interactionTarget: "用户回复、投票、认知偏差和决策挑战讨论。"
+    handle: "@thinking_tree_vt",
+    profileUrl: "https://x.com/thinking_tree_vt",
+    positioning: "一棵会说话的树",
+    personaRole: "它不是一个人。它把 VisionTree 的 Tree 变成活的隐喻，用树的口吻讲思维模型、认知偏差和结构化思考。",
+    voice: ["平静", "像活了很久的树", "淡淡幽默", "不卖萌", "不装可爱"],
+    contentTypes: ["树的成长日记", "树的观察", "年轮故事", "和其他账号互动"],
+    avoid: ["卖萌", "装可爱", "过度人设化", "把树写成吉祥物"],
+    cadence: "第一周发 2-3 条树的独白；长期每天 1 条。",
+    interactionTarget: "思维模型、AI 时代人类观察、可收藏的树形隐喻内容。"
+  },
+  {
+    id: "u7",
+    accountName: "visiontree",
+    displayName: "VisionTree",
+    role: "武新悦与石盛楠共同管理",
+    platform: "X",
+    handle: "@VisionTreeLab",
+    profileUrl: "https://x.com/VisionTreeLab",
+    positioning: "官方号 / 叙事收拢",
+    personaRole: "官方号不追自己出圈。第一周用 3-4 条品类定义帖说明 VisionTree 不是什么、是什么，并转发其他账号的好内容。",
+    voice: ["清楚", "克制", "定义感", "收拢叙事"],
+    contentTypes: ["品类定义帖", "对比式表达", "矩阵转发点评", "官方叙事汇总"],
+    avoid: ["发太多", "自己抢矩阵账号的戏", "空泛 slogan", "把 VisionTree 讲成普通效率工具"],
+    cadence: "第一周 3-4 条品类定义帖；转发其他六个号中质量最高的帖子并补一句评论。",
+    interactionTarget: "把七个账号收拢到同一条 VisionTree 叙事里。"
   }
 ];
 
 const visionTreeAssets = [
   {
     id: "a1",
-    title: "AI 时代人的价值危机素材",
-    theme: "价值危机",
-    source: "项目叙事",
-    format: "长帖 + 观点短帖",
+    title: "Thinking Lab 第一周启动素材",
+    theme: "视觉实验",
+    source: "V2 账号启动计划",
+    format: "图解 + 两分钟实验",
     freshness: "今天 10:20",
-    score: 94,
-    tags: ["认知增强", "人的价值", "AI 时代"],
-    summary: "围绕“当 AI 完成基础脑力劳动，人还剩什么价值”展开，可拆成 Eli 深度帖和 AI Doubt 短帖。",
-    owner: "Eli Rowan",
+    score: 95,
+    tags: ["Thinking Lab", "图解", "互动实验"],
+    summary: "原 Thinking in Frames 和 Decision Lab 合并为 Thinking Lab：一边做模型图解，一边发两分钟思维实验。",
+    owner: "Thinking Lab",
     palette: "mint",
-    notes: ["适合从人的价值危机切入，不要写成普通 AI 焦虑。", "核心表达是人主导判断，AI 辅助思考。"],
+    notes: ["第一周目标不是追粉丝，而是让主页三秒内说清楚账号是谁。", "内容组合是两张图、两个实验、一张概念卡。"],
     resources: [
       {
         id: "a1-web",
-        title: "VisionTree 项目叙事主线",
+        title: "Thinking Lab 第一周详细计划",
         kind: "web",
-        url: "https://visiontree.example/narrative",
+        url: "https://visiontree.example/v2/thinking-lab-week-one",
         source: "网页链接",
         updated: "2026-05-08",
-        summary: "统一 VisionTree 对外叙事：AI 时代人的价值危机、判断外包与思考扶手。",
-        highlights: ["第一入口是 AI 时代人的价值危机。", "不要把 VisionTree 讲成普通效率工具。", "强调 AI 辅助思考，人主导判断。"]
+        summary: "头像、Banner、Bio、周一到周日的内容节奏与互动方式。",
+        highlights: ["Banner 写 One visual. One experiment. Every day.", "周一发沉没成本图解，周二发第一个互动实验。", "周三有 3-4 条内容后再置顶第一张图。"]
       },
       {
         id: "a1-pdf",
-        title: "价值宣言摘录 PDF",
+        title: "Thinking Lab 启动清单 PDF",
         kind: "pdf",
-        url: "https://visiontree.example/files/value-manifesto.pdf",
+        url: "https://visiontree.example/files/thinking-lab-launch.pdf",
         source: "PDF",
         updated: "2026-05-08",
-        summary: "沉淀 VisionTree 关于人的价值、模糊判断和认知框架的核心表述。",
-        highlights: ["人的价值锚定在处理模糊。", "AI 不应替代人的判断过程。", "VisionTree 是认知框架加速器。"]
+        summary: "沉淀 Thinking Lab 第一周的视觉、互动、置顶帖与评论动作。",
+        highlights: ["图要干净，三秒看懂。", "互动题可以纯文字。", "评论区不要自我介绍，不要说关注我。"]
       }
     ]
   },
   {
     id: "a2",
-    title: "产品建设与判断取舍素材",
-    theme: "产品建设",
-    source: "产品迭代记录",
-    format: "短帖 + 复盘",
+    title: "Eli Rowan 月度概念词素材",
+    theme: "慢思考",
+    source: "V2 账号启动计划",
+    format: "概念长帖",
     freshness: "昨天 18:40",
-    score: 88,
-    tags: ["产品哲学", "判断取舍", "工程记录"],
-    summary: "记录 VisionTree 如何把产品做成“思考扶手”，适合 Milo Reed 和官方号使用。",
-    owner: "Milo Reed",
+    score: 90,
+    tags: ["Eli Rowan", "概念词", "慢思考"],
+    summary: "Eli 第一周只做一件事：选好这个月的主推概念词，用不同场景切入发三条。",
+    owner: "Eli Rowan",
     palette: "amber",
-    notes: ["从一个按钮、一处交互、一次砍功能讲产品哲学。", "不要夸大成宏大功能发布。"],
+    notes: ["Eli 的调性是慢和深，第一周发太多反而不对。", "评论要有自己的角度，不要只说同意。"],
     resources: [
       {
         id: "a2-web",
-        title: "产品取舍记录",
+        title: "Eli 第一周概念准备页",
         kind: "web",
-        url: "https://visiontree.example/build-notes",
+        url: "https://visiontree.example/v2/eli-concept-month",
         source: "网页链接",
         updated: "2026-05-07",
-        summary: "记录哪些自动化功能被保留、砍掉或改写。",
-        highlights: ["砍掉会让用户少想一步的功能。", "文案从生成答案改为继续判断。", "工程选择服务于判断而不是效率。"]
+        summary: "围绕同一个概念词准备三到四条帖子，每条从不同场景切入。",
+        highlights: ["第一周发三条就够。", "建立慢和深的第一印象。", "开始在思想类大号评论区出现。"]
       },
       {
         id: "a2-pdf",
-        title: "产品建设复盘 PDF",
+        title: "Eli 概念帖检查表 PDF",
         kind: "pdf",
-        url: "https://visiontree.example/files/build-retro.pdf",
+        url: "https://visiontree.example/files/eli-concept-checklist.pdf",
         source: "PDF",
         updated: "2026-05-06",
-        summary: "用于 Milo Reed 的产品建设内容素材。",
-        highlights: ["短句表达。", "真实取舍优先。", "避免品牌口号。"]
+        summary: "检查概念是否足够清楚、场景是否有差异、语气是否慢而稳。",
+        highlights: ["不用感叹号。", "不要轻飘金句。", "概念要能被 Thinking Lab 做成图。"]
       }
     ]
   },
   {
     id: "a3",
-    title: "普通人的 AI 困惑素材",
-    theme: "用户困境",
-    source: "用户观察",
-    format: "体验帖 + FAQ",
+    title: "AI Doubt Notes 反 AI 短帖素材",
+    theme: "怀疑笔记",
+    source: "V2 账号启动计划",
+    format: "三句短帖",
     freshness: "2 天前",
-    score: 83,
-    tags: ["AI 疲惫", "普通用户", "Nora Tries VisionTree"],
-    summary: "围绕普通人跟不上 AI、产出更多但理解更少的体验，适合 Nora Blake 和 Decision Lab。",
-    owner: "Nora Blake",
+    score: 88,
+    tags: ["AI Doubt Notes", "反 AI", "效率神话"],
+    summary: "准备五到六条反 AI 短帖。每条不超过三四句话，但要让人读完愣一下。",
+    owner: "AI Doubt Notes",
     palette: "rose",
-    notes: ["写真实困惑，不装懂。", "自然导流到 Nora Tries VisionTree。"],
+    notes: ["评论要短要刺，但要有事实，不能只是情绪。", "第一周不用发 Grudging Admit，先铺批判底色。"],
     resources: [
       {
         id: "a3-web",
-        title: "用户困境观察页",
+        title: "AI Doubt 第一周短帖池",
         kind: "web",
-        url: "https://visiontree.example/user-observations",
+        url: "https://visiontree.example/v2/ai-doubt-week-one",
         source: "网页链接",
         updated: "2026-05-06",
-        summary: "记录普通用户在 AI 工具使用中的迟疑、疲惫和判断丢失。",
-        highlights: ["AI 帮我写完，但我不同意结论。", "回复更多邮件，但理解更少。", "不是不会用工具，而是不知道如何判断。"]
+        summary: "收集 AI 工具发布帖、效率讨论帖下可切入的反问和短评论。",
+        highlights: ["短帖不超过三四句话。", "读完要停一下。", "不要把怀疑写成恐慌。"]
       },
       {
         id: "a3-pdf",
-        title: "Nora 体验素材 PDF",
+        title: "反 AI 短帖检查表 PDF",
         kind: "pdf",
-        url: "https://visiontree.example/files/nora-tries.pdf",
+        url: "https://visiontree.example/files/ai-doubt-notes.pdf",
         source: "PDF",
         updated: "2026-05-05",
-        summary: "Nora Blake 的体验帖和普通用户导流素材。",
-        highlights: ["语言日常。", "保留犹豫感。", "避免工具排行榜。"]
+        summary: "检查每条短帖是否有事实支点、是否足够短、是否避免情绪化。",
+        highlights: ["短。", "刺。", "有事实。"]
       }
     ]
   },
   {
     id: "a4",
-    title: "思维模型与决策训练素材",
-    theme: "思维模型",
-    source: "思考方法学",
-    format: "图卡 + 互动实验",
+    title: "Milo Reed 工程取舍素材",
+    theme: "工程取舍",
+    source: "V2 账号启动计划",
+    format: "工程师短帖",
     freshness: "本周一",
-    score: 81,
-    tags: ["思维模型", "决策实验", "认知框架"],
-    summary: "把语理分析、谬误剖析、判断框架转成图卡和两分钟实验。",
-    owner: "Thinking in Frames",
+    score: 86,
+    tags: ["Milo Reed", "技术选择", "产品取舍"],
+    summary: "从 VisionTree 最近真实遇到的技术选择出发：面临什么选项、选了哪个、为什么。",
+    owner: "Milo Reed",
     palette: "cyan",
-    notes: ["一张图只讲一个概念。", "每个实验都要有明确回复动作。"],
+    notes: ["不用长，写清楚选项和判断。", "评论像工程师对工程师说话。"],
     resources: [
       {
         id: "a4-web",
-        title: "思维模型素材索引",
+        title: "Milo 工程师短帖素材页",
         kind: "web",
-        url: "https://visiontree.example/frames",
+        url: "https://visiontree.example/v2/milo-engineering-notes",
         source: "网页链接",
         updated: "2026-05-04",
-        summary: "归档可视化思维模型、决策对比图和互动实验题。",
-        highlights: ["Eli 的概念可转成概念卡。", "Nora 的体验可转成前后对比图。", "Decision Lab 负责让用户动手。"]
+        summary: "记录 VisionTree 建设中的真实技术选择、被砍掉的方案和保留原因。",
+        highlights: ["我们面临了什么选项。", "我们选了哪个。", "为什么。"]
       },
       {
         id: "a4-pdf",
-        title: "决策实验模板 PDF",
+        title: "工程取舍复盘 PDF",
         kind: "pdf",
-        url: "https://visiontree.example/files/decision-lab.pdf",
+        url: "https://visiontree.example/files/milo-tradeoffs.pdf",
         source: "PDF",
         updated: "2026-05-03",
-        summary: "用于 The Decision Lab 的投票、偏差识别和二次分析模板。",
-        highlights: ["先给场景。", "要求用户做选择。", "第二天回收答案做分析。"]
+        summary: "把真实技术选择整理为可发布的短帖结构。",
+        highlights: ["别像发布公告。", "别写成粉丝口吻。", "保留工程判断。"]
+      }
+    ]
+  },
+  {
+    id: "a5",
+    title: "Nora Blake 真实试用素材",
+    theme: "普通人体验",
+    source: "V2 账号启动计划",
+    format: "试用日记",
+    freshness: "本周二",
+    score: 84,
+    tags: ["Nora Blake", "真实体验", "不装懂"],
+    summary: "挑一个这周真的在用的 AI 工具，写两到三条真实使用感受：可以困惑，可以承认没看懂。",
+    owner: "Nora Blake",
+    palette: "rose",
+    notes: ["关键词是真实。", "不要做评测，不要装懂。"],
+    resources: [
+      {
+        id: "a5-web",
+        title: "Nora 第一周试用记录",
+        kind: "web",
+        url: "https://visiontree.example/v2/nora-tries-ai",
+        source: "网页链接",
+        updated: "2026-05-05",
+        summary: "记录一个普通人使用 AI 工具时的迟疑、节省时间和不确定。",
+        highlights: ["我没看懂这个功能在干嘛。", "它确实省了时间。", "但我不确定省下来的时间有没有花在更好的地方。"]
+      },
+      {
+        id: "a5-pdf",
+        title: "普通人体验帖模板 PDF",
+        kind: "pdf",
+        url: "https://visiontree.example/files/nora-week-one.pdf",
+        source: "PDF",
+        updated: "2026-05-05",
+        summary: "把真实试用感受整理为两到三条 X 帖。",
+        highlights: ["保留困惑。", "保留不确定。", "不要排榜。"]
+      }
+    ]
+  },
+  {
+    id: "a6",
+    title: "The Thinking Tree 树的独白素材",
+    theme: "活的隐喻",
+    source: "V2 账号启动计划",
+    format: "图文独白",
+    freshness: "本周三",
+    score: 92,
+    tags: ["The Thinking Tree", "树的口吻", "思维模型"],
+    summary: "The Thinking Tree 不是一个人。它把产品名变成活的隐喻：思维模型是养分，判断力是年轮，结构化思考是根系。",
+    owner: "The Thinking Tree",
+    palette: "mint",
+    notes: ["语气不是卖萌，也不是装可爱。", "它更像一棵活了很久的树，在平静地观察人类。"],
+    resources: [
+      {
+        id: "a6-web",
+        title: "The Thinking Tree 角色设定页",
+        kind: "web",
+        url: "https://visiontree.example/v2/the-thinking-tree",
+        source: "网页链接",
+        updated: "2026-05-08",
+        summary: "解释树的存在逻辑、视觉空间、语气和内容类型。",
+        highlights: ["思维模型是养分。", "思考过程是光合作用。", "判断力是年轮。"]
+      },
+      {
+        id: "a6-pdf",
+        title: "树的独白首周素材 PDF",
+        kind: "pdf",
+        url: "https://visiontree.example/files/thinking-tree-week-one.pdf",
+        source: "PDF",
+        updated: "2026-05-08",
+        summary: "包含发芽、新叶、根系、年轮等视觉方向和首条独白。",
+        highlights: ["I grow one leaf at a time.", "Each leaf is a way of thinking.", "先回到根，再伸向枝。"]
+      }
+    ]
+  },
+  {
+    id: "a7",
+    title: "VisionTree 官方品类定义素材",
+    theme: "官方叙事",
+    source: "V2 账号启动计划",
+    format: "对比式定义帖",
+    freshness: "本周四",
+    score: 89,
+    tags: ["VisionTree", "官方号", "品类定义"],
+    summary: "官方号第一周不用发太多。用三到四条对比式定义帖说清楚 VisionTree 不是什么、是什么。",
+    owner: "VisionTree",
+    palette: "amber",
+    notes: ["官方号的任务不是自己出圈，而是把其他六个号的内容收拢到一个叙事里。", "转发矩阵账号的好内容，加一两句评论。"],
+    resources: [
+      {
+        id: "a7-web",
+        title: "VisionTree 官方号第一周计划",
+        kind: "web",
+        url: "https://visiontree.example/v2/official-week-one",
+        source: "网页链接",
+        updated: "2026-05-08",
+        summary: "定义官方号的发布边界、转发策略和品类表达方式。",
+        highlights: ["不是普通效率工具。", "不是自动替你做判断。", "是帮助人保留判断的认知增强项目。"]
+      },
+      {
+        id: "a7-pdf",
+        title: "官方品类定义帖模板 PDF",
+        kind: "pdf",
+        url: "https://visiontree.example/files/official-category-posts.pdf",
+        source: "PDF",
+        updated: "2026-05-08",
+        summary: "三到四条官方号对比式定义帖草稿模板。",
+        highlights: ["不是什么。", "是什么。", "为什么这件事在 AI 时代重要。"]
       }
     ]
   }
+];
+
+const visionTreeTemplates = [
+  {
+    id: "t1",
+    title: "图解 + 两分钟实验",
+    format: "Visual / Experiment",
+    channels: ["X"],
+    hook: "One visual. One experiment. Every day.",
+    structure: ["一个模型", "一张干净图", "一句解释", "一个动作问题"],
+    length: "1 图或 3-5 句",
+    notes: ["适合 Thinking Lab。图和互动交替发。", "视觉内容三秒看懂，不要塞太多字。"],
+    resources: [
+      {
+        id: "t1-web",
+        title: "Thinking Lab 图解与实验模板页",
+        kind: "web",
+        url: "https://visiontree.example/templates/thinking-lab",
+        source: "网页链接",
+        updated: "2026-05-08",
+        summary: "把思维模型转成图解或两分钟实验的发布模板。",
+        highlights: ["图解只讲一个模型。", "实验题要让人立刻能回复。", "评论区不要自我介绍。"]
+      },
+      {
+        id: "t1-pdf",
+        title: "Thinking Lab 内容检查表 PDF",
+        kind: "pdf",
+        url: "https://visiontree.example/files/thinking-lab-template.pdf",
+        source: "PDF",
+        updated: "2026-05-08",
+        summary: "检查模型、图解、互动动作和置顶策略。",
+        highlights: ["两张图。", "两个实验。", "一张概念卡。"]
+      }
+    ]
+  },
+  {
+    id: "t2",
+    title: "慢概念三帖",
+    format: "Concept Thread",
+    channels: ["X"],
+    hook: "先命名一个概念，再用三个场景慢慢打开它。",
+    structure: ["概念命名", "场景切入", "默认假设", "判断边界"],
+    length: "3-8 段",
+    notes: ["适合 Eli Rowan。第一周发三条就够。", "不要为了热闹牺牲慢和深。"],
+    resources: [
+      {
+        id: "t2-web",
+        title: "Eli 概念帖模板展示页",
+        kind: "web",
+        url: "https://visiontree.example/templates/eli-concept",
+        source: "网页链接",
+        updated: "2026-05-08",
+        summary: "围绕同一个概念词准备多角度帖子。",
+        highlights: ["同一概念，不同场景。", "评论要有自己的角度。", "不用感叹号。"]
+      },
+      {
+        id: "t2-pdf",
+        title: "慢概念写作检查表 PDF",
+        kind: "pdf",
+        url: "https://visiontree.example/files/eli-template.pdf",
+        source: "PDF",
+        updated: "2026-05-08",
+        summary: "控制语气、密度和发布频率。",
+        highlights: ["慢。", "稳。", "有思想密度。"]
+      }
+    ]
+  },
+  {
+    id: "t3",
+    title: "反 AI 三句短帖",
+    format: "Short Note",
+    channels: ["X"],
+    hook: "让人读完愣一下，但不是情绪宣泄。",
+    structure: ["一句观察", "一句反问", "一句判断"],
+    length: "3-4 句",
+    notes: ["适合 AI Doubt Notes。短、刺、有事实。", "第一周先不发 Grudging Admit。"],
+    resources: [
+      {
+        id: "t3-web",
+        title: "AI Doubt 短帖模板页",
+        kind: "web",
+        url: "https://visiontree.example/templates/ai-doubt",
+        source: "网页链接",
+        updated: "2026-05-08",
+        summary: "把 AI 效率叙事拆成短观察和短反问。",
+        highlights: ["不超过三四句话。", "评论更短。", "有事实，不靠愤怒。"]
+      },
+      {
+        id: "t3-pdf",
+        title: "AI Doubt 语气检查 PDF",
+        kind: "pdf",
+        url: "https://visiontree.example/files/ai-doubt-template.pdf",
+        source: "PDF",
+        updated: "2026-05-08",
+        summary: "避免恐吓、阴谋论和纯情绪。",
+        highlights: ["冷静。", "刺。", "不是恐慌。"]
+      }
+    ]
+  },
+  {
+    id: "t4",
+    title: "工程取舍短帖",
+    format: "Build Note",
+    channels: ["X"],
+    hook: "我们面临了两个选项，最后选了更保留判断的那个。",
+    structure: ["真实问题", "两个选项", "最终选择", "为什么"],
+    length: "4-6 句",
+    notes: ["适合 Milo Reed。写真实取舍，不写发布公告。", "评论要像工程师对工程师说话。"],
+    resources: [
+      {
+        id: "t4-web",
+        title: "Milo 工程取舍模板页",
+        kind: "web",
+        url: "https://visiontree.example/templates/milo-build-note",
+        source: "网页链接",
+        updated: "2026-05-08",
+        summary: "把产品建设中的真实技术选择整理为短帖。",
+        highlights: ["选项必须具体。", "判断理由要清楚。", "避免宏大表述。"]
+      },
+      {
+        id: "t4-pdf",
+        title: "工程取舍短帖 PDF",
+        kind: "pdf",
+        url: "https://visiontree.example/files/milo-template.pdf",
+        source: "PDF",
+        updated: "2026-05-08",
+        summary: "辅助检查短帖是否像真实工程记录。",
+        highlights: ["问题。", "选项。", "取舍。"]
+      }
+    ]
+  },
+  {
+    id: "t5",
+    title: "普通人真实试用日记",
+    format: "Diary Note",
+    channels: ["X"],
+    hook: "我没完全看懂，但这个感受是真的。",
+    structure: ["今天用了什么", "哪里卡住", "哪里有帮助", "留下什么不确定"],
+    length: "3-6 句",
+    notes: ["适合 Nora Blake。不要做评测。", "可以承认不懂，也可以承认不确定。"],
+    resources: [
+      {
+        id: "t5-web",
+        title: "Nora 试用日记模板页",
+        kind: "web",
+        url: "https://visiontree.example/templates/nora-diary",
+        source: "网页链接",
+        updated: "2026-05-08",
+        summary: "把普通人的 AI 工具体验写得真实而不装懂。",
+        highlights: ["我也是普通人。", "我也有这个困惑。", "不是工具评测。"]
+      },
+      {
+        id: "t5-pdf",
+        title: "Nora 试用日记 PDF",
+        kind: "pdf",
+        url: "https://visiontree.example/files/nora-template.pdf",
+        source: "PDF",
+        updated: "2026-05-08",
+        summary: "保留困惑、不确定和日常语气。",
+        highlights: ["真实。", "日常。", "不装懂。"]
+      }
+    ]
+  },
+  {
+    id: "t6",
+    title: "树的独白图文",
+    format: "Tree Monologue",
+    channels: ["X"],
+    hook: "Today I grew a new leaf. It is called first principles thinking.",
+    structure: ["树的动作", "一个思维模型", "树的隐喻", "一张图"],
+    length: "1 图 + 1-3 句",
+    notes: ["适合 The Thinking Tree。不是卖萌，是一棵树平静地观察人类。", "视觉可以是发芽、年轮、根系或被风吹弯。"],
+    resources: [
+      {
+        id: "t6-web",
+        title: "树的独白模板页",
+        kind: "web",
+        url: "https://visiontree.example/templates/thinking-tree",
+        source: "网页链接",
+        updated: "2026-05-08",
+        summary: "把思维模型翻译成树的语言。",
+        highlights: ["思维模型是养分。", "判断力是年轮。", "认知偏差是害虫。"]
+      },
+      {
+        id: "t6-pdf",
+        title: "The Thinking Tree 视觉模板 PDF",
+        kind: "pdf",
+        url: "https://visiontree.example/files/tree-template.pdf",
+        source: "PDF",
+        updated: "2026-05-08",
+        summary: "AI 作图方向和树的独白写法。",
+        highlights: ["发芽。", "根系。", "年轮截面。"]
+      }
+    ]
+  },
+  {
+    id: "t7",
+    title: "官方对比式品类定义",
+    format: "Category Definition",
+    channels: ["X"],
+    hook: "VisionTree is not here to think for you. It is here to keep you in the act of thinking.",
+    structure: ["不是什么", "是什么", "为什么重要", "转发矩阵账号"],
+    length: "4-7 句",
+    notes: ["适合官方号 VisionTree。第一周 3-4 条就够。", "官方号负责收拢叙事，不抢其他账号的戏。"],
+    resources: [
+      {
+        id: "t7-web",
+        title: "官方号品类定义模板页",
+        kind: "web",
+        url: "https://visiontree.example/templates/official-category",
+        source: "网页链接",
+        updated: "2026-05-08",
+        summary: "用对比式写法解释 VisionTree 不是什么、是什么。",
+        highlights: ["不是普通效率工具。", "不是自动替你思考。", "是认知增强项目。"]
+      },
+      {
+        id: "t7-pdf",
+        title: "VisionTree 官方帖检查表 PDF",
+        kind: "pdf",
+        url: "https://visiontree.example/files/official-template.pdf",
+        source: "PDF",
+        updated: "2026-05-08",
+        summary: "保证官方文案清楚、克制、收拢叙事。",
+        highlights: ["不追自己出圈。", "转发质量最高的矩阵内容。", "补一两句评论。"]
+      }
+    ]
+  }
+];
+
+const visionTreeContents = [
+  ["c1", "Sunk cost is not about money", "X", "已发布", "a1", "t1", "Thinking Lab", "2026-05-11T08:30:00+08:00", "2026-05-11", "10:00", "2026-05-11T10:05:00+08:00", 12800, 620, 74, 41, 390],
+  ["c2", "AI did not save your thinking. It moved the judgment out of sight.", "X", "已发布", "a3", "t3", "AI Doubt Notes", "2026-05-11T11:20:00+08:00", "2026-05-11", "12:30", "2026-05-11T12:32:00+08:00", 9400, 510, 63, 38, 221],
+  ["c3", "为什么我们没有做一键自动判断", "X", "草稿", "a4", "t4", "Milo Reed", "2026-05-12T09:40:00+08:00", "2026-05-12", "18:00", null, 0, 0, 0, 0, 0],
+  ["c4", "Today I grew a new leaf. It is called first principles thinking.", "X", "草稿", "a6", "t6", "The Thinking Tree", "2026-05-12T14:10:00+08:00", "2026-05-13", "09:20", null, 0, 0, 0, 0, 0],
+  ["c5", "VisionTree is not an autopilot for thinking.", "X", "已排期", "a7", "t7", "VisionTree", "2026-05-12T16:25:00+08:00", "2026-05-13", "20:30", null, 0, 0, 0, 0, 0]
+];
+
+const visionTreePlans = [
+  ["p1", "2026-05-11", "周一", "10:00", "X", "Thinking Lab：沉没成本图解", "Thinking Lab", "建立视觉第一印象", "已完成", "c1"],
+  ["p2", "2026-05-12", "周二", "10:00", "X", "Thinking Lab：第一个两分钟实验", "Thinking Lab", "引导回复", "制作中", null],
+  ["p3", "2026-05-13", "周三", "10:00", "X", "Thinking Lab：AI 答案 vs 保留判断", "Thinking Lab", "形成置顶内容", "待领取", null],
+  ["p4", "2026-05-14", "周四", "11:00", "X", "Thinking Lab：决策方式投票", "Thinking Lab", "带来回复", "待领取", null],
+  ["p5", "2026-05-15", "周五", "10:30", "X", "Thinking Lab：Eli 概念卡", "Thinking Lab", "连接矩阵账号", "待领取", null],
+  ["p6", "2026-05-11", "周一", "16:00", "X", "Eli：月度概念词第一帖", "Eli Rowan", "建立慢思考调性", "待领取", null],
+  ["p7", "2026-05-11", "周一", "12:30", "X", "AI Doubt：反 AI 短帖", "AI Doubt Notes", "铺批判底色", "已完成", "c2"],
+  ["p8", "2026-05-12", "周二", "18:00", "X", "Milo：真实技术取舍", "Milo Reed", "建立工程可信度", "制作中", "c3"],
+  ["p9", "2026-05-12", "周二", "20:00", "X", "Nora：真实 AI 工具试用", "Nora Blake", "降低普通人门槛", "待领取", null],
+  ["p10", "2026-05-13", "周三", "09:20", "X", "The Thinking Tree：第一片新叶", "The Thinking Tree", "建立记忆点", "制作中", "c4"],
+  ["p11", "2026-05-13", "周三", "20:30", "X", "VisionTree：第一条品类定义", "VisionTree", "收拢官方叙事", "待发布", "c5"]
+];
+
+const visionTreeActivities = [
+  ["act1", "c1", "数据同步", "周一沉没成本图解已发布，收藏集中来自模型图。", "10:45", "2026-05-11T10:45:00+08:00"],
+  ["act2", "c1", "评论记录", "在相关大号评论区贴图并补一句解释，没有自我介绍。", "11:20", "2026-05-11T11:20:00+08:00"],
+  ["act3", "c2", "数据同步", "AI Doubt 第一条短帖建立了短、刺、有事实的语气。", "13:10", "2026-05-11T13:10:00+08:00"],
+  ["act4", "c3", "状态更新", "Milo 工程取舍帖已进入内容池，等待补充真实选项细节。", "09:40", "2026-05-12T09:40:00+08:00"],
+  ["act5", "c4", "状态更新", "The Thinking Tree 首条独白已准备配图方向：新叶与根系。", "14:10", "2026-05-12T14:10:00+08:00"],
+  ["act6", "c5", "状态更新", "官方号第一条品类定义帖已排期，用对比式写法定调。", "16:25", "2026-05-12T16:25:00+08:00"]
 ];
 
 const nowIso = () => new Date().toISOString();
@@ -457,7 +839,10 @@ function upsertPersonaUsers() {
     ["Mia", "Milo Reed"],
     ["Jun", "AI Doubt Notes"],
     ["Hao", "Nora Blake"],
-    ["Lena", "Eli Rowan"]
+    ["Lena", "Eli Rowan"],
+    ["Thinking in Frames", "Thinking Lab"],
+    ["The Decision Lab", "Thinking Lab"],
+    ["Decision Lab", "Thinking Lab"]
   ];
   ownerMap.forEach(([from, to]) => {
     db.prepare("UPDATE contents SET owner = ? WHERE owner = ?").run(to, from);
@@ -467,47 +852,152 @@ function upsertPersonaUsers() {
 }
 
 function syncVisionTreeDemoData() {
-  const updateAsset = db.prepare(`
-    UPDATE assets
-    SET title = ?, theme = ?, source = ?, format = ?, freshness = ?, score = ?, tags_json = ?, summary = ?,
-        owner = ?, palette = ?, notes_json = ?, resources_json = ?
-    WHERE id = ?
+  pruneLegacyVisionTreeMaterial();
+
+  const upsertAsset = db.prepare(`
+    INSERT INTO assets
+      (id, title, theme, source, format, freshness, score, tags_json, summary, owner, palette, notes_json, resources_json)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ON CONFLICT(id) DO UPDATE SET
+      title = excluded.title,
+      theme = excluded.theme,
+      source = excluded.source,
+      format = excluded.format,
+      freshness = excluded.freshness,
+      score = excluded.score,
+      tags_json = excluded.tags_json,
+      summary = excluded.summary,
+      owner = excluded.owner,
+      palette = excluded.palette,
+      notes_json = excluded.notes_json,
+      resources_json = excluded.resources_json
   `);
-  visionTreeAssets.forEach((asset) =>
-    updateAsset.run(
-      asset.title,
-      asset.theme,
-      asset.source,
-      asset.format,
-      asset.freshness,
-      asset.score,
-      json(asset.tags),
-      asset.summary,
-      asset.owner,
-      asset.palette,
-      json(asset.notes),
-      json(asset.resources),
-      asset.id
+  const shouldSeedLegacyMaterial = db.prepare("SELECT COUNT(*) AS count FROM assets WHERE source LIKE 'IMA VT素材库%'").get().count === 0;
+  if (shouldSeedLegacyMaterial) {
+    visionTreeAssets.forEach((asset) =>
+      upsertAsset.run(
+        asset.id,
+        asset.title,
+        asset.theme,
+        asset.source,
+        asset.format,
+        asset.freshness,
+        asset.score,
+        json(asset.tags),
+        asset.summary,
+        asset.owner,
+        asset.palette,
+        json(asset.notes),
+        json(asset.resources)
+      )
+    );
+  }
+
+  const upsertTemplate = db.prepare(`
+    INSERT INTO templates
+      (id, title, format, channels_json, structure_json, hook, length, notes_json, resources_json)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ON CONFLICT(id) DO UPDATE SET
+      title = excluded.title,
+      format = excluded.format,
+      channels_json = excluded.channels_json,
+      structure_json = excluded.structure_json,
+      hook = excluded.hook,
+      length = excluded.length,
+      notes_json = excluded.notes_json,
+      resources_json = excluded.resources_json
+  `);
+  visionTreeTemplates.forEach((template) =>
+    upsertTemplate.run(
+      template.id,
+      template.title,
+      template.format,
+      json(template.channels),
+      json(template.structure),
+      template.hook,
+      template.length,
+      json(template.notes),
+      json(template.resources)
     )
   );
 
-  const updates = [
-    ["c1", "AI 没有替你省下思考，它只是把判断藏到了下一步", "X", "a1", "t2", "AI Doubt Notes"],
-    ["c2", "为什么我们把“生成答案”改成了“继续判断”", "X", "a2", "t3", "Milo Reed"],
-    ["c3", "我试了一个 AI 工具，结果更不确定了", "X", "a3", "t4", "Nora Blake"]
-  ];
-  const updateContent = db.prepare("UPDATE contents SET title = ?, channel = ?, asset_id = ?, template_id = ?, owner = ? WHERE id = ?");
-  updates.forEach(([id, title, channel, assetId, templateId, owner]) => updateContent.run(title, channel, assetId, templateId, owner, id));
+  const upsertContent = db.prepare(`
+    INSERT INTO contents
+      (id, title, channel, status, asset_id, template_id, owner, saved_at, scheduled_date, scheduled_time,
+       published_at, views, likes, comments, shares, saves)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ON CONFLICT(id) DO UPDATE SET
+      title = excluded.title,
+      channel = excluded.channel,
+      status = excluded.status,
+      asset_id = excluded.asset_id,
+      template_id = excluded.template_id,
+      owner = excluded.owner,
+      saved_at = excluded.saved_at,
+      scheduled_date = excluded.scheduled_date,
+      scheduled_time = excluded.scheduled_time,
+      published_at = excluded.published_at,
+      views = excluded.views,
+      likes = excluded.likes,
+      comments = excluded.comments,
+      shares = excluded.shares,
+      saves = excluded.saves
+  `);
+  if (shouldSeedLegacyMaterial) {
+    visionTreeContents.forEach((row) => upsertContent.run(...row));
+  }
 
-  const plans = [
-    ["p1", "2026-05-09", "周六", "10:00", "X", "Nora Tries VisionTree", "Nora Blake", "降低门槛"],
-    ["p2", "2026-05-10", "周日", "20:30", "X", "按钮文案背后的产品哲学", "Milo Reed", "建立信任"],
-    ["p3", "2026-05-11", "周一", "12:15", "X", "AI 时代人的价值危机", "Eli Rowan", "沉淀深度叙事"],
-    ["p4", "2026-05-12", "周二", "18:00", "X", "一张图解释认知外包", "Thinking in Frames", "提高收藏"],
-    ["p5", "2026-05-13", "周三", "09:40", "X", "两分钟判断实验", "The Decision Lab", "提升回复"]
-  ];
-  const updatePlan = db.prepare("UPDATE plans SET date = ?, day = ?, slot = ?, channel = ?, theme = ?, owner = ?, goal = ? WHERE id = ?");
-  plans.forEach(([id, date, day, slot, channel, theme, owner, goal]) => updatePlan.run(date, day, slot, channel, theme, owner, goal, id));
+  const upsertPlan = db.prepare(`
+    INSERT INTO plans (id, date, day, slot, channel, theme, owner, goal, status, content_id)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ON CONFLICT(id) DO UPDATE SET
+      date = excluded.date,
+      day = excluded.day,
+      slot = excluded.slot,
+      channel = excluded.channel,
+      theme = excluded.theme,
+      owner = excluded.owner,
+      goal = excluded.goal,
+      status = excluded.status,
+      content_id = excluded.content_id
+  `);
+  if (shouldSeedLegacyMaterial) {
+    visionTreePlans.forEach((row) => upsertPlan.run(...row));
+  }
+
+  const upsertActivity = db.prepare(`
+    INSERT INTO activities (id, content_id, type, note, time_label, created_at)
+    VALUES (?, ?, ?, ?, ?, ?)
+    ON CONFLICT(id) DO UPDATE SET
+      content_id = excluded.content_id,
+      type = excluded.type,
+      note = excluded.note,
+      time_label = excluded.time_label,
+      created_at = excluded.created_at
+  `);
+  if (shouldSeedLegacyMaterial) {
+    visionTreeActivities.forEach((row) => upsertActivity.run(...row));
+  }
+}
+
+function pruneLegacyVisionTreeMaterial() {
+  const legacyAssetIds = visionTreeAssets.map((asset) => asset.id);
+  if (!legacyAssetIds.length) return;
+
+  const placeholders = legacyAssetIds.map(() => "?").join(", ");
+  const legacyContentIds = db
+    .prepare(`SELECT id FROM contents WHERE asset_id IN (${placeholders})`)
+    .all(...legacyAssetIds)
+    .map((row) => row.id);
+
+  if (legacyContentIds.length) {
+    const contentPlaceholders = legacyContentIds.map(() => "?").join(", ");
+    db.prepare(`UPDATE plans SET content_id = NULL WHERE content_id IN (${contentPlaceholders})`).run(...legacyContentIds);
+    db.prepare(`DELETE FROM activities WHERE content_id IN (${contentPlaceholders})`).run(...legacyContentIds);
+    db.prepare(`DELETE FROM contents WHERE id IN (${contentPlaceholders})`).run(...legacyContentIds);
+  }
+
+  db.prepare(`DELETE FROM assets WHERE id IN (${placeholders})`).run(...legacyAssetIds);
 }
 
 function mapUser(row) {
@@ -537,307 +1027,10 @@ function seedDatabase() {
   const users = personaUsers;
 
   const assets = visionTreeAssets;
-
-  /*
-  const legacyAssets = [
-    {
-      id: "a1",
-      title: "AI 视频脚本复盘素材",
-      theme: "效率工具",
-      source: "访谈摘录",
-      format: "长文 + 短视频",
-      freshness: "今天 10:20",
-      score: 91,
-      tags: ["案例", "生产力", "脚本"],
-      summary: "来自创作者访谈的三段故事线，可拆成教程、复盘和观点短帖。",
-      owner: "Mia",
-      palette: "mint",
-      notes: ["适合拆成 1 条短视频、1 条小红书观点帖和 1 条公众号复盘。", "素材里的失败版本可以作为开场冲突。"],
-      resources: [
-        {
-          id: "a1-web",
-          title: "访谈原文：创作者如何复盘脚本",
-          kind: "web",
-          url: "https://content.example/source/ai-script-interview",
-          source: "网页链接",
-          updated: "2026-05-08",
-          summary: "记录创作者从选题、脚本、剪辑到评论复盘的完整过程。",
-          highlights: ["改稿集中在前 3 秒钩子。", "评论区问题可继续做答疑内容。", "适合沉淀为团队脚本检查清单。"]
-        },
-        {
-          id: "a1-pdf",
-          title: "脚本迭代记录 PDF",
-          kind: "pdf",
-          url: "https://content.example/files/script-review.pdf",
-          source: "PDF",
-          updated: "2026-05-07",
-          summary: "包含 6 版脚本、镜头说明和发布后的数据回看。",
-          highlights: ["第 3 版完播率提升最明显。", "标题测试可复用于 B 站和视频号。", "结尾评论引导需要保留。"]
-        }
-      ]
-    },
-    {
-      id: "a2",
-      title: "五月内容增长周报",
-      theme: "数据洞察",
-      source: "运营报表",
-      format: "图文轮播",
-      freshness: "昨天 18:40",
-      score: 84,
-      tags: ["周报", "增长", "复盘"],
-      summary: "整理了 6 个账号的曝光、收藏和评论关键词，适合做复盘型内容。",
-      owner: "Jun",
-      palette: "amber",
-      notes: ["适合做周报轮播，也可以拆成管理层同步长文。", "优先突出曝光增长和收藏率异常点。"],
-      resources: [
-        {
-          id: "a2-web",
-          title: "矩阵账号周报看板",
-          kind: "web",
-          url: "https://content.example/dashboard/may-weekly-growth",
-          source: "网页链接",
-          updated: "2026-05-07",
-          summary: "汇总 6 个账号本周曝光、互动和内容发布节奏。",
-          highlights: ["小红书收藏率连续两周上升。", "公众号打开率受发布时间影响明显。", "微博话题互动适合做快评。"]
-        },
-        {
-          id: "a2-pdf",
-          title: "五月第一周增长简报 PDF",
-          kind: "pdf",
-          url: "https://content.example/files/may-growth-brief.pdf",
-          source: "PDF",
-          updated: "2026-05-06",
-          summary: "沉淀周报结论、样本内容截图和下周行动建议。",
-          highlights: ["轮播封面建议使用一个关键数字。", "需要补充高收藏内容样本。", "下周优先测试午间发布时间。"]
-        }
-      ]
-    },
-    {
-      id: "a3",
-      title: "用户评论高频问题",
-      theme: "社群反馈",
-      source: "评论抓取",
-      format: "FAQ 清单",
-      freshness: "2 天前",
-      score: 79,
-      tags: ["评论", "答疑", "转化"],
-      summary: "归类了 32 条评论中的疑问和反对意见，可生成答疑帖和直播提纲。",
-      owner: "Hao",
-      palette: "rose",
-      notes: ["适合做 FAQ 清单和短视频口播。", "高频问题可以直接作为标题，减少创作距离感。"],
-      resources: [
-        {
-          id: "a3-web",
-          title: "评论聚类页面",
-          kind: "web",
-          url: "https://content.example/comments/faq-cluster",
-          source: "网页链接",
-          updated: "2026-05-06",
-          summary: "按疑问、反对意见、购买顾虑和功能建议归类评论。",
-          highlights: ["价格相关问题占 28%。", "教程类追问适合做系列内容。", "有 5 条评论可做二创引用。"]
-        },
-        {
-          id: "a3-pdf",
-          title: "评论问题归档 PDF",
-          kind: "pdf",
-          url: "https://content.example/files/comment-faq.pdf",
-          source: "PDF",
-          updated: "2026-05-05",
-          summary: "保留原始评论、回复建议和可复用答疑话术。",
-          highlights: ["需要避开过度承诺。", "每条回答控制在 80 字内。", "结尾引导用户补充场景。"]
-        }
-      ]
-    },
-    {
-      id: "a4",
-      title: "品牌幕后拍摄素材",
-      theme: "品牌信任",
-      source: "素材上传",
-      format: "短视频混剪",
-      freshness: "本周一",
-      score: 73,
-      tags: ["幕后", "团队", "信任"],
-      summary: "包含产品打磨、团队讨论和客户交付片段，适合做温度型内容。",
-      owner: "Lena",
-      palette: "cyan",
-      notes: ["适合品牌信任内容，不宜过度销售。", "短视频开场可以直接使用团队讨论片段。"],
-      resources: [
-        {
-          id: "a4-web",
-          title: "幕后素材索引页",
-          kind: "web",
-          url: "https://content.example/media/behind-the-scenes",
-          source: "网页链接",
-          updated: "2026-05-04",
-          summary: "按场景归档产品打磨、团队会议和交付瞬间。",
-          highlights: ["团队讨论片段适合做开场。", "客户交付镜头需要打码。", "产品细节镜头适合做转场。"]
-        },
-        {
-          id: "a4-pdf",
-          title: "品牌幕后拍摄脚本 PDF",
-          kind: "pdf",
-          url: "https://content.example/files/brand-bts-shotlist.pdf",
-          source: "PDF",
-          updated: "2026-05-03",
-          summary: "包含镜头清单、拍摄顺序和平台剪辑建议。",
-          highlights: ["先信任，再功能。", "避免大段旁白。", "建议保留现场环境声。"]
-        }
-      ]
-    }
-  ];
-  */
-
-  const templates = [
-    {
-      id: "t1",
-      title: "三段式观点短帖",
-      format: "观点 / 图文",
-      channels: ["小红书", "微博", "公众号"],
-      hook: "先抛出反常识结论，再给证据。",
-      structure: ["反常识标题", "真实场景", "三点拆解", "行动提示"],
-      length: "600-900 字",
-      notes: ["适合观点明确、证据充分的素材。", "标题不要只写结论，要保留一点反差。"],
-      resources: [
-        {
-          id: "t1-web",
-          title: "观点短帖示例页",
-          kind: "web",
-          url: "https://content.example/templates/opinion-post",
-          source: "网页链接",
-          updated: "2026-05-02",
-          summary: "展示三段式观点短帖的标题、正文和评论引导样例。",
-          highlights: ["第一段只讲一个场景。", "中段用数字或案例支撑。", "结尾给一个可执行动作。"]
-        },
-        {
-          id: "t1-pdf",
-          title: "观点帖写作检查表 PDF",
-          kind: "pdf",
-          url: "https://content.example/files/opinion-checklist.pdf",
-          source: "PDF",
-          updated: "2026-05-01",
-          summary: "用于审核标题、论据和转化引导是否完整。",
-          highlights: ["标题需要包含对象和冲突。", "每段不超过 120 字。", "保留一个评论问题。"]
-        }
-      ]
-    },
-    {
-      id: "t2",
-      title: "短视频脚本：问题到结果",
-      format: "短视频",
-      channels: ["抖音", "视频号", "B站"],
-      hook: "3 秒内展示痛点和结果画面。",
-      structure: ["痛点镜头", "过程演示", "前后对比", "评论引导"],
-      length: "45-75 秒",
-      notes: ["适合教程、复盘和工具类素材。", "开场先给结果画面，再回到过程。"],
-      resources: [
-        {
-          id: "t2-web",
-          title: "短视频脚本模板展示页",
-          kind: "web",
-          url: "https://content.example/templates/problem-to-result-video",
-          source: "网页链接",
-          updated: "2026-05-04",
-          summary: "展示镜头段落、字幕节奏和评论引导的组合方式。",
-          highlights: ["每 8-12 秒切换一次视觉重点。", "前后对比要有同一指标。", "口播只保留必要解释。"]
-        },
-        {
-          id: "t2-pdf",
-          title: "短视频分镜模板 PDF",
-          kind: "pdf",
-          url: "https://content.example/files/video-shot-template.pdf",
-          source: "PDF",
-          updated: "2026-05-03",
-          summary: "包含镜头、字幕、画面素材和剪辑备注的表格模板。",
-          highlights: ["第一镜头必须可独立理解。", "字幕不超过两行。", "最后 5 秒留互动钩子。"]
-        }
-      ]
-    },
-    {
-      id: "t3",
-      title: "数据周报轮播",
-      format: "轮播 / 长图",
-      channels: ["小红书", "公众号", "微博"],
-      hook: "用一个关键数字做封面。",
-      structure: ["关键指标", "波动原因", "内容样本", "下周动作"],
-      length: "8-10 页",
-      notes: ["适合周报、月报和活动复盘素材。", "每一页只服务一个判断，不堆叠过多指标。"],
-      resources: [
-        {
-          id: "t3-web",
-          title: "数据轮播版式展示页",
-          kind: "web",
-          url: "https://content.example/templates/data-carousel",
-          source: "网页链接",
-          updated: "2026-05-05",
-          summary: "展示封面数字、图表页、样本页和行动页的排版。",
-          highlights: ["封面只放一个核心指标。", "图表页需要配一句结论。", "最后一页必须落到下周动作。"]
-        },
-        {
-          id: "t3-pdf",
-          title: "数据周报模板 PDF",
-          kind: "pdf",
-          url: "https://content.example/files/data-report-carousel.pdf",
-          source: "PDF",
-          updated: "2026-05-04",
-          summary: "可复用的 10 页周报结构和数据填充说明。",
-          highlights: ["先结论，后指标。", "样本截图要统一尺寸。", "结尾列 3 个动作。"]
-        }
-      ]
-    },
-    {
-      id: "t4",
-      title: "评论区答疑合集",
-      format: "FAQ",
-      channels: ["抖音", "小红书", "视频号", "B站"],
-      hook: "直接引用用户问题，降低距离感。",
-      structure: ["评论截图", "简短回答", "展开解释", "二次提问"],
-      length: "5-7 问",
-      notes: ["适合评论素材、售前问题和直播切片。", "每条回答要保留用户原始表达里的关键词。"],
-      resources: [
-        {
-          id: "t4-web",
-          title: "评论答疑合集展示页",
-          kind: "web",
-          url: "https://content.example/templates/comment-faq",
-          source: "网页链接",
-          updated: "2026-05-06",
-          summary: "展示评论截图、短回答和展开解释的内容结构。",
-          highlights: ["先回应情绪，再回答问题。", "每个问题只给一个明确结论。", "结尾引导用户补充场景。"]
-        },
-        {
-          id: "t4-pdf",
-          title: "FAQ 内容审核 PDF",
-          kind: "pdf",
-          url: "https://content.example/files/faq-review.pdf",
-          source: "PDF",
-          updated: "2026-05-05",
-          summary: "用于检查答疑内容是否准确、克制、可发布。",
-          highlights: ["避免承诺无法保证的结果。", "保留真实评论口吻。", "必要时补充免责声明。"]
-        }
-      ]
-    }
-  ];
-
-  const contents = [
-    ["c1", "我们把一条视频改了 6 次，播放才破万", "抖音", "已发布", "a1", "t2", "Mia", "2026-05-07T16:35:00+08:00", "2026-05-07", "18:00", "2026-05-07T18:20:00+08:00", 28600, 1460, 183, 92, 614],
-    ["c2", "五月第一周账号矩阵内容表现", "公众号", "已排期", "a2", "t3", "Jun", "2026-05-07T17:25:00+08:00", "2026-05-10", "20:30", null, 0, 0, 0, 0, 0],
-    ["c3", "评论区问得最多的 5 个问题", "小红书", "草稿", "a3", "t4", "Hao", "2026-05-08T13:05:00+08:00", "2026-05-09", "10:00", null, 0, 0, 0, 0, 0]
-  ];
-
-  const plans = [
-    ["p1", "2026-05-09", "周六", "10:00", "小红书", "评论区答疑合集", "Hao", "拉升收藏", "制作中", "c3"],
-    ["p2", "2026-05-10", "周日", "20:30", "公众号", "矩阵周报复盘", "Jun", "管理层同步", "待发布", "c2"],
-    ["p3", "2026-05-11", "周一", "12:15", "抖音", "脚本改稿过程", "Mia", "提高完播", "待领取", null],
-    ["p4", "2026-05-12", "周二", "18:00", "视频号", "品牌幕后混剪", "Lena", "建立信任", "待领取", null],
-    ["p5", "2026-05-13", "周三", "09:40", "微博", "增长数据快评", "Jun", "话题互动", "待领取", null]
-  ];
-
-  const activities = [
-    ["act1", "c1", "数据同步", "曝光 +12%，评论集中在脚本结构。", "09:30", "2026-05-08T09:30:00+08:00"],
-    ["act2", "c1", "评论记录", "置顶了高赞问题，准备二创答疑。", "11:12", "2026-05-08T11:12:00+08:00"],
-    ["act3", "c2", "状态更新", "已通过审核，等待发布。", "昨天", "2026-05-07T18:00:00+08:00"],
-    ["act4", "c3", "状态更新", "初稿已进入内容池。", "13:05", "2026-05-08T13:05:00+08:00"]
-  ];
+  const templates = visionTreeTemplates;
+  const contents = visionTreeContents;
+  const plans = visionTreePlans;
+  const activities = visionTreeActivities;
 
   const insertUser = db.prepare(`
     INSERT INTO users

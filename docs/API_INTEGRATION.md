@@ -28,19 +28,25 @@
 ```json
 {
   "accounts": [
-    { "accountName": "mia", "displayName": "Mia", "role": "creator" }
+    {
+      "accountName": "thinking-lab",
+      "displayName": "Thinking Lab",
+      "role": "负责人：武新悦",
+      "platform": "X",
+      "handle": "@thinking_lab_vt"
+    }
   ]
 }
 ```
 
 ### `POST /api/login`
 
-演示登录，不需要密码。只能登录数据库中存在的 6 个账号。
+演示登录，不需要密码。只能登录数据库中存在的 7 个账号。
 
 请求：
 
 ```json
-{ "accountName": "mia" }
+{ "accountName": "thinking-lab" }
 ```
 
 响应：
@@ -49,10 +55,12 @@
 {
   "token": "uuid-session-token",
   "user": {
-    "id": "u1",
-    "accountName": "mia",
-    "displayName": "Mia",
-    "role": "creator"
+    "id": "u5",
+    "accountName": "thinking-lab",
+    "displayName": "Thinking Lab",
+    "role": "负责人：武新悦",
+    "platform": "X",
+    "handle": "@thinking_lab_vt"
   }
 }
 ```
@@ -232,11 +240,11 @@ type ContentItem = {
 
 ```json
 {
-  "title": "把一个普通素材拆成 4 条矩阵内容",
-  "channel": "抖音",
+  "title": "Sunk cost is not about money",
+  "channel": "X",
   "assetId": "a1",
-  "templateId": "t2",
-  "planId": "p3"
+  "templateId": "t1",
+  "planId": "p1"
 }
 ```
 
@@ -376,4 +384,3 @@ type ContentItem = {
 - 新增 API 时继续使用参数化 SQL，避免拼接 SQL。
 - 当前 CORS 只允许本地 Vite 源；生产部署需要显式配置允许源。
 - 当前 token 没有过期时间；生产环境必须补会话过期和权限控制。
-

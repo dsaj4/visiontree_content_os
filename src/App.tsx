@@ -35,6 +35,7 @@ type ContentStatus = "草稿" | "审核中" | "已排期" | "已发布";
 type PlanStatus = "待领取" | "制作中" | "待发布" | "已完成";
 type ViewKey = "studio" | "assets" | "templates" | "content" | "calendar" | "insights" | "profile";
 type CalendarMode = "planned" | "published";
+type PlanScope = "mine" | "all";
 type DetailTarget = { kind: "asset"; id: string } | { kind: "template"; id: string } | null;
 type ResourceKind = "web" | "pdf";
 
@@ -155,388 +156,382 @@ type PlanItem = {
   contentId?: string;
 };
 
-const channels: Channel[] = ["X", "LinkedIn", "小红书", "公众号", "视频号", "B站", "微博"];
+const channels: Channel[] = ["X"];
 
 const fallbackAssets: Asset[] = [
   {
     id: "a1",
-    title: "AI 视频脚本复盘素材",
-    theme: "效率工具",
-    source: "访谈摘录",
-    format: "长文 + 短视频",
+    title: "Thinking Lab 第一周启动素材",
+    theme: "视觉实验",
+    source: "V2 账号启动计划",
+    format: "图解 + 两分钟实验",
     freshness: "今天 10:20",
-    score: 91,
-    tags: ["案例", "生产力", "脚本"],
-    summary: "来自创作者访谈的三段故事线，可拆成教程、复盘和观点短帖。",
-    owner: "Mia",
+    score: 95,
+    tags: ["Thinking Lab", "图解", "互动实验"],
+    summary: "原 Thinking in Frames 和 Decision Lab 合并为 Thinking Lab：一边做模型图解，一边发两分钟思维实验。",
+    owner: "Thinking Lab",
     palette: "mint",
-    notes: ["适合拆成 1 条短视频、1 条小红书观点帖和 1 条公众号复盘。", "素材里的失败版本可以作为开场冲突。"],
+    notes: ["第一周目标不是追粉丝，而是让主页三秒内说清楚账号是谁。", "内容组合是两张图、两个实验、一张概念卡。"],
     resources: [
       {
         id: "a1-web",
-        title: "访谈原文：创作者如何复盘脚本",
+        title: "Thinking Lab 第一周详细计划",
         kind: "web",
-        url: "https://content.example/source/ai-script-interview",
+        url: "https://visiontree.example/v2/thinking-lab-week-one",
         source: "网页链接",
         updated: "2026-05-08",
-        summary: "记录创作者从选题、脚本、剪辑到评论复盘的完整过程。",
-        highlights: ["改稿集中在前 3 秒钩子。", "评论区问题可继续做答疑内容。", "适合沉淀为团队脚本检查清单。"]
+        summary: "头像、Banner、Bio、周一到周日的内容节奏与互动方式。",
+        highlights: ["Banner 写 One visual. One experiment. Every day.", "周一发沉没成本图解。", "周二发第一个互动实验。"]
       },
       {
         id: "a1-pdf",
-        title: "脚本迭代记录 PDF",
+        title: "Thinking Lab 启动清单 PDF",
         kind: "pdf",
-        url: "https://content.example/files/script-review.pdf",
+        url: "https://visiontree.example/files/thinking-lab-launch.pdf",
         source: "PDF",
-        updated: "2026-05-07",
-        summary: "包含 6 版脚本、镜头说明和发布后的数据回看。",
-        highlights: ["第 3 版完播率提升最明显。", "标题测试可复用于 B 站和视频号。", "结尾评论引导需要保留。"]
+        updated: "2026-05-08",
+        summary: "沉淀 Thinking Lab 第一周的视觉、互动、置顶帖与评论动作。",
+        highlights: ["图要干净，三秒看懂。", "互动题可以纯文字。", "评论区不要自我介绍。"]
       }
     ]
   },
   {
     id: "a2",
-    title: "五月内容增长周报",
-    theme: "数据洞察",
-    source: "运营报表",
-    format: "图文轮播",
+    title: "Eli Rowan 月度概念词素材",
+    theme: "慢思考",
+    source: "V2 账号启动计划",
+    format: "概念长帖",
     freshness: "昨天 18:40",
-    score: 84,
-    tags: ["周报", "增长", "复盘"],
-    summary: "整理了 6 个账号的曝光、收藏和评论关键词，适合做复盘型内容。",
-    owner: "Jun",
+    score: 90,
+    tags: ["Eli Rowan", "概念词", "慢思考"],
+    summary: "Eli 第一周只做一件事：选好这个月的主推概念词，用不同场景切入发三条。",
+    owner: "Eli Rowan",
     palette: "amber",
-    notes: ["适合做周报轮播，也可以拆成管理层同步长文。", "优先突出曝光增长和收藏率异常点。"],
+    notes: ["Eli 的调性是慢和深，第一周发太多反而不对。", "评论要有自己的角度，不要只说同意。"],
     resources: [
       {
         id: "a2-web",
-        title: "矩阵账号周报看板",
+        title: "Eli 第一周概念准备页",
         kind: "web",
-        url: "https://content.example/dashboard/may-weekly-growth",
+        url: "https://visiontree.example/v2/eli-concept-month",
         source: "网页链接",
         updated: "2026-05-07",
-        summary: "汇总 6 个账号本周曝光、互动和内容发布节奏。",
-        highlights: ["小红书收藏率连续两周上升。", "公众号打开率受发布时间影响明显。", "微博话题互动适合做快评。"]
+        summary: "围绕同一个概念词准备三到四条帖子，每条从不同场景切入。",
+        highlights: ["第一周发三条就够。", "建立慢和深的第一印象。", "开始在思想类大号评论区出现。"]
       },
       {
         id: "a2-pdf",
-        title: "五月第一周增长简报 PDF",
+        title: "Eli 概念帖检查表 PDF",
         kind: "pdf",
-        url: "https://content.example/files/may-growth-brief.pdf",
+        url: "https://visiontree.example/files/eli-concept-checklist.pdf",
         source: "PDF",
         updated: "2026-05-06",
-        summary: "沉淀周报结论、样本内容截图和下周行动建议。",
-        highlights: ["轮播封面建议使用一个关键数字。", "需要补充高收藏内容样本。", "下周优先测试午间发布时间。"]
+        summary: "检查概念是否足够清楚、场景是否有差异、语气是否慢而稳。",
+        highlights: ["不用感叹号。", "不要轻飘金句。", "概念要能被 Thinking Lab 做成图。"]
       }
     ]
   },
   {
     id: "a3",
-    title: "用户评论高频问题",
-    theme: "社群反馈",
-    source: "评论抓取",
-    format: "FAQ 清单",
+    title: "AI Doubt Notes 反 AI 短帖素材",
+    theme: "怀疑笔记",
+    source: "V2 账号启动计划",
+    format: "三句短帖",
     freshness: "2 天前",
-    score: 79,
-    tags: ["评论", "答疑", "转化"],
-    summary: "归类了 32 条评论中的疑问和反对意见，可生成答疑帖和直播提纲。",
-    owner: "Hao",
+    score: 88,
+    tags: ["AI Doubt Notes", "反 AI", "效率神话"],
+    summary: "准备五到六条反 AI 短帖。每条不超过三四句话，但要让人读完愣一下。",
+    owner: "AI Doubt Notes",
     palette: "rose",
-    notes: ["适合做 FAQ 清单和短视频口播。", "高频问题可以直接作为标题，减少创作距离感。"],
+    notes: ["评论要短要刺，但要有事实，不能只是情绪。", "第一周不用发 Grudging Admit，先铺批判底色。"],
     resources: [
       {
         id: "a3-web",
-        title: "评论聚类页面",
+        title: "AI Doubt 第一周短帖池",
         kind: "web",
-        url: "https://content.example/comments/faq-cluster",
+        url: "https://visiontree.example/v2/ai-doubt-week-one",
         source: "网页链接",
         updated: "2026-05-06",
-        summary: "按疑问、反对意见、购买顾虑和功能建议归类评论。",
-        highlights: ["价格相关问题占 28%。", "教程类追问适合做系列内容。", "有 5 条评论可做二创引用。"]
+        summary: "收集 AI 工具发布帖、效率讨论帖下可切入的反问和短评论。",
+        highlights: ["短帖不超过三四句话。", "读完要停一下。", "不要把怀疑写成恐慌。"]
       },
       {
         id: "a3-pdf",
-        title: "评论问题归档 PDF",
+        title: "反 AI 短帖检查表 PDF",
         kind: "pdf",
-        url: "https://content.example/files/comment-faq.pdf",
+        url: "https://visiontree.example/files/ai-doubt-notes.pdf",
         source: "PDF",
         updated: "2026-05-05",
-        summary: "保留原始评论、回复建议和可复用答疑话术。",
-        highlights: ["需要避开过度承诺。", "每条回答控制在 80 字内。", "结尾引导用户补充场景。"]
+        summary: "检查每条短帖是否有事实支点、是否足够短、是否避免情绪化。",
+        highlights: ["短。", "刺。", "有事实。"]
       }
     ]
   },
   {
     id: "a4",
-    title: "品牌幕后拍摄素材",
-    theme: "品牌信任",
-    source: "素材上传",
-    format: "短视频混剪",
+    title: "The Thinking Tree 树的独白素材",
+    theme: "活的隐喻",
+    source: "V2 账号启动计划",
+    format: "图文独白",
     freshness: "本周一",
-    score: 73,
-    tags: ["幕后", "团队", "信任"],
-    summary: "包含产品打磨、团队讨论和客户交付片段，适合做温度型内容。",
-    owner: "Lena",
+    score: 92,
+    tags: ["The Thinking Tree", "树的口吻", "思维模型"],
+    summary: "The Thinking Tree 不是一个人。它把产品名变成活的隐喻：思维模型是养分，判断力是年轮，结构化思考是根系。",
+    owner: "The Thinking Tree",
     palette: "cyan",
-    notes: ["适合品牌信任内容，不宜过度销售。", "短视频开场可以直接使用团队讨论片段。"],
+    notes: ["语气不是卖萌，也不是装可爱。", "它更像一棵活了很久的树，在平静地观察人类。"],
     resources: [
       {
         id: "a4-web",
-        title: "幕后素材索引页",
+        title: "The Thinking Tree 角色设定页",
         kind: "web",
-        url: "https://content.example/media/behind-the-scenes",
+        url: "https://visiontree.example/v2/the-thinking-tree",
         source: "网页链接",
-        updated: "2026-05-04",
-        summary: "按场景归档产品打磨、团队会议和交付瞬间。",
-        highlights: ["团队讨论片段适合做开场。", "客户交付镜头需要打码。", "产品细节镜头适合做转场。"]
+        updated: "2026-05-08",
+        summary: "解释树的存在逻辑、视觉空间、语气和内容类型。",
+        highlights: ["思维模型是养分。", "思考过程是光合作用。", "判断力是年轮。"]
       },
       {
         id: "a4-pdf",
-        title: "品牌幕后拍摄脚本 PDF",
+        title: "树的独白首周素材 PDF",
         kind: "pdf",
-        url: "https://content.example/files/brand-bts-shotlist.pdf",
+        url: "https://visiontree.example/files/thinking-tree-week-one.pdf",
         source: "PDF",
-        updated: "2026-05-03",
-        summary: "包含镜头清单、拍摄顺序和平台剪辑建议。",
-        highlights: ["先信任，再功能。", "避免大段旁白。", "建议保留现场环境声。"]
+        updated: "2026-05-08",
+        summary: "包含发芽、新叶、根系、年轮等视觉方向和首条独白。",
+        highlights: ["I grow one leaf at a time.", "Each leaf is a way of thinking.", "先回到根，再伸向枝。"]
       }
     ]
+  },
+  {
+    id: "a5",
+    title: "Nora Blake 真实试用素材",
+    theme: "普通人体验",
+    source: "V2 账号启动计划",
+    format: "试用日记",
+    freshness: "本周二",
+    score: 84,
+    tags: ["Nora Blake", "真实体验", "不装懂"],
+    summary: "挑一个这周真的在用的 AI 工具，写两到三条真实使用感受：可以困惑，可以承认没看懂。",
+    owner: "Nora Blake",
+    palette: "rose",
+    notes: ["关键词是真实。", "不要做评测，不要装懂。"],
+    resources: []
+  },
+  {
+    id: "a6",
+    title: "Milo Reed 工程取舍素材",
+    theme: "工程取舍",
+    source: "V2 账号启动计划",
+    format: "工程师短帖",
+    freshness: "本周二",
+    score: 86,
+    tags: ["Milo Reed", "技术选择", "产品取舍"],
+    summary: "从 VisionTree 最近真实遇到的技术选择出发：面临什么选项、选了哪个、为什么。",
+    owner: "Milo Reed",
+    palette: "amber",
+    notes: ["不用长，写清楚选项和判断。", "评论像工程师对工程师说话。"],
+    resources: []
+  },
+  {
+    id: "a7",
+    title: "VisionTree 官方品类定义素材",
+    theme: "官方叙事",
+    source: "V2 账号启动计划",
+    format: "对比式定义帖",
+    freshness: "本周四",
+    score: 89,
+    tags: ["VisionTree", "官方号", "品类定义"],
+    summary: "官方号第一周不用发太多。用三到四条对比式定义帖说清楚 VisionTree 不是什么、是什么。",
+    owner: "VisionTree",
+    palette: "mint",
+    notes: ["官方号的任务不是自己出圈，而是把其他六个号的内容收拢到一个叙事里。"],
+    resources: []
   }
 ];
 
 const fallbackTemplates: Template[] = [
   {
     id: "t1",
-    title: "三段式观点短帖",
-    format: "观点 / 图文",
-    channels: ["小红书", "微博", "公众号"],
-    hook: "先抛出反常识结论，再给证据。",
-    structure: ["反常识标题", "真实场景", "三点拆解", "行动提示"],
-    length: "600-900 字",
-    notes: ["适合观点明确、证据充分的素材。", "标题不要只写结论，要保留一点反差。"],
-    resources: [
-      {
-        id: "t1-web",
-        title: "观点短帖示例页",
-        kind: "web",
-        url: "https://content.example/templates/opinion-post",
-        source: "网页链接",
-        updated: "2026-05-02",
-        summary: "展示三段式观点短帖的标题、正文和评论引导样例。",
-        highlights: ["第一段只讲一个场景。", "中段用数字或案例支撑。", "结尾给一个可执行动作。"]
-      },
-      {
-        id: "t1-pdf",
-        title: "观点帖写作检查表 PDF",
-        kind: "pdf",
-        url: "https://content.example/files/opinion-checklist.pdf",
-        source: "PDF",
-        updated: "2026-05-01",
-        summary: "用于审核标题、论据和转化引导是否完整。",
-        highlights: ["标题需要包含对象和冲突。", "每段不超过 120 字。", "保留一个评论问题。"]
-      }
-    ]
+    title: "图解 + 两分钟实验",
+    format: "Visual / Experiment",
+    channels: ["X"],
+    hook: "One visual. One experiment. Every day.",
+    structure: ["一个模型", "一张干净图", "一句解释", "一个动作问题"],
+    length: "1 图或 3-5 句",
+    notes: ["适合 Thinking Lab。图和互动交替发。", "视觉内容三秒看懂，不要塞太多字。"],
+    resources: []
   },
   {
     id: "t2",
-    title: "短视频脚本：问题到结果",
-    format: "短视频",
-    channels: ["抖音", "视频号", "B站"],
-    hook: "3 秒内展示痛点和结果画面。",
-    structure: ["痛点镜头", "过程演示", "前后对比", "评论引导"],
-    length: "45-75 秒",
-    notes: ["适合教程、复盘和工具类素材。", "开场先给结果画面，再回到过程。"],
-    resources: [
-      {
-        id: "t2-web",
-        title: "短视频脚本模板展示页",
-        kind: "web",
-        url: "https://content.example/templates/problem-to-result-video",
-        source: "网页链接",
-        updated: "2026-05-04",
-        summary: "展示镜头段落、字幕节奏和评论引导的组合方式。",
-        highlights: ["每 8-12 秒切换一次视觉重点。", "前后对比要有同一指标。", "口播只保留必要解释。"]
-      },
-      {
-        id: "t2-pdf",
-        title: "短视频分镜模板 PDF",
-        kind: "pdf",
-        url: "https://content.example/files/video-shot-template.pdf",
-        source: "PDF",
-        updated: "2026-05-03",
-        summary: "包含镜头、字幕、画面素材和剪辑备注的表格模板。",
-        highlights: ["第一镜头必须可独立理解。", "字幕不超过两行。", "最后 5 秒留互动钩子。"]
-      }
-    ]
+    title: "慢概念三帖",
+    format: "Concept Thread",
+    channels: ["X"],
+    hook: "先命名一个概念，再用三个场景慢慢打开它。",
+    structure: ["概念命名", "场景切入", "默认假设", "判断边界"],
+    length: "3-8 段",
+    notes: ["适合 Eli Rowan。第一周发三条就够。", "不要为了热闹牺牲慢和深。"],
+    resources: []
   },
   {
     id: "t3",
-    title: "数据周报轮播",
-    format: "轮播 / 长图",
-    channels: ["小红书", "公众号", "微博"],
-    hook: "用一个关键数字做封面。",
-    structure: ["关键指标", "波动原因", "内容样本", "下周动作"],
-    length: "8-10 页",
-    notes: ["适合周报、月报和活动复盘素材。", "每一页只服务一个判断，不堆叠过多指标。"],
-    resources: [
-      {
-        id: "t3-web",
-        title: "数据轮播版式展示页",
-        kind: "web",
-        url: "https://content.example/templates/data-carousel",
-        source: "网页链接",
-        updated: "2026-05-05",
-        summary: "展示封面数字、图表页、样本页和行动页的排版。",
-        highlights: ["封面只放一个核心指标。", "图表页需要配一句结论。", "最后一页必须落到下周动作。"]
-      },
-      {
-        id: "t3-pdf",
-        title: "数据周报模板 PDF",
-        kind: "pdf",
-        url: "https://content.example/files/data-report-carousel.pdf",
-        source: "PDF",
-        updated: "2026-05-04",
-        summary: "可复用的 10 页周报结构和数据填充说明。",
-        highlights: ["先结论，后指标。", "样本截图要统一尺寸。", "结尾列 3 个动作。"]
-      }
-    ]
+    title: "反 AI 三句短帖",
+    format: "Short Note",
+    channels: ["X"],
+    hook: "让人读完愣一下，但不是情绪宣泄。",
+    structure: ["一句观察", "一句反问", "一句判断"],
+    length: "3-4 句",
+    notes: ["适合 AI Doubt Notes。短、刺、有事实。", "第一周先不发 Grudging Admit。"],
+    resources: []
   },
   {
     id: "t4",
-    title: "评论区答疑合集",
-    format: "FAQ",
-    channels: ["抖音", "小红书", "视频号", "B站"],
-    hook: "直接引用用户问题，降低距离感。",
-    structure: ["评论截图", "简短回答", "展开解释", "二次提问"],
-    length: "5-7 问",
-    notes: ["适合评论素材、售前问题和直播切片。", "每条回答要保留用户原始表达里的关键词。"],
-    resources: [
-      {
-        id: "t4-web",
-        title: "评论答疑合集展示页",
-        kind: "web",
-        url: "https://content.example/templates/comment-faq",
-        source: "网页链接",
-        updated: "2026-05-06",
-        summary: "展示评论截图、短回答和展开解释的内容结构。",
-        highlights: ["先回应情绪，再回答问题。", "每个问题只给一个明确结论。", "结尾引导用户补充场景。"]
-      },
-      {
-        id: "t4-pdf",
-        title: "FAQ 内容审核 PDF",
-        kind: "pdf",
-        url: "https://content.example/files/faq-review.pdf",
-        source: "PDF",
-        updated: "2026-05-05",
-        summary: "用于检查答疑内容是否准确、克制、可发布。",
-        highlights: ["避免承诺无法保证的结果。", "保留真实评论口吻。", "必要时补充免责声明。"]
-      }
-    ]
+    title: "工程取舍短帖",
+    format: "Build Note",
+    channels: ["X"],
+    hook: "我们面临了两个选项，最后选了更保留判断的那个。",
+    structure: ["真实问题", "两个选项", "最终选择", "为什么"],
+    length: "4-6 句",
+    notes: ["适合 Milo Reed。写真实取舍，不写发布公告。", "评论要像工程师对工程师说话。"],
+    resources: []
+  },
+  {
+    id: "t5",
+    title: "普通人真实试用日记",
+    format: "Diary Note",
+    channels: ["X"],
+    hook: "我没完全看懂，但这个感受是真的。",
+    structure: ["今天用了什么", "哪里卡住", "哪里有帮助", "留下什么不确定"],
+    length: "3-6 句",
+    notes: ["适合 Nora Blake。不要做评测。", "可以承认不懂，也可以承认不确定。"],
+    resources: []
+  },
+  {
+    id: "t6",
+    title: "树的独白图文",
+    format: "Tree Monologue",
+    channels: ["X"],
+    hook: "Today I grew a new leaf. It is called first principles thinking.",
+    structure: ["树的动作", "一个思维模型", "树的隐喻", "一张图"],
+    length: "1 图 + 1-3 句",
+    notes: ["适合 The Thinking Tree。不是卖萌，是一棵树平静地观察人类。", "视觉可以是发芽、年轮、根系或被风吹弯。"],
+    resources: []
+  },
+  {
+    id: "t7",
+    title: "官方对比式品类定义",
+    format: "Category Definition",
+    channels: ["X"],
+    hook: "VisionTree is not here to think for you. It is here to keep you in the act of thinking.",
+    structure: ["不是什么", "是什么", "为什么重要", "转发矩阵账号"],
+    length: "4-7 句",
+    notes: ["适合官方号 VisionTree。第一周 3-4 条就够。", "官方号负责收拢叙事，不抢其他账号的戏。"],
+    resources: []
   }
 ];
 
 const fallbackContents: ContentItem[] = [
   {
     id: "c1",
-    title: "我们把一条视频改了 6 次，播放才破万",
-    channel: "抖音",
+    title: "Sunk cost is not about money",
+    channel: "X",
     status: "已发布",
-    assetTitle: "AI 视频脚本复盘素材",
-    templateTitle: "短视频脚本：问题到结果",
-    owner: "Mia",
-    publishDate: "2026-05-07",
-    publishTime: "18:20",
-    metrics: { views: 28600, likes: 1460, comments: 183, shares: 92, saves: 614 },
+    assetTitle: "Thinking Lab 第一周启动素材",
+    templateTitle: "图解 + 两分钟实验",
+    owner: "Thinking Lab",
+    publishDate: "2026-05-11",
+    publishTime: "10:05",
+    metrics: { views: 12800, likes: 620, comments: 74, shares: 41, saves: 390 },
     activities: [
-      { id: "act1", type: "数据同步", note: "曝光 +12%，评论集中在脚本结构。", time: "09:30" },
-      { id: "act2", type: "评论记录", note: "置顶了高赞问题，准备二创答疑。", time: "11:12" }
+      { id: "act1", type: "数据同步", note: "周一沉没成本图解已发布，收藏集中来自模型图。", time: "10:45" },
+      { id: "act2", type: "评论记录", note: "在相关大号评论区贴图并补一句解释，没有自我介绍。", time: "11:20" }
     ]
   },
   {
     id: "c2",
-    title: "五月第一周账号矩阵内容表现",
-    channel: "公众号",
-    status: "已排期",
-    assetTitle: "五月内容增长周报",
-    templateTitle: "数据周报轮播",
-    owner: "Jun",
-    publishDate: "2026-05-10",
-    publishTime: "20:30",
-    metrics: { views: 0, likes: 0, comments: 0, shares: 0, saves: 0 },
-    activities: [{ id: "act3", type: "状态更新", note: "已通过审核，等待发布。", time: "昨天" }]
+    title: "AI did not save your thinking. It moved the judgment out of sight.",
+    channel: "X",
+    status: "已发布",
+    assetTitle: "AI Doubt Notes 反 AI 短帖素材",
+    templateTitle: "反 AI 三句短帖",
+    owner: "AI Doubt Notes",
+    publishDate: "2026-05-11",
+    publishTime: "12:32",
+    metrics: { views: 9400, likes: 510, comments: 63, shares: 38, saves: 221 },
+    activities: [{ id: "act3", type: "数据同步", note: "AI Doubt 第一条短帖建立了短、刺、有事实的语气。", time: "13:10" }]
   },
   {
     id: "c3",
-    title: "评论区问得最多的 5 个问题",
-    channel: "小红书",
+    title: "为什么我们没有做一键自动判断",
+    channel: "X",
     status: "草稿",
-    assetTitle: "用户评论高频问题",
-    templateTitle: "评论区答疑合集",
-    owner: "Hao",
-    publishDate: "2026-05-09",
-    publishTime: "10:00",
+    assetTitle: "Milo Reed 工程取舍素材",
+    templateTitle: "工程取舍短帖",
+    owner: "Milo Reed",
+    publishDate: "2026-05-12",
+    publishTime: "18:00",
     metrics: { views: 0, likes: 0, comments: 0, shares: 0, saves: 0 },
-    activities: [{ id: "act4", type: "状态更新", note: "初稿已进入内容池。", time: "13:05" }]
+    activities: [{ id: "act4", type: "状态更新", note: "Milo 工程取舍帖已进入内容池，等待补充真实选项细节。", time: "09:40" }]
   }
 ];
 
 const fallbackPlan: PlanItem[] = [
   {
     id: "p1",
-    date: "2026-05-09",
-    day: "周六",
+    date: "2026-05-11",
+    day: "周一",
     slot: "10:00",
-    channel: "小红书",
-    theme: "评论区答疑合集",
-    owner: "Hao",
-    goal: "拉升收藏",
+    channel: "X",
+    theme: "Thinking Lab：沉没成本图解",
+    owner: "Thinking Lab",
+    goal: "建立视觉第一印象",
+    status: "已完成",
+    contentId: "c1"
+  },
+  {
+    id: "p2",
+    date: "2026-05-12",
+    day: "周二",
+    slot: "10:00",
+    channel: "X",
+    theme: "Thinking Lab：第一个两分钟实验",
+    owner: "Thinking Lab",
+    goal: "引导回复",
+    status: "制作中"
+  },
+  {
+    id: "p3",
+    date: "2026-05-12",
+    day: "周二",
+    slot: "18:00",
+    channel: "X",
+    theme: "Milo：真实技术取舍",
+    owner: "Milo Reed",
+    goal: "建立工程可信度",
     status: "制作中",
     contentId: "c3"
   },
   {
-    id: "p2",
-    date: "2026-05-10",
-    day: "周日",
-    slot: "20:30",
-    channel: "公众号",
-    theme: "矩阵周报复盘",
-    owner: "Jun",
-    goal: "管理层同步",
-    status: "待发布",
-    contentId: "c2"
-  },
-  {
-    id: "p3",
-    date: "2026-05-11",
-    day: "周一",
-    slot: "12:15",
-    channel: "抖音",
-    theme: "脚本改稿过程",
-    owner: "Mia",
-    goal: "提高完播",
-    status: "待领取"
-  },
-  {
     id: "p4",
-    date: "2026-05-12",
-    day: "周二",
-    slot: "18:00",
-    channel: "视频号",
-    theme: "品牌幕后混剪",
-    owner: "Lena",
-    goal: "建立信任",
+    date: "2026-05-13",
+    day: "周三",
+    slot: "09:20",
+    channel: "X",
+    theme: "The Thinking Tree：第一片新叶",
+    owner: "The Thinking Tree",
+    goal: "建立记忆点",
     status: "待领取"
   },
   {
     id: "p5",
     date: "2026-05-13",
     day: "周三",
-    slot: "09:40",
-    channel: "微博",
-    theme: "增长数据快评",
-    owner: "Jun",
-    goal: "话题互动",
-    status: "待领取"
+    slot: "20:30",
+    channel: "X",
+    theme: "VisionTree：第一条品类定义",
+    owner: "VisionTree",
+    goal: "收拢官方叙事",
+    status: "待发布"
   }
 ];
 
@@ -623,8 +618,9 @@ function App() {
   const [loginName, setLoginName] = useState("");
   const [activeView, setActiveView] = useState<ViewKey>("studio");
   const [selectedAssetId, setSelectedAssetId] = useState(fallbackAssets[0].id);
-  const [selectedTemplateId, setSelectedTemplateId] = useState(fallbackTemplates[1].id);
+  const [selectedTemplateId, setSelectedTemplateId] = useState(fallbackTemplates[0].id);
   const [selectedPlanId, setSelectedPlanId] = useState(fallbackPlan[2].id);
+  const [planScope, setPlanScope] = useState<PlanScope>("mine");
   const [selectedChannel, setSelectedChannel] = useState<Channel>("X");
   const [assetQuery, setAssetQuery] = useState("");
   const [templateQuery, setTemplateQuery] = useState("");
@@ -635,9 +631,9 @@ function App() {
   const [calendarMode, setCalendarMode] = useState<CalendarMode>("planned");
   const [detailTarget, setDetailTarget] = useState<DetailTarget>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [draftTitle, setDraftTitle] = useState("把一个普通素材拆成 4 条矩阵内容");
+  const [draftTitle, setDraftTitle] = useState("第一周只追一个清晰的第一印象");
   const [draftCopy, setDraftCopy] = useState(
-    "开场：很多团队不是缺内容，而是缺一套把素材变成矩阵资产的方法。\n\n主体：从素材池选择原始信息，套用适配平台的格式模板，生成初稿后进入内容池；发布后再回收评论、转发和数据表现。\n\n收束：下一个动作，是把这条内容关联到本周的发布计划。"
+    "开场：第一周不追粉丝数，也不追互动量，只追一个清晰的第一印象。\n\n主体：从素材池选择账号素材，套用适配账号的格式模板，生成初稿后进入内容池；发布后再回收评论、转发和数据表现。\n\n收束：下一个动作，是把这条内容关联到七账号矩阵的第一周启动计划。"
   );
 
   const applyBootstrap = (data: BootstrapData) => {
@@ -647,11 +643,14 @@ function App() {
     setTemplates(data.templates);
     setContentPool(data.contentPool);
     setPlanItems(data.planItems);
+    const userPlans = data.planItems.filter((plan) => plan.owner === data.user.displayName);
     setSelectedAssetId((current) => (data.assets.some((asset) => asset.id === current) ? current : data.assets[0]?.id ?? fallbackAssets[0].id));
     setSelectedTemplateId((current) =>
       data.templates.some((template) => template.id === current) ? current : data.templates[0]?.id ?? fallbackTemplates[0].id
     );
-    setSelectedPlanId((current) => (data.planItems.some((plan) => plan.id === current) ? current : data.planItems[0]?.id ?? fallbackPlan[0].id));
+    setSelectedPlanId((current) =>
+      userPlans.some((plan) => plan.id === current) ? current : userPlans[0]?.id ?? data.planItems[0]?.id ?? fallbackPlan[0].id
+    );
   };
 
   const refreshData = async (token = authToken) => {
@@ -728,6 +727,7 @@ function App() {
     setTemplates([]);
     setContentPool([]);
     setPlanItems([]);
+    setPlanScope("mine");
     setDetailTarget(null);
     localStorage.removeItem("content-system-token");
     localStorage.removeItem("content-system-user");
@@ -735,6 +735,22 @@ function App() {
 
   const selectedAsset = assets.find((asset) => asset.id === selectedAssetId) ?? assets[0] ?? fallbackAssets[0];
   const selectedTemplate = templates.find((template) => template.id === selectedTemplateId) ?? templates[0] ?? fallbackTemplates[0];
+
+  const myPlanItems = useMemo(
+    () => (currentUser ? planItems.filter((plan) => plan.owner === currentUser.displayName) : planItems),
+    [currentUser, planItems]
+  );
+
+  const scopedPlanItems = planScope === "mine" ? myPlanItems : planItems;
+  const composerPlanItems = scopedPlanItems.length ? scopedPlanItems : planItems;
+
+  useEffect(() => {
+    const availablePlans = composerPlanItems.length ? composerPlanItems : planItems;
+    if (!availablePlans.length) return;
+    if (!availablePlans.some((plan) => plan.id === selectedPlanId)) {
+      setSelectedPlanId(availablePlans[0].id);
+    }
+  }, [composerPlanItems, planItems, selectedPlanId]);
 
   const filteredAssets = useMemo(
     () =>
@@ -766,6 +782,7 @@ function App() {
     [templates, templateQuery]
   );
   const selectedPlan = planItems.find((plan) => plan.id === selectedPlanId) ?? planItems[0] ?? fallbackPlan[0];
+  const visiblePendingPlanCount = myPlanItems.filter((plan) => plan.status !== "已完成").length;
 
   const totalMetrics = useMemo(
     () =>
@@ -1056,7 +1073,7 @@ function App() {
               <label>
                 <span>关联计划</span>
                 <select value={selectedPlanId} onChange={(event) => setSelectedPlanId(event.target.value)}>
-                  {planItems.map((plan) => (
+                  {composerPlanItems.map((plan) => (
                     <option key={plan.id} value={plan.id}>
                       {plan.date} {plan.channel} {plan.theme}
                     </option>
@@ -1091,7 +1108,16 @@ function App() {
             </div>
           </div>
 
-          <PlanQueue planItems={planItems} selectedPlanId={selectedPlanId} onSelectPlan={setSelectedPlanId} />
+          <PlanQueue
+            currentUserName={currentUser?.displayName ?? ""}
+            planItems={scopedPlanItems}
+            planScope={planScope}
+            selectedPlanId={selectedPlanId}
+            totalPlanCount={planItems.length}
+            userPlanCount={myPlanItems.length}
+            onPlanScopeChange={setPlanScope}
+            onSelectPlan={setSelectedPlanId}
+          />
         </section>
       );
     }
@@ -1346,8 +1372,8 @@ function App() {
         <div className="brand-mark">
           <span>VT</span>
           <div>
-            <strong>VisionTree 内容工作台</strong>
-            <small>正在连接认知内容库</small>
+            <strong>VisionTree V2 内容工作台</strong>
+            <small>正在连接七账号启动计划</small>
           </div>
         </div>
       </main>
@@ -1360,8 +1386,8 @@ function App() {
         <div className="brand-mark">
           <span>VT</span>
           <div>
-            <strong>VisionTree 内容工作台</strong>
-            <small>Content OS</small>
+            <strong>VisionTree V2 内容工作台</strong>
+            <small>Seven-account launch OS</small>
           </div>
         </div>
         <nav>
@@ -1403,8 +1429,8 @@ function App() {
       <section className="main-stage">
         <header className="topbar">
           <div>
-            <span className="eyebrow">VisionTree Content OS</span>
-            <h1>让每个账号围绕同一条认知叙事，各自说出不同的人话</h1>
+            <span className="eyebrow">VisionTree V2 Launch OS</span>
+            <h1>七个账号，六个人：让每个主页三秒内说清楚自己是谁</h1>
           </div>
           <div className="topbar-actions">
             <button className="icon-button" title="查看待办">
@@ -1429,9 +1455,9 @@ function App() {
         {appError && <div className="error-banner">{appError}</div>}
 
         <section className="metric-band">
-          <MetricCard icon={Flame} label="素材热度" value={`${assets.length ? Math.max(...assets.map((asset) => asset.score)) : 0}`} tone="heat" />
+          <MetricCard icon={Flame} label="启动素材热度" value={`${assets.length ? Math.max(...assets.map((asset) => asset.score)) : 0}`} tone="heat" />
           <MetricCard icon={FileText} label="内容池记录" value={`${contentPool.length}`} tone="paper" />
-          <MetricCard icon={Clock3} label="待执行计划" value={`${planItems.filter((plan) => plan.status !== "已完成").length}`} tone="time" />
+          <MetricCard icon={Clock3} label="我的待执行" value={`${visiblePendingPlanCount}`} tone="time" />
           <MetricCard icon={TrendingUp} label="累计曝光" value={formatNumber(totalMetrics.views)} tone="growth" />
         </section>
 
@@ -1464,21 +1490,21 @@ function LoginScreen({
         <div className="brand-mark">
           <span>VT</span>
           <div>
-            <strong>VisionTree 内容工作台</strong>
-            <small>Content OS</small>
+            <strong>VisionTree V2 内容工作台</strong>
+            <small>Seven-account launch OS</small>
           </div>
         </div>
         <div className="login-copy">
-          <span className="eyebrow">Persona Login</span>
-          <h1>选择一个 VisionTree 内容人格进入系统</h1>
-          <p>当前演示版不需要密码，仅允许 6 个 persona 账号登录。每个账号负责一条不同的叙事边界。</p>
+          <span className="eyebrow">Account Login</span>
+          <h1>选择一个 VisionTree V2 账号进入系统</h1>
+          <p>当前演示版不需要密码，仅允许 7 个账号登录。六个人负责具体账号，官方号负责把内容收拢到同一条叙事里。</p>
         </div>
         <form className="login-form" onSubmit={onLogin}>
           <label>
             <span>账号名</span>
             <input
               value={loginName}
-              placeholder="例如 milo、nora、eli"
+              placeholder="例如 thinking-lab、milo、visiontree"
               onChange={(event) => onLoginNameChange(event.target.value)}
             />
           </label>
@@ -1545,9 +1571,9 @@ function ProfileView({ currentUser, accounts }: { currentUser: UserAccount; acco
       <div className="workspace-panel profile-hero">
         <div className="profile-avatar">{currentUser.displayName.slice(0, 2)}</div>
         <div className="profile-copy">
-          <span className="eyebrow">Persona Home</span>
+          <span className="eyebrow">Account Home</span>
           <h2>{currentUser.displayName}</h2>
-          <p>{currentUser.personaRole || "负责 VisionTree 内容矩阵中的一个叙事角色。"}</p>
+          <p>{currentUser.personaRole || "负责 VisionTree V2 七账号矩阵中的一个内容位置。"}</p>
           <div className="detail-meta">
             <span>{currentUser.positioning || currentUser.role}</span>
             <strong>
@@ -1562,7 +1588,7 @@ function ProfileView({ currentUser, accounts }: { currentUser: UserAccount; acco
       </div>
 
       <div className="workspace-panel profile-panel">
-        <PanelTitle icon={BookOpenText} title="人设信息" meta="内容边界" />
+        <PanelTitle icon={BookOpenText} title="账号设定" meta="内容边界" />
         <div className="profile-sections">
           <ProfileSection title="语气" items={currentUser.voice ?? []} />
           <ProfileSection title="内容类型" items={currentUser.contentTypes ?? []} />
@@ -1571,7 +1597,7 @@ function ProfileView({ currentUser, accounts }: { currentUser: UserAccount; acco
       </div>
 
       <div className="workspace-panel profile-panel">
-        <PanelTitle icon={RadioTower} title="账号运营" meta="X 示例" />
+        <PanelTitle icon={RadioTower} title="首周运营" meta="X 启动计划" />
         <div className="profile-ops">
           <article>
             <span>发布节奏</span>
@@ -1585,7 +1611,7 @@ function ProfileView({ currentUser, accounts }: { currentUser: UserAccount; acco
       </div>
 
       <div className="workspace-panel profile-roster">
-        <PanelTitle icon={UsersRound} title="账号矩阵" meta={`${accounts.length} 个 persona`} />
+        <PanelTitle icon={UsersRound} title="V2 账号矩阵" meta={`${accounts.length} 个账号`} />
         <div className="persona-grid">
           {accounts.map((account) => (
             <article className={account.accountName === currentUser.accountName ? "active" : ""} key={account.accountName}>
@@ -1829,8 +1855,6 @@ function DetailView({
   const [activeResourceId, setActiveResourceId] = useState(resources[0]?.id ?? "");
   const activeResource = resources.find((resource) => resource.id === activeResourceId) ?? resources[0];
 
-  if (!activeResource) return null;
-
   return (
     <section className="detail-view">
       <div className="workspace-panel detail-hero">
@@ -1872,120 +1896,156 @@ function DetailView({
 
       <div className="workspace-panel resource-panel">
         <PanelTitle icon={FileSearch} title="来源资料" meta={`${resources.length} 个链接 / PDF`} />
-        <div className="resource-layout">
-          <div className="resource-list">
-            {resources.map((resource) => {
-              const Icon = resource.kind === "pdf" ? FileText : Globe2;
-              return (
-                <button
-                  className={`resource-item ${activeResource.id === resource.id ? "active" : ""}`}
-                  key={resource.id}
-                  onClick={() => setActiveResourceId(resource.id)}
-                >
-                  <Icon size={18} />
-                  <span>
-                    <strong>{resource.title}</strong>
-                    <small>
-                      {resource.source} · {resource.updated}
-                    </small>
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-
-          <div className="resource-preview">
-            <div className="preview-topline">
-              <span className={`status-pill ${activeResource.kind === "pdf" ? "accent" : "success"}`}>
-                {activeResource.kind === "pdf" ? "PDF" : "网页"}
-              </span>
-              <a href={activeResource.url} target="_blank" rel="noreferrer">
-                打开原链接
-                <ExternalLink size={15} />
-              </a>
+        {activeResource ? (
+          <div className="resource-layout">
+            <div className="resource-list">
+              {resources.map((resource) => {
+                const Icon = resource.kind === "pdf" ? FileText : Globe2;
+                return (
+                  <button
+                    className={`resource-item ${activeResource.id === resource.id ? "active" : ""}`}
+                    key={resource.id}
+                    onClick={() => setActiveResourceId(resource.id)}
+                  >
+                    <Icon size={18} />
+                    <span>
+                      <strong>{resource.title}</strong>
+                      <small>
+                        {resource.source} · {resource.updated}
+                      </small>
+                    </span>
+                  </button>
+                );
+              })}
             </div>
 
-            {activeResource.kind === "web" ? (
-              <div className="web-frame">
-                <div className="browser-strip">
-                  <i />
-                  <i />
-                  <i />
-                  <span>{activeResource.url}</span>
+            <div className="resource-preview">
+              <div className="preview-topline">
+                <span className={`status-pill ${activeResource.kind === "pdf" ? "accent" : "success"}`}>
+                  {activeResource.kind === "pdf" ? "PDF" : "网页"}
+                </span>
+                <a href={activeResource.url} target="_blank" rel="noreferrer">
+                  打开原链接
+                  <ExternalLink size={15} />
+                </a>
+              </div>
+
+              {activeResource.kind === "web" ? (
+                <div className="web-frame">
+                  <div className="browser-strip">
+                    <i />
+                    <i />
+                    <i />
+                    <span>{activeResource.url}</span>
+                  </div>
+                  <div className="web-document">
+                    <span>网页摘要</span>
+                    <h3>{activeResource.title}</h3>
+                    <p>{activeResource.summary}</p>
+                    <div className="web-lines">
+                      <i />
+                      <i />
+                      <i />
+                    </div>
+                  </div>
                 </div>
-                <div className="web-document">
-                  <span>网页摘要</span>
-                  <h3>{activeResource.title}</h3>
-                  <p>{activeResource.summary}</p>
-                  <div className="web-lines">
+              ) : (
+                <div className="pdf-frame">
+                  <div className="pdf-page">
+                    <span>PDF</span>
+                    <h3>{activeResource.title}</h3>
+                    <p>{activeResource.summary}</p>
                     <i />
                     <i />
                     <i />
                   </div>
+                  <div className="pdf-thumbs">
+                    <span>01</span>
+                    <span>02</span>
+                    <span>03</span>
+                  </div>
                 </div>
-              </div>
-            ) : (
-              <div className="pdf-frame">
-                <div className="pdf-page">
-                  <span>PDF</span>
-                  <h3>{activeResource.title}</h3>
-                  <p>{activeResource.summary}</p>
-                  <i />
-                  <i />
-                  <i />
-                </div>
-                <div className="pdf-thumbs">
-                  <span>01</span>
-                  <span>02</span>
-                  <span>03</span>
-                </div>
-              </div>
-            )}
+              )}
 
-            <div className="highlight-list">
-              {activeResource.highlights.map((highlight) => (
-                <article key={highlight}>
-                  <CheckCircle2 size={16} />
-                  <span>{highlight}</span>
-                </article>
-              ))}
+              <div className="highlight-list">
+                {activeResource.highlights.map((highlight) => (
+                  <article key={highlight}>
+                    <CheckCircle2 size={16} />
+                    <span>{highlight}</span>
+                  </article>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
+        ) : (
+          <div className="empty-state">
+            <FileSearch size={22} />
+            <strong>暂无配套资料</strong>
+            <span>这个条目还没有录入网页链接或 PDF。</span>
+          </div>
+        )}
       </div>
     </section>
   );
 }
 
 function PlanQueue({
+  currentUserName,
   planItems,
+  planScope,
   selectedPlanId,
+  totalPlanCount,
+  userPlanCount,
+  onPlanScopeChange,
   onSelectPlan
 }: {
+  currentUserName: string;
   planItems: PlanItem[];
+  planScope: PlanScope;
   selectedPlanId: string;
+  totalPlanCount: number;
+  userPlanCount: number;
+  onPlanScopeChange: (scope: PlanScope) => void;
   onSelectPlan: (id: string) => void;
 }) {
   return (
     <div className="workspace-panel queue-panel">
-      <PanelTitle icon={CalendarDays} title="待执行计划" meta="创作者实时可见" />
+      <PanelTitle icon={CalendarDays} title="待执行计划" meta={planScope === "mine" ? `${currentUserName} 的计划` : "全部账号计划"} />
+      <div className="queue-toolbar">
+        <button className={planScope === "mine" ? "active" : ""} onClick={() => onPlanScopeChange("mine")}>
+          我的计划
+          <span>{userPlanCount}</span>
+        </button>
+        <button className={planScope === "all" ? "active" : ""} onClick={() => onPlanScopeChange("all")}>
+          全部计划
+          <span>{totalPlanCount}</span>
+        </button>
+      </div>
       <div className="queue-list">
-        {planItems.map((plan) => (
-          <button
-            className={`queue-item ${selectedPlanId === plan.id ? "selected" : ""}`}
-            key={plan.id}
-            onClick={() => onSelectPlan(plan.id)}
-          >
-            <span className={`status-dot ${statusClass[plan.status]}`} />
-            <span>
-              <strong>{plan.theme}</strong>
-              <small>
-                {plan.date} {plan.slot} · {plan.channel}
-              </small>
-            </span>
-            <ChevronRight size={16} />
-          </button>
-        ))}
+        {planItems.length ? (
+          planItems.map((plan) => (
+            <button
+              className={`queue-item ${selectedPlanId === plan.id ? "selected" : ""}`}
+              key={plan.id}
+              onClick={() => onSelectPlan(plan.id)}
+            >
+              <span className={`status-dot ${statusClass[plan.status]}`} />
+              <span>
+                <strong>{plan.theme}</strong>
+                <small>
+                  {plan.date} {plan.slot} · {plan.channel}
+                </small>
+              </span>
+              <ChevronRight size={16} />
+            </button>
+          ))
+        ) : (
+          <div className="queue-empty">
+            <CalendarDays size={20} />
+            <strong>当前账号暂无待执行计划</strong>
+            <span>切换到全部计划可以查看其他账号的安排。</span>
+          </div>
+        )}
       </div>
     </div>
   );

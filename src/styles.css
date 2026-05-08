@@ -802,6 +802,64 @@ textarea:focus {
   gap: 5px;
 }
 
+.queue-toolbar {
+  display: flex;
+  gap: 8px;
+  padding: 12px 14px 0;
+  flex-wrap: wrap;
+}
+
+.queue-toolbar button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+  padding: 0 10px;
+  color: var(--muted);
+  background: #f3eedf;
+  border: 1px solid var(--line);
+  font-weight: 900;
+}
+
+.queue-toolbar button.active {
+  color: var(--ink);
+  background: #fffdf4;
+  border-color: var(--charcoal);
+  box-shadow: 3px 3px 0 rgba(32, 37, 31, 0.1);
+}
+
+.queue-toolbar span {
+  display: inline-grid;
+  place-items: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  color: var(--green);
+  background: #dff2df;
+  border: 1px solid rgba(39, 115, 93, 0.18);
+  font-size: 0.76rem;
+}
+
+.queue-empty {
+  display: grid;
+  place-items: center;
+  gap: 8px;
+  min-height: 150px;
+  padding: 22px;
+  color: var(--muted);
+  text-align: center;
+  background: #fffdf4;
+  border: 1px solid var(--line);
+}
+
+.queue-empty svg {
+  color: var(--green);
+}
+
+.queue-empty strong {
+  color: var(--ink);
+}
+
 .status-dot {
   width: 10px;
   height: 10px;
