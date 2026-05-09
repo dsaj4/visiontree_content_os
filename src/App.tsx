@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from "react";
 import {
   ArrowLeft,
   BarChart3,
@@ -15,6 +15,7 @@ import {
   FolderKanban,
   GalleryHorizontalEnd,
   Globe2,
+  ImageIcon,
   LayoutTemplate,
   ListChecks,
   MessageSquareText,
@@ -27,6 +28,9 @@ import {
   Send,
   Sparkles,
   TrendingUp,
+  UploadCloud,
+  Video,
+  X,
   UsersRound
 } from "lucide-react";
 
@@ -121,9 +125,20 @@ type Metrics = {
   saves: number;
 };
 
+type MediaAttachment = {
+  id: string;
+  name: string;
+  kind: "image" | "video";
+  mimeType: string;
+  size: number;
+  url: string;
+  createdAt?: string;
+};
+
 type ContentItem = {
   id: string;
   title: string;
+  body?: string;
   channel: Channel;
   status: ContentStatus;
   assetId?: string;
@@ -140,6 +155,7 @@ type ContentItem = {
   publishDate: string;
   publishTime: string;
   metrics: Metrics;
+  media?: MediaAttachment[];
   activities: Activity[];
 };
 
@@ -430,51 +446,6 @@ const fallbackTemplates: Template[] = [
   }
 ];
 
-const fallbackContents: ContentItem[] = [
-  {
-    id: "c1",
-    title: "Sunk cost is not about money",
-    channel: "X",
-    status: "已发布",
-    assetTitle: "Thinking Lab 第一周启动素材",
-    templateTitle: "图解 + 两分钟实验",
-    owner: "Thinking Lab",
-    publishDate: "2026-05-11",
-    publishTime: "10:05",
-    metrics: { views: 12800, likes: 620, comments: 74, shares: 41, saves: 390 },
-    activities: [
-      { id: "act1", type: "数据同步", note: "周一沉没成本图解已发布，收藏集中来自模型图。", time: "10:45" },
-      { id: "act2", type: "评论记录", note: "在相关大号评论区贴图并补一句解释，没有自我介绍。", time: "11:20" }
-    ]
-  },
-  {
-    id: "c2",
-    title: "AI did not save your thinking. It moved the judgment out of sight.",
-    channel: "X",
-    status: "已发布",
-    assetTitle: "AI Doubt Notes 反 AI 短帖素材",
-    templateTitle: "反 AI 三句短帖",
-    owner: "AI Doubt Notes",
-    publishDate: "2026-05-11",
-    publishTime: "12:32",
-    metrics: { views: 9400, likes: 510, comments: 63, shares: 38, saves: 221 },
-    activities: [{ id: "act3", type: "数据同步", note: "AI Doubt 第一条短帖建立了短、刺、有事实的语气。", time: "13:10" }]
-  },
-  {
-    id: "c3",
-    title: "为什么我们没有做一键自动判断",
-    channel: "X",
-    status: "草稿",
-    assetTitle: "Milo Reed 工程取舍素材",
-    templateTitle: "工程取舍短帖",
-    owner: "Milo Reed",
-    publishDate: "2026-05-12",
-    publishTime: "18:00",
-    metrics: { views: 0, likes: 0, comments: 0, shares: 0, saves: 0 },
-    activities: [{ id: "act4", type: "状态更新", note: "Milo 工程取舍帖已进入内容池，等待补充真实选项细节。", time: "09:40" }]
-  }
-];
-
 const fallbackPlan: PlanItem[] = [
   {
     id: "p1",
@@ -576,6 +547,23 @@ async function apiRequest<T>(path: string, options: RequestInit & { token?: stri
   return payload as T;
 }
 
+async function uploadMediaFiles(files: File[], token: string): Promise<MediaAttachment[]> {
+  const formData = new FormData();
+  files.forEach((file) => formData.append("files", file));
+
+  const response = await fetch(`${API_BASE}/uploads`, {
+    method: "POST",
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+    body: formData
+  });
+
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(payload.error ?? "媒体上传失败");
+  }
+  return payload.media as MediaAttachment[];
+}
+
 function loadStoredUser() {
   try {
     const raw = localStorage.getItem("content-system-user");
@@ -588,6 +576,17 @@ function loadStoredUser() {
 function formatNumber(value: number) {
   if (value >= 10000) return `${(value / 10000).toFixed(1)}万`;
   return value.toLocaleString("zh-CN");
+}
+
+function formatFileSize(value: number) {
+  if (value >= 1024 * 1024) return `${(value / (1024 * 1024)).toFixed(1)} MB`;
+  if (value >= 1024) return `${Math.round(value / 1024)} KB`;
+  return `${value} B`;
+}
+
+function truncateText(value: string, maxLength: number) {
+  const trimmed = value.trim();
+  return trimmed.length > maxLength ? `${trimmed.slice(0, maxLength)}...` : trimmed;
 }
 
 function formatDayLabel(date: string) {
@@ -631,10 +630,10 @@ function App() {
   const [calendarMode, setCalendarMode] = useState<CalendarMode>("planned");
   const [detailTarget, setDetailTarget] = useState<DetailTarget>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [draftTitle, setDraftTitle] = useState("第一周只追一个清晰的第一印象");
-  const [draftCopy, setDraftCopy] = useState(
-    "开场：第一周不追粉丝数，也不追互动量，只追一个清晰的第一印象。\n\n主体：从素材池选择账号素材，套用适配账号的格式模板，生成初稿后进入内容池；发布后再回收评论、转发和数据表现。\n\n收束：下一个动作，是把这条内容关联到七账号矩阵的第一周启动计划。"
-  );
+  const [draftTitle, setDraftTitle] = useState("");
+  const [draftCopy, setDraftCopy] = useState("");
+  const [draftMedia, setDraftMedia] = useState<MediaAttachment[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
 
   const applyBootstrap = (data: BootstrapData) => {
     setCurrentUser(data.user);
@@ -803,7 +802,7 @@ function App() {
     const keyword = searchTerm.trim().toLowerCase();
     if (!keyword) return contentPool;
     return contentPool.filter((content) =>
-      [content.title, content.channel, content.status, content.owner, content.assetTitle, content.templateTitle]
+      [content.title, content.body ?? "", content.channel, content.status, content.owner, content.assetTitle, content.templateTitle]
         .join(" ")
         .toLowerCase()
         .includes(keyword)
@@ -851,6 +850,30 @@ function App() {
     );
   };
 
+  const handleDraftMediaUpload = async (event: ChangeEvent<HTMLInputElement>) => {
+    const input = event.currentTarget;
+    const files = Array.from(input.files ?? []);
+    input.value = "";
+    if (!files.length) return;
+
+    const invalidFile = files.find((file) => !file.type.startsWith("image/") && !file.type.startsWith("video/"));
+    if (invalidFile) {
+      setAppError("仅支持上传图片或视频文件。");
+      return;
+    }
+
+    setAppError("");
+    setIsUploading(true);
+    try {
+      const uploaded = await uploadMediaFiles(files, authToken);
+      setDraftMedia((current) => [...current, ...uploaded]);
+    } catch (error) {
+      setAppError(error instanceof Error ? error.message : "媒体上传失败");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   const saveDraft = async () => {
     setAppError("");
     setIsMutating(true);
@@ -861,12 +884,17 @@ function App() {
         body: JSON.stringify({
           title: draftTitle.trim() || `${selectedAsset.theme} 内容草稿`,
           channel: selectedChannel,
+          body: draftCopy,
           assetId: selectedAsset.id,
           templateId: selectedTemplate.id,
-          planId: selectedPlan.id
+          planId: selectedPlan.id,
+          mediaIds: draftMedia.map((item) => item.id)
         })
       });
       applyBootstrap(data);
+      setDraftTitle("");
+      setDraftCopy("");
+      setDraftMedia([]);
       setActiveView("content");
     } catch (error) {
       setAppError(error instanceof Error ? error.message : "草稿保存失败");
@@ -1088,12 +1116,22 @@ function App() {
 
             <label className="field-stack">
               <span>标题</span>
-              <input value={draftTitle} onChange={(event) => setDraftTitle(event.target.value)} />
+              <input value={draftTitle} placeholder="输入这条内容的工作标题" onChange={(event) => setDraftTitle(event.target.value)} />
             </label>
             <label className="field-stack editor-field">
               <span>正文</span>
-              <textarea value={draftCopy} onChange={(event) => setDraftCopy(event.target.value)} />
+              <textarea
+                value={draftCopy}
+                placeholder="在这里写正文草稿；可先上传配图或视频，再存入内容池。"
+                onChange={(event) => setDraftCopy(event.target.value)}
+              />
             </label>
+            <DraftMediaUploader
+              media={draftMedia}
+              isUploading={isUploading}
+              onUpload={handleDraftMediaUpload}
+              onRemove={(mediaId) => setDraftMedia((current) => current.filter((item) => item.id !== mediaId))}
+            />
             <div className="composer-footer">
               <div>
                 <strong>{selectedAsset.source}</strong>
@@ -1101,7 +1139,7 @@ function App() {
                   {selectedAsset.freshness} · {selectedTemplate.structure.length} 段结构
                 </span>
               </div>
-              <button className="primary-button" onClick={saveDraft} disabled={isMutating}>
+              <button className="primary-button" onClick={saveDraft} disabled={isMutating || isUploading}>
                 <Plus size={18} />
                 存入内容池
               </button>
@@ -1171,37 +1209,46 @@ function App() {
               />
             </div>
             <div className="content-table">
-              {filteredContent.map((content) => (
-                <article className="content-row" key={content.id}>
-                  <div className="content-main">
-                    <span className={`status-pill ${statusClass[content.status]}`}>{content.status}</span>
-                    <h3>{content.title}</h3>
-                    <p>
-                      {content.channel} · {content.owner} · {content.assetTitle} · {content.templateTitle}
-                    </p>
-                    <small className="time-note">
-                      存入 {content.savedDate ?? "-"} {content.savedTime ?? ""} · 计划 {content.scheduledDate ?? content.publishDate}{" "}
-                      {content.scheduledTime ?? content.publishTime} · 真实发布{" "}
-                      {content.publishedAt ? `${content.publishDate} ${content.publishTime}` : "待平台回传"}
-                    </small>
-                  </div>
-                  <MetricStrip metrics={content.metrics} />
-                  <div className="row-actions">
-                    <button onClick={() => publishAndSync(content.id)} disabled={isMutating}>
-                      <RadioTower size={16} />
-                      发布/同步
-                    </button>
-                    <button onClick={() => recordInteraction(content.id, "评论记录")} disabled={isMutating}>
-                      <MessageSquareText size={16} />
-                      评论
-                    </button>
-                    <button onClick={() => recordInteraction(content.id, "转发记录")} disabled={isMutating}>
-                      <Repeat2 size={16} />
-                      转发
-                    </button>
-                  </div>
-                </article>
-              ))}
+              {filteredContent.length ? (
+                filteredContent.map((content) => (
+                  <article className="content-row" key={content.id}>
+                    <div className="content-main">
+                      <span className={`status-pill ${statusClass[content.status]}`}>{content.status}</span>
+                      <h3>{content.title}</h3>
+                      <p>
+                        {content.channel} · {content.owner} · {content.assetTitle} · {content.templateTitle}
+                      </p>
+                      <small className="time-note">
+                        存入 {content.savedDate ?? "-"} {content.savedTime ?? ""} · 计划 {content.scheduledDate ?? content.publishDate}{" "}
+                        {content.scheduledTime ?? content.publishTime} · 真实发布{" "}
+                        {content.publishedAt ? `${content.publishDate} ${content.publishTime}` : "待平台回传"}
+                      </small>
+                      <MediaAttachmentStrip media={content.media ?? []} />
+                    </div>
+                    <MetricStrip metrics={content.metrics} />
+                    <div className="row-actions">
+                      <button onClick={() => publishAndSync(content.id)} disabled={isMutating}>
+                        <RadioTower size={16} />
+                        发布/同步
+                      </button>
+                      <button onClick={() => recordInteraction(content.id, "评论记录")} disabled={isMutating}>
+                        <MessageSquareText size={16} />
+                        评论
+                      </button>
+                      <button onClick={() => recordInteraction(content.id, "转发记录")} disabled={isMutating}>
+                        <Repeat2 size={16} />
+                        转发
+                      </button>
+                    </div>
+                  </article>
+                ))
+              ) : (
+                <div className="empty-state">
+                  <FolderKanban size={22} />
+                  <strong>内容池暂无记录</strong>
+                  <span>保存第一条草稿后，这里会开始记录内容、附件和发布数据。</span>
+                </div>
+              )}
             </div>
           </div>
 
@@ -1267,27 +1314,36 @@ function App() {
               </div>
             ) : (
               <div className="published-board">
-                {publishedContents.map((content) => (
-                  <article className="published-card" key={content.id}>
-                    <div className="published-date">
-                      <strong>{content.publishDate.slice(5)}</strong>
-                      <span>{formatDayLabel(content.publishDate)}</span>
-                      <em>{content.publishTime}</em>
-                    </div>
-                    <div className="published-copy">
-                      <span className={`status-pill ${statusClass[content.status]}`}>{content.channel}</span>
-                      <h3>{content.title}</h3>
-                      <p>
-                        {content.owner} · {content.assetTitle} · {content.templateTitle}
-                      </p>
-                      <MetricStrip metrics={content.metrics} />
-                    </div>
-                    <button onClick={() => publishAndSync(content.id)} disabled={isMutating}>
-                      <RadioTower size={16} />
-                      同步数据
-                    </button>
-                  </article>
-                ))}
+                {publishedContents.length ? (
+                  publishedContents.map((content) => (
+                    <article className="published-card" key={content.id}>
+                      <div className="published-date">
+                        <strong>{content.publishDate.slice(5)}</strong>
+                        <span>{formatDayLabel(content.publishDate)}</span>
+                        <em>{content.publishTime}</em>
+                      </div>
+                      <div className="published-copy">
+                        <span className={`status-pill ${statusClass[content.status]}`}>{content.channel}</span>
+                        <h3>{content.title}</h3>
+                        <p>
+                          {content.owner} · {content.assetTitle} · {content.templateTitle}
+                        </p>
+                        <MediaAttachmentStrip media={content.media ?? []} compact />
+                        <MetricStrip metrics={content.metrics} />
+                      </div>
+                      <button onClick={() => publishAndSync(content.id)} disabled={isMutating}>
+                        <RadioTower size={16} />
+                        同步数据
+                      </button>
+                    </article>
+                  ))
+                ) : (
+                  <div className="empty-state">
+                    <Send size={22} />
+                    <strong>暂无已发布内容</strong>
+                    <span>平台回传真实发布时间后，这里会显示发布历史。</span>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -1320,17 +1376,25 @@ function App() {
               <>
                 <PanelTitle icon={ListChecks} title="发布时间线" meta="按发布时间倒序" />
                 <div className="published-timeline">
-                  {publishedContents.map((content) => (
-                    <article className="timeline-item" key={content.id}>
-                      <span>
-                        {content.publishDate} {content.publishTime}
-                      </span>
-                      <strong>{content.title}</strong>
-                      <small>
-                        {content.channel} · {formatNumber(content.metrics.views)} 曝光 · {formatNumber(content.metrics.comments)} 评论
-                      </small>
-                    </article>
-                  ))}
+                  {publishedContents.length ? (
+                    publishedContents.map((content) => (
+                      <article className="timeline-item" key={content.id}>
+                        <span>
+                          {content.publishDate} {content.publishTime}
+                        </span>
+                        <strong>{content.title}</strong>
+                        <small>
+                          {content.channel} · {formatNumber(content.metrics.views)} 曝光 · {formatNumber(content.metrics.comments)} 评论
+                        </small>
+                      </article>
+                    ))
+                  ) : (
+                    <div className="empty-state compact-empty">
+                      <Clock3 size={20} />
+                      <strong>等待真实发布记录</strong>
+                      <span>发布同步后自动生成时间线。</span>
+                    </div>
+                  )}
                 </div>
               </>
             )}
@@ -1565,6 +1629,84 @@ function MetricStrip({ metrics }: { metrics: Metrics }) {
   );
 }
 
+function DraftMediaUploader({
+  media,
+  isUploading,
+  onUpload,
+  onRemove
+}: {
+  media: MediaAttachment[];
+  isUploading: boolean;
+  onUpload: (event: ChangeEvent<HTMLInputElement>) => void;
+  onRemove: (mediaId: string) => void;
+}) {
+  return (
+    <div className="draft-media-section">
+      <div className="draft-media-header">
+        <div>
+          <span>媒体附件</span>
+          <strong>{media.length ? `${media.length} 个文件` : "图片 / 视频"}</strong>
+        </div>
+        <label className={`ghost-button upload-button ${isUploading ? "is-disabled" : ""}`}>
+          <UploadCloud size={16} />
+          {isUploading ? "上传中" : "上传"}
+          <input type="file" accept="image/*,video/*" multiple onChange={onUpload} disabled={isUploading} />
+        </label>
+      </div>
+
+      {media.length ? (
+        <div className="draft-media-grid">
+          {media.map((item) => (
+            <article className="draft-media-card" key={item.id}>
+              <div className="draft-media-thumb">
+                {item.kind === "image" ? (
+                  <img src={item.url} alt={item.name} />
+                ) : (
+                  <video src={item.url} muted preload="metadata" controls />
+                )}
+              </div>
+              <div className="draft-media-copy">
+                <span>
+                  {item.kind === "image" ? <ImageIcon size={14} /> : <Video size={14} />}
+                  {item.kind === "image" ? "图片" : "视频"}
+                </span>
+                <strong>{item.name}</strong>
+                <small>{formatFileSize(item.size)}</small>
+              </div>
+              <button type="button" className="media-remove" title="移除附件" onClick={() => onRemove(item.id)}>
+                <X size={15} />
+              </button>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <div className="draft-media-empty">
+          <ImageIcon size={18} />
+          <span>暂无附件</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function MediaAttachmentStrip({ media, compact = false }: { media: MediaAttachment[]; compact?: boolean }) {
+  if (!media.length) return null;
+
+  return (
+    <div className={`media-strip ${compact ? "compact" : ""}`}>
+      {media.map((item) => {
+        const Icon = item.kind === "image" ? ImageIcon : Video;
+        return (
+          <a href={item.url} target="_blank" rel="noreferrer" key={item.id}>
+            <Icon size={14} />
+            <span>{item.name}</span>
+          </a>
+        );
+      })}
+    </div>
+  );
+}
+
 function ProfileView({ currentUser, accounts }: { currentUser: UserAccount; accounts: UserAccount[] }) {
   return (
     <section className="profile-view">
@@ -1677,52 +1819,62 @@ function AssetLibraryView({
 
         {assets.length ? (
           <div className="library-results asset-library-grid">
-            {assets.map((asset) => (
-              <article
-                className={`asset-card ${asset.palette} ${selectedAssetId === asset.id ? "selected" : ""}`}
-                key={asset.id}
-                onClick={() => onSelectAsset(asset)}
-              >
-                <span className="asset-poster" aria-hidden="true">
-                  <span>{asset.theme.slice(0, 2)}</span>
-                </span>
-                <span className="asset-body">
-                  <span className="row-between">
-                    <strong>{asset.title}</strong>
-                    <em>{asset.score}</em>
+            {assets.map((asset) => {
+              const visibleTags = asset.tags.slice(0, 3);
+              const hiddenTagCount = Math.max(0, asset.tags.length - visibleTags.length);
+
+              return (
+                <article
+                  className={`asset-card ${asset.palette} ${selectedAssetId === asset.id ? "selected" : ""}`}
+                  key={asset.id}
+                  onClick={() => onSelectAsset(asset)}
+                >
+                  <span className="asset-poster" aria-hidden="true">
+                    <span>{asset.theme.slice(0, 2)}</span>
                   </span>
-                  <span className="usage-count">已发布引用 {asset.referenceCount ?? 0} 次</span>
-                  <span className="asset-summary">{asset.summary}</span>
-                  <span className="tag-row">
-                    {asset.tags.map((tag) => (
-                      <span key={tag}>{tag}</span>
-                    ))}
+                  <span className="asset-body">
+                    <span className="row-between">
+                      <strong className="asset-title" title={asset.title}>
+                        {truncateText(asset.title, 24)}
+                      </strong>
+                      <em>{asset.score}</em>
+                    </span>
+                    <span className="usage-count">已发布引用 {asset.referenceCount ?? 0} 次</span>
+                    <span className="asset-summary" title={asset.summary}>
+                      {asset.summary}
+                    </span>
+                    <span className="tag-row asset-tag-row" title={asset.tags.join(" / ")}>
+                      {visibleTags.map((tag) => (
+                        <span key={tag}>{truncateText(tag, 10)}</span>
+                      ))}
+                      {hiddenTagCount > 0 && <span className="tag-overflow">+{hiddenTagCount}</span>}
+                    </span>
+                    <span className="library-card-actions">
+                      <button
+                        className="primary-button"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          onSelectAsset(asset);
+                        }}
+                      >
+                        <Plus size={15} />
+                        取用
+                      </button>
+                      <button
+                        className="ghost-button"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          onOpenDetail(asset);
+                        }}
+                      >
+                        <FileSearch size={15} />
+                        详情
+                      </button>
+                    </span>
                   </span>
-                  <span className="library-card-actions">
-                    <button
-                      className="primary-button"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        onSelectAsset(asset);
-                      }}
-                    >
-                      <Plus size={15} />
-                      取用
-                    </button>
-                    <button
-                      className="ghost-button"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        onOpenDetail(asset);
-                      }}
-                    >
-                      <FileSearch size={15} />
-                      详情
-                    </button>
-                  </span>
-                </span>
-              </article>
-            ))}
+                </article>
+              );
+            })}
           </div>
         ) : (
           <div className="empty-state">
@@ -2062,16 +2214,24 @@ function ActivityRail({
     <div className={`workspace-panel activity-panel ${wide ? "wide" : ""}`}>
       <PanelTitle icon={RadioTower} title="数据与互动记录" meta={`${activities.length} 条最近活动`} />
       <div className="activity-list">
-        {activities.map((activity) => (
-          <article className="activity-item" key={activity.id}>
-            <span>{activity.type}</span>
-            <strong>{activity.contentTitle}</strong>
-            <p>{activity.note}</p>
-            <small>
-              {activity.channel} · {activity.time}
-            </small>
-          </article>
-        ))}
+        {activities.length ? (
+          activities.map((activity) => (
+            <article className="activity-item" key={activity.id}>
+              <span>{activity.type}</span>
+              <strong>{activity.contentTitle}</strong>
+              <p>{activity.note}</p>
+              <small>
+                {activity.channel} · {activity.time}
+              </small>
+            </article>
+          ))
+        ) : (
+          <div className="empty-state compact-empty">
+            <RadioTower size={20} />
+            <strong>暂无活动记录</strong>
+            <span>保存草稿、发布同步或记录互动后，这里会自动更新。</span>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -2110,7 +2270,7 @@ function KpiPanel({ totalMetrics, contentPool }: { totalMetrics: Metrics; conten
           const channelViews = contentPool
             .filter((content) => content.channel === channel)
             .reduce((sum, content) => sum + content.metrics.views, 0);
-          const width = totalMetrics.views ? Math.max(8, Math.round((channelViews / totalMetrics.views) * 100)) : 8;
+          const width = totalMetrics.views ? Math.max(8, Math.round((channelViews / totalMetrics.views) * 100)) : 0;
           return (
             <div className="channel-bar" key={channel}>
               <span>{channel}</span>

@@ -1,5 +1,120 @@
 # API Integration Guide
 
+本文档说明 `content-system` 的 API 和数据边界。业务背景、账号矩阵、素材池/模板库管理要求见 [CONTENT_AGENT_BRIEF.md](CONTENT_AGENT_BRIEF.md)。
+
+重要前提：
+
+- 本项目是 VisionTree 主项目的营销内容创作管理系统，不是主产品本身。
+- 当前内容创作刚刚开始，系统中已有账号、素材、模板和计划，但内容池尚未沉淀稳定内容。
+- 素材池和模板库服务于 VisionTree 初期营销内容矩阵，新增字段或对接外部系统时必须保留“素材/模板可追溯、可复用、可统计引用”的结构。
+- 普通 CRUD 只负责基础记录。真实发布时间、曝光、点赞、评论、转发、收藏等平台数据必须走发布同步或平台回传链路。
+
+## 2026-05-09 CRUD API 更新
+
+以下接口均需要登录后的 `Authorization: Bearer <token>`。`referenceCount`、`publishedAt`、曝光/点赞/评论/转发/收藏等平台数据不应由普通 CRUD 写入。
+
+### 素材池 CRUD
+
+- `GET /api/assets`：返回 `{ assets }`。
+- `GET /api/assets/:id`：返回 `{ asset }`。
+- `POST /api/assets`：新增素材，返回 `{ asset }`。
+- `PATCH /api/assets/:id`：部分更新素材，返回 `{ asset }`。
+- `DELETE /api/assets/:id`：删除素材。若已有内容记录引用该素材，返回 `409`。
+
+新增/更新字段：
+
+```json
+{
+  "id": "asset-external-id",
+  "title": "素材标题",
+  "theme": "主题",
+  "source": "来源",
+  "format": "网页/PDF/截图/访谈摘录",
+  "freshness": "2026-05-09",
+  "score": 80,
+  "tags": ["VisionTree", "X"],
+  "summary": "素材简介",
+  "owner": "Milo Reed",
+  "palette": "mint",
+  "notes": ["备注"],
+  "resources": [
+    {
+      "id": "resource-1",
+      "title": "原始网页",
+      "kind": "web",
+      "url": "https://example.com",
+      "source": "网页链接",
+      "updated": "2026-05-09",
+      "summary": "资源摘要",
+      "highlights": ["可引用重点"]
+    }
+  ]
+}
+```
+
+`id` 可由外部素材库指定；不传时后端生成。`referenceCount` 由已发布内容聚合计算，不支持写入。
+
+### 模板库 CRUD
+
+- `GET /api/templates`：返回 `{ templates }`。
+- `GET /api/templates/:id`：返回 `{ template }`。
+- `POST /api/templates`：新增模板，返回 `{ template }`。
+- `PATCH /api/templates/:id`：部分更新模板，返回 `{ template }`。
+- `DELETE /api/templates/:id`：删除模板。若已有内容记录引用该模板，返回 `409`。
+
+新增/更新字段：
+
+```json
+{
+  "id": "template-external-id",
+  "title": "模板标题",
+  "format": "短帖/长帖/图解/投票",
+  "channels": ["X"],
+  "structure": ["hook", "point", "cta"],
+  "hook": "开场方式",
+  "length": "short",
+  "notes": ["备注"],
+  "resources": []
+}
+```
+
+`referenceCount` 同样由已发布内容聚合计算，不支持写入。
+
+### 内容记录与正文 CRUD
+
+- `GET /api/contents`：返回 `{ contents }`。
+- `GET /api/contents/:id`：返回 `{ content }`，包含 `body`、素材/模板标题、媒体附件、活动记录和指标。
+- `POST /api/contents`：新增内容记录，返回 `{ content }`。
+- `PATCH /api/contents/:id`：更新标题、正文、渠道、素材、模板、计划时间等基础字段，返回 `{ content }`。
+- `DELETE /api/contents/:id`：删除内容记录，并解绑相关计划。
+- `GET /api/contents/:id/body`：只读取正文，返回 `{ id, body }`。
+- `PATCH /api/contents/:id/body`：只更新正文，请求 `{ "body": "..." }`。
+- `DELETE /api/contents/:id/body`：清空正文，不删除内容记录。
+
+新增内容请求：
+
+```json
+{
+  "id": "content-external-id",
+  "title": "内容工作标题",
+  "body": "正文草稿",
+  "channel": "X",
+  "assetId": "asset-external-id",
+  "templateId": "template-external-id",
+  "scheduledDate": "2026-05-10",
+  "scheduledTime": "09:00",
+  "mediaIds": []
+}
+```
+
+边界规则：
+
+- `savedAt` 由后端在创建内容时写入。
+- `publishedAt` 和 `metrics` 不能通过 `POST /api/contents` 或 `PATCH /api/contents/:id` 写入。
+- 真实发布时间与平台指标继续使用 `POST /api/contents/:id/platform-update`。
+- 新增内容状态只允许 `草稿`、`审核中`、`已排期`；`已发布` 只能由发布/平台回传接口产生。
+- 正文最大长度为 `20000` 字。
+
 本文档面向后续接手本项目的 agent/工程师，用于对接真实素材库、模板库和内容记录系统。
 
 ## 当前架构
@@ -214,7 +329,18 @@ type ContentItem = {
   publishDate: string;
   publishTime: string;
   metrics: Metrics;
+  media?: MediaAttachment[];
   activities: Activity[];
+};
+
+type MediaAttachment = {
+  id: string;
+  name: string;
+  kind: "image" | "video";
+  mimeType: string;
+  size: number;
+  url: string;
+  createdAt?: string;
 };
 ```
 
@@ -241,14 +367,47 @@ type ContentItem = {
 ```json
 {
   "title": "Sunk cost is not about money",
+  "body": "正文草稿",
   "channel": "X",
   "assetId": "a1",
   "templateId": "t1",
-  "planId": "p1"
+  "planId": "p1",
+  "mediaIds": ["m1778311400920-c709eb1e"]
 }
 ```
 
 响应：完整 `BootstrapData`。
+
+### `POST /api/uploads`
+
+上传创作草稿使用的图片或视频。请求必须使用 `multipart/form-data`，字段名为 `files`，支持一次上传多个文件。
+
+限制：
+- 需要 `Authorization: Bearer <token>`。
+- 仅接受 `image/*` 和 `video/*`，但会拒绝 `image/svg+xml`。
+- 一次最多 8 个文件，单个文件最大 50MB。
+- 上传后先生成未绑定附件；保存草稿时通过 `mediaIds` 绑定到 `contents`。
+
+响应：
+```json
+{
+  "media": [
+    {
+      "id": "m1778311400920-c709eb1e",
+      "name": "demo.jpeg",
+      "kind": "image",
+      "mimeType": "image/jpeg",
+      "size": 124000,
+      "url": "/api/uploads/m1778311400920-c709eb1e.jpeg",
+      "createdAt": "2026-05-09T15:20:00.000+08:00"
+    }
+  ]
+}
+```
+
+### `GET /api/uploads/:fileName`
+
+读取上传后的媒体文件。前端会直接使用返回的 `url` 展示图片或视频预览。
 
 ### `POST /api/contents/:id/publish`
 

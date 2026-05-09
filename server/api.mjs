@@ -1,18 +1,21 @@
 import { randomUUID } from "node:crypto";
-import { existsSync, mkdirSync, readFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { createServer } from "node:http";
 import { DatabaseSync } from "node:sqlite";
-import { extname, join, resolve } from "node:path";
+import { extname, join, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
+import { narrativeThemeAssets } from "./narrative-assets.mjs";
 
 const rootDir = resolve(fileURLToPath(new URL("..", import.meta.url)));
 const dataDir = join(rootDir, "data");
+const uploadDir = join(dataDir, "uploads");
 const distDir = join(rootDir, "dist");
 const dbPath = join(dataDir, "content-system.sqlite");
 const port = Number(process.env.API_PORT ?? 8787);
 const allowedOrigins = new Set(["http://localhost:5173", "http://127.0.0.1:5173"]);
 
 mkdirSync(dataDir, { recursive: true });
+mkdirSync(uploadDir, { recursive: true });
 
 const db = new DatabaseSync(dbPath);
 db.exec("PRAGMA foreign_keys = ON");
@@ -25,6 +28,32 @@ const parseJson = (value, fallback = []) => {
     return fallback;
   }
 };
+
+const maxUploadBytes = 80 * 1024 * 1024;
+const maxUploadFileBytes = 50 * 1024 * 1024;
+const maxUploadFiles = 8;
+const maxContentBodyLength = 20_000;
+
+const statusDraft = "\u8349\u7a3f";
+const statusReview = "\u5ba1\u6838\u4e2d";
+const statusScheduled = "\u5df2\u6392\u671f";
+const statusPublished = "\u5df2\u53d1\u5e03";
+const statusPlanWaiting = "\u5f85\u9886\u53d6";
+const statusPlanWorking = "\u5236\u4f5c\u4e2d";
+const statusActivityUpdate = "\u72b6\u6001\u66f4\u65b0";
+const editableContentStatuses = new Set([statusDraft, statusReview, statusScheduled]);
+const resourceKinds = new Set(["web", "pdf"]);
+
+const mimeFallbackExtensions = new Map([
+  ["image/jpeg", ".jpg"],
+  ["image/png", ".png"],
+  ["image/gif", ".gif"],
+  ["image/webp", ".webp"],
+  ["image/svg+xml", ".svg"],
+  ["video/mp4", ".mp4"],
+  ["video/webm", ".webm"],
+  ["video/quicktime", ".mov"]
+]);
 
 const personaUsers = [
   {
@@ -623,35 +652,21 @@ const visionTreeTemplates = [
   }
 ];
 
-const visionTreeContents = [
-  ["c1", "Sunk cost is not about money", "X", "已发布", "a1", "t1", "Thinking Lab", "2026-05-11T08:30:00+08:00", "2026-05-11", "10:00", "2026-05-11T10:05:00+08:00", 12800, 620, 74, 41, 390],
-  ["c2", "AI did not save your thinking. It moved the judgment out of sight.", "X", "已发布", "a3", "t3", "AI Doubt Notes", "2026-05-11T11:20:00+08:00", "2026-05-11", "12:30", "2026-05-11T12:32:00+08:00", 9400, 510, 63, 38, 221],
-  ["c3", "为什么我们没有做一键自动判断", "X", "草稿", "a4", "t4", "Milo Reed", "2026-05-12T09:40:00+08:00", "2026-05-12", "18:00", null, 0, 0, 0, 0, 0],
-  ["c4", "Today I grew a new leaf. It is called first principles thinking.", "X", "草稿", "a6", "t6", "The Thinking Tree", "2026-05-12T14:10:00+08:00", "2026-05-13", "09:20", null, 0, 0, 0, 0, 0],
-  ["c5", "VisionTree is not an autopilot for thinking.", "X", "已排期", "a7", "t7", "VisionTree", "2026-05-12T16:25:00+08:00", "2026-05-13", "20:30", null, 0, 0, 0, 0, 0]
-];
+const legacyDemoContentIds = ["c1", "c2", "c3", "c4", "c5"];
+const legacyDemoActivityIds = ["act1", "act2", "act3", "act4", "act5", "act6"];
 
 const visionTreePlans = [
-  ["p1", "2026-05-11", "周一", "10:00", "X", "Thinking Lab：沉没成本图解", "Thinking Lab", "建立视觉第一印象", "已完成", "c1"],
-  ["p2", "2026-05-12", "周二", "10:00", "X", "Thinking Lab：第一个两分钟实验", "Thinking Lab", "引导回复", "制作中", null],
+  ["p1", "2026-05-11", "周一", "10:00", "X", "Thinking Lab：沉没成本图解", "Thinking Lab", "建立视觉第一印象", "待领取", null],
+  ["p2", "2026-05-12", "周二", "10:00", "X", "Thinking Lab：第一个两分钟实验", "Thinking Lab", "引导回复", "待领取", null],
   ["p3", "2026-05-13", "周三", "10:00", "X", "Thinking Lab：AI 答案 vs 保留判断", "Thinking Lab", "形成置顶内容", "待领取", null],
   ["p4", "2026-05-14", "周四", "11:00", "X", "Thinking Lab：决策方式投票", "Thinking Lab", "带来回复", "待领取", null],
   ["p5", "2026-05-15", "周五", "10:30", "X", "Thinking Lab：Eli 概念卡", "Thinking Lab", "连接矩阵账号", "待领取", null],
   ["p6", "2026-05-11", "周一", "16:00", "X", "Eli：月度概念词第一帖", "Eli Rowan", "建立慢思考调性", "待领取", null],
-  ["p7", "2026-05-11", "周一", "12:30", "X", "AI Doubt：反 AI 短帖", "AI Doubt Notes", "铺批判底色", "已完成", "c2"],
-  ["p8", "2026-05-12", "周二", "18:00", "X", "Milo：真实技术取舍", "Milo Reed", "建立工程可信度", "制作中", "c3"],
+  ["p7", "2026-05-11", "周一", "12:30", "X", "AI Doubt：反 AI 短帖", "AI Doubt Notes", "铺批判底色", "待领取", null],
+  ["p8", "2026-05-12", "周二", "18:00", "X", "Milo：真实技术取舍", "Milo Reed", "建立工程可信度", "待领取", null],
   ["p9", "2026-05-12", "周二", "20:00", "X", "Nora：真实 AI 工具试用", "Nora Blake", "降低普通人门槛", "待领取", null],
-  ["p10", "2026-05-13", "周三", "09:20", "X", "The Thinking Tree：第一片新叶", "The Thinking Tree", "建立记忆点", "制作中", "c4"],
-  ["p11", "2026-05-13", "周三", "20:30", "X", "VisionTree：第一条品类定义", "VisionTree", "收拢官方叙事", "待发布", "c5"]
-];
-
-const visionTreeActivities = [
-  ["act1", "c1", "数据同步", "周一沉没成本图解已发布，收藏集中来自模型图。", "10:45", "2026-05-11T10:45:00+08:00"],
-  ["act2", "c1", "评论记录", "在相关大号评论区贴图并补一句解释，没有自我介绍。", "11:20", "2026-05-11T11:20:00+08:00"],
-  ["act3", "c2", "数据同步", "AI Doubt 第一条短帖建立了短、刺、有事实的语气。", "13:10", "2026-05-11T13:10:00+08:00"],
-  ["act4", "c3", "状态更新", "Milo 工程取舍帖已进入内容池，等待补充真实选项细节。", "09:40", "2026-05-12T09:40:00+08:00"],
-  ["act5", "c4", "状态更新", "The Thinking Tree 首条独白已准备配图方向：新叶与根系。", "14:10", "2026-05-12T14:10:00+08:00"],
-  ["act6", "c5", "状态更新", "官方号第一条品类定义帖已排期，用对比式写法定调。", "16:25", "2026-05-12T16:25:00+08:00"]
+  ["p10", "2026-05-13", "周三", "09:20", "X", "The Thinking Tree：第一片新叶", "The Thinking Tree", "建立记忆点", "待领取", null],
+  ["p11", "2026-05-13", "周三", "20:30", "X", "VisionTree：第一条品类定义", "VisionTree", "收拢官方叙事", "待领取", null]
 ];
 
 const nowIso = () => new Date().toISOString();
@@ -732,6 +747,7 @@ function createSchema() {
     CREATE TABLE IF NOT EXISTS contents (
       id TEXT PRIMARY KEY,
       title TEXT NOT NULL,
+      body TEXT NOT NULL DEFAULT '',
       channel TEXT NOT NULL,
       status TEXT NOT NULL,
       asset_id TEXT NOT NULL REFERENCES assets(id),
@@ -746,6 +762,18 @@ function createSchema() {
       comments INTEGER NOT NULL DEFAULT 0,
       shares INTEGER NOT NULL DEFAULT 0,
       saves INTEGER NOT NULL DEFAULT 0
+    );
+
+    CREATE TABLE IF NOT EXISTS media_attachments (
+      id TEXT PRIMARY KEY,
+      content_id TEXT REFERENCES contents(id) ON DELETE CASCADE,
+      owner TEXT NOT NULL,
+      original_name TEXT NOT NULL,
+      mime_type TEXT NOT NULL,
+      kind TEXT NOT NULL,
+      size INTEGER NOT NULL,
+      url TEXT NOT NULL,
+      created_at TEXT NOT NULL
     );
 
     CREATE TABLE IF NOT EXISTS plans (
@@ -792,6 +820,7 @@ function migrateSchema() {
     ["cadence", "TEXT"],
     ["interaction_target", "TEXT"]
   ].forEach(([name, definition]) => ensureColumn("users", name, definition));
+  ensureColumn("contents", "body", "TEXT NOT NULL DEFAULT ''");
 }
 
 function upsertPersonaUsers() {
@@ -851,7 +880,7 @@ function upsertPersonaUsers() {
   });
 }
 
-function syncVisionTreeDemoData() {
+function syncVisionTreeReferenceData() {
   pruneLegacyVisionTreeMaterial();
 
   const upsertAsset = db.prepare(`
@@ -872,9 +901,9 @@ function syncVisionTreeDemoData() {
       notes_json = excluded.notes_json,
       resources_json = excluded.resources_json
   `);
-  const shouldSeedLegacyMaterial = db.prepare("SELECT COUNT(*) AS count FROM assets WHERE source LIKE 'IMA VT素材库%'").get().count === 0;
+  const shouldSeedLegacyMaterial = db.prepare("SELECT COUNT(*) AS count FROM assets").get().count === 0;
   if (shouldSeedLegacyMaterial) {
-    visionTreeAssets.forEach((asset) =>
+    narrativeThemeAssets.forEach((asset) =>
       upsertAsset.run(
         asset.id,
         asset.title,
@@ -921,32 +950,6 @@ function syncVisionTreeDemoData() {
     )
   );
 
-  const upsertContent = db.prepare(`
-    INSERT INTO contents
-      (id, title, channel, status, asset_id, template_id, owner, saved_at, scheduled_date, scheduled_time,
-       published_at, views, likes, comments, shares, saves)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    ON CONFLICT(id) DO UPDATE SET
-      title = excluded.title,
-      channel = excluded.channel,
-      status = excluded.status,
-      asset_id = excluded.asset_id,
-      template_id = excluded.template_id,
-      owner = excluded.owner,
-      saved_at = excluded.saved_at,
-      scheduled_date = excluded.scheduled_date,
-      scheduled_time = excluded.scheduled_time,
-      published_at = excluded.published_at,
-      views = excluded.views,
-      likes = excluded.likes,
-      comments = excluded.comments,
-      shares = excluded.shares,
-      saves = excluded.saves
-  `);
-  if (shouldSeedLegacyMaterial) {
-    visionTreeContents.forEach((row) => upsertContent.run(...row));
-  }
-
   const upsertPlan = db.prepare(`
     INSERT INTO plans (id, date, day, slot, channel, theme, owner, goal, status, content_id)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -957,26 +960,10 @@ function syncVisionTreeDemoData() {
       channel = excluded.channel,
       theme = excluded.theme,
       owner = excluded.owner,
-      goal = excluded.goal,
-      status = excluded.status,
-      content_id = excluded.content_id
+      goal = excluded.goal
   `);
   if (shouldSeedLegacyMaterial) {
     visionTreePlans.forEach((row) => upsertPlan.run(...row));
-  }
-
-  const upsertActivity = db.prepare(`
-    INSERT INTO activities (id, content_id, type, note, time_label, created_at)
-    VALUES (?, ?, ?, ?, ?, ?)
-    ON CONFLICT(id) DO UPDATE SET
-      content_id = excluded.content_id,
-      type = excluded.type,
-      note = excluded.note,
-      time_label = excluded.time_label,
-      created_at = excluded.created_at
-  `);
-  if (shouldSeedLegacyMaterial) {
-    visionTreeActivities.forEach((row) => upsertActivity.run(...row));
   }
 }
 
@@ -1000,6 +987,23 @@ function pruneLegacyVisionTreeMaterial() {
   db.prepare(`DELETE FROM assets WHERE id IN (${placeholders})`).run(...legacyAssetIds);
 }
 
+function resetLegacyDemoContentState() {
+  const contentPlaceholders = legacyDemoContentIds.map(() => "?").join(", ");
+  const activityPlaceholders = legacyDemoActivityIds.map(() => "?").join(", ");
+  const planIds = visionTreePlans.map((plan) => plan[0]);
+  const planPlaceholders = planIds.map(() => "?").join(", ");
+
+  db.prepare(`UPDATE plans SET status = '待领取', content_id = NULL WHERE content_id IN (${contentPlaceholders})`).run(...legacyDemoContentIds);
+  db.prepare(`UPDATE plans SET status = '待领取' WHERE id IN (${planPlaceholders}) AND content_id IS NULL AND status IN ('制作中', '待发布', '已完成')`).run(
+    ...planIds
+  );
+  db.prepare(`DELETE FROM activities WHERE content_id IN (${contentPlaceholders}) OR id IN (${activityPlaceholders})`).run(
+    ...legacyDemoContentIds,
+    ...legacyDemoActivityIds
+  );
+  db.prepare(`DELETE FROM contents WHERE id IN (${contentPlaceholders})`).run(...legacyDemoContentIds);
+}
+
 function mapUser(row) {
   if (!row) return null;
   return {
@@ -1020,17 +1024,27 @@ function mapUser(row) {
   };
 }
 
+function mapMedia(row) {
+  return {
+    id: row.id,
+    name: row.name,
+    kind: row.kind,
+    mimeType: row.mimeType,
+    size: row.size,
+    url: row.url,
+    createdAt: row.createdAt
+  };
+}
+
 function seedDatabase() {
   const userCount = db.prepare("SELECT COUNT(*) AS count FROM users").get().count;
   if (userCount > 0) return;
 
   const users = personaUsers;
 
-  const assets = visionTreeAssets;
+  const assets = narrativeThemeAssets;
   const templates = visionTreeTemplates;
-  const contents = visionTreeContents;
   const plans = visionTreePlans;
-  const activities = visionTreeActivities;
 
   const insertUser = db.prepare(`
     INSERT INTO users
@@ -1099,32 +1113,18 @@ function seedDatabase() {
     )
   );
 
-  const insertContent = db.prepare(`
-    INSERT INTO contents
-      (id, title, channel, status, asset_id, template_id, owner, saved_at, scheduled_date, scheduled_time,
-       published_at, views, likes, comments, shares, saves)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `);
-  contents.forEach((row) => insertContent.run(...row));
-
   const insertPlan = db.prepare(`
     INSERT INTO plans (id, date, day, slot, channel, theme, owner, goal, status, content_id)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `);
   plans.forEach((row) => insertPlan.run(...row));
-
-  const insertActivity = db.prepare(`
-    INSERT INTO activities (id, content_id, type, note, time_label, created_at)
-    VALUES (?, ?, ?, ?, ?, ?)
-  `);
-  activities.forEach((row) => insertActivity.run(...row));
 }
 
 function assetReferenceCounts() {
   return new Map(
     db
-      .prepare("SELECT asset_id AS id, COUNT(*) AS count FROM contents WHERE status = '已发布' GROUP BY asset_id")
-      .all()
+      .prepare("SELECT asset_id AS id, COUNT(*) AS count FROM contents WHERE status = ? GROUP BY asset_id")
+      .all(statusPublished)
       .map((row) => [row.id, row.count])
   );
 }
@@ -1132,99 +1132,600 @@ function assetReferenceCounts() {
 function templateReferenceCounts() {
   return new Map(
     db
-      .prepare("SELECT template_id AS id, COUNT(*) AS count FROM contents WHERE status = '已发布' GROUP BY template_id")
-      .all()
+      .prepare("SELECT template_id AS id, COUNT(*) AS count FROM contents WHERE status = ? GROUP BY template_id")
+      .all(statusPublished)
       .map((row) => [row.id, row.count])
   );
 }
 
+function mapAsset(row, assetCounts = assetReferenceCounts()) {
+  return {
+    id: row.id,
+    title: row.title,
+    theme: row.theme,
+    source: row.source,
+    format: row.format,
+    freshness: row.freshness,
+    score: row.score,
+    tags: parseJson(row.tags_json),
+    summary: row.summary,
+    owner: row.owner,
+    palette: row.palette,
+    notes: parseJson(row.notes_json),
+    resources: parseJson(row.resources_json),
+    referenceCount: assetCounts.get(row.id) ?? 0
+  };
+}
+
+function listAssets() {
+  const counts = assetReferenceCounts();
+  return db.prepare("SELECT * FROM assets ORDER BY score DESC, title").all().map((row) => mapAsset(row, counts));
+}
+
+function getAsset(id) {
+  const row = db.prepare("SELECT * FROM assets WHERE id = ?").get(id);
+  return row ? mapAsset(row) : null;
+}
+
+function mapTemplate(row, templateCounts = templateReferenceCounts()) {
+  return {
+    id: row.id,
+    title: row.title,
+    format: row.format,
+    channels: parseJson(row.channels_json),
+    structure: parseJson(row.structure_json),
+    hook: row.hook,
+    length: row.length,
+    notes: parseJson(row.notes_json),
+    resources: parseJson(row.resources_json),
+    referenceCount: templateCounts.get(row.id) ?? 0
+  };
+}
+
+function listTemplates() {
+  const counts = templateReferenceCounts();
+  return db.prepare("SELECT * FROM templates ORDER BY id").all().map((row) => mapTemplate(row, counts));
+}
+
+function getTemplate(id) {
+  const row = db.prepare("SELECT * FROM templates WHERE id = ?").get(id);
+  return row ? mapTemplate(row) : null;
+}
+
+const contentSelectSql = `
+  SELECT c.*, a.title AS asset_title, t.title AS template_title
+  FROM contents c
+  JOIN assets a ON a.id = c.asset_id
+  JOIN templates t ON t.id = c.template_id
+`;
+
+function mapContent(row) {
+  return {
+    id: row.id,
+    title: row.title,
+    body: row.body ?? "",
+    channel: row.channel,
+    status: row.status,
+    assetId: row.asset_id,
+    templateId: row.template_id,
+    assetTitle: row.asset_title,
+    templateTitle: row.template_title,
+    owner: row.owner,
+    savedAt: row.saved_at,
+    savedDate: dateFromIso(row.saved_at),
+    savedTime: timeFromIso(row.saved_at),
+    scheduledDate: row.scheduled_date,
+    scheduledTime: row.scheduled_time,
+    publishedAt: row.published_at,
+    publishDate: dateFromIso(row.published_at, row.scheduled_date),
+    publishTime: timeFromIso(row.published_at, row.scheduled_time),
+    metrics: {
+      views: row.views,
+      likes: row.likes,
+      comments: row.comments,
+      shares: row.shares,
+      saves: row.saves
+    },
+    media: db
+      .prepare(
+        "SELECT id, original_name AS name, kind, mime_type AS mimeType, size, url, created_at AS createdAt FROM media_attachments WHERE content_id = ? ORDER BY datetime(created_at)"
+      )
+      .all(row.id)
+      .map(mapMedia),
+    activities: db
+      .prepare("SELECT id, type, note, time_label AS time FROM activities WHERE content_id = ? ORDER BY datetime(created_at) DESC LIMIT 8")
+      .all(row.id)
+  };
+}
+
+function listContents() {
+  return db.prepare(`${contentSelectSql} ORDER BY datetime(c.saved_at) DESC`).all().map(mapContent);
+}
+
+function getContent(id) {
+  const row = db.prepare(`${contentSelectSql} WHERE c.id = ?`).get(id);
+  return row ? mapContent(row) : null;
+}
+
+function validationError(message, statusCode = 400) {
+  const error = new Error(message);
+  error.statusCode = statusCode;
+  return error;
+}
+
+function isPlainObject(value) {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+}
+
+function normalizeRecordId(value, fallback) {
+  const id = value === undefined || value === null || value === "" ? fallback : String(value).trim();
+  if (!/^[a-zA-Z0-9_-]{1,80}$/.test(id)) {
+    throw validationError("ID 只能包含字母、数字、下划线和短横线，长度不超过 80。");
+  }
+  return id;
+}
+
+function normalizeStringField(value, fallback, label, maxLength = 200, required = false) {
+  if (value === undefined || value === null) {
+    if (required) throw validationError(`${label}不能为空。`);
+    return fallback ?? "";
+  }
+  if (typeof value !== "string") throw validationError(`${label}必须是字符串。`);
+  const text = value.trim();
+  if ((required && !text) || text.length > maxLength) {
+    throw validationError(`${label}不能为空，且长度不能超过 ${maxLength}。`);
+  }
+  return text;
+}
+
+function normalizeStringArray(value, fallback, label, maxItems = 30, maxLength = 120) {
+  if (value === undefined || value === null) return fallback ?? [];
+  if (!Array.isArray(value)) throw validationError(`${label}必须是数组。`);
+  if (value.length > maxItems) throw validationError(`${label}最多 ${maxItems} 项。`);
+  return [
+    ...new Set(
+      value.map((item) => {
+        if (typeof item !== "string") throw validationError(`${label}只能包含字符串。`);
+        const text = item.trim();
+        if (text.length > maxLength) throw validationError(`${label}单项不能超过 ${maxLength}。`);
+        return text;
+      })
+    )
+  ].filter(Boolean);
+}
+
+function normalizeResourceLinks(value, fallback = []) {
+  if (value === undefined || value === null) return fallback;
+  if (!Array.isArray(value)) throw validationError("resources 必须是数组。");
+  if (value.length > 20) throw validationError("resources 最多 20 项。");
+  return value.map((resource, index) => {
+    if (!isPlainObject(resource)) throw validationError("resources 每一项必须是对象。");
+    const kind = resourceKinds.has(resource.kind) ? resource.kind : "web";
+    return {
+      id: normalizeRecordId(resource.id, `resource-${index + 1}`),
+      title: normalizeStringField(resource.title, "", "资源标题", 160, true),
+      kind,
+      url: normalizeStringField(resource.url, "", "资源链接", 1000, true),
+      source: normalizeStringField(resource.source, "", "资源来源", 120),
+      updated: normalizeStringField(resource.updated, "", "资源更新时间", 80),
+      summary: normalizeStringField(resource.summary, "", "资源摘要", 600),
+      highlights: normalizeStringArray(resource.highlights, [], "资源高亮", 12, 240)
+    };
+  });
+}
+
+function normalizeScore(value, fallback = 70) {
+  if (value === undefined || value === null || value === "") return fallback;
+  const score = Number(value);
+  if (!Number.isInteger(score) || score < 0 || score > 100) {
+    throw validationError("score 必须是 0-100 的整数。");
+  }
+  return score;
+}
+
+function normalizeAssetPayload(body, existing = null) {
+  if (!isPlainObject(body)) throw validationError("请求体必须是 JSON 对象。");
+  const current = existing
+    ? {
+        id: existing.id,
+        title: existing.title,
+        theme: existing.theme,
+        source: existing.source,
+        format: existing.format,
+        freshness: existing.freshness,
+        score: existing.score,
+        tags: parseJson(existing.tags_json),
+        summary: existing.summary,
+        owner: existing.owner,
+        palette: existing.palette,
+        notes: parseJson(existing.notes_json),
+        resources: parseJson(existing.resources_json)
+      }
+    : {};
+  const required = !existing;
+  return {
+    id: existing?.id ?? normalizeRecordId(body.id, `asset-${randomUUID().slice(0, 8)}`),
+    title: normalizeStringField(body.title, current.title, "素材标题", 160, required),
+    theme: normalizeStringField(body.theme, current.theme, "素材主题", 120, required),
+    source: normalizeStringField(body.source, current.source, "素材来源", 160, required),
+    format: normalizeStringField(body.format, current.format, "素材格式", 120, required),
+    freshness: normalizeStringField(body.freshness, current.freshness ?? dateFromIso(nowIso()), "素材新鲜度", 80),
+    score: normalizeScore(body.score, current.score ?? 70),
+    tags: normalizeStringArray(body.tags, current.tags ?? [], "素材标签", 30, 60),
+    summary: normalizeStringField(body.summary, current.summary, "素材简介", 800, required),
+    owner: normalizeStringField(body.owner, current.owner, "素材负责人", 120, required),
+    palette: normalizeStringField(body.palette, current.palette ?? "mint", "素材配色", 40),
+    notes: normalizeStringArray(body.notes, current.notes ?? [], "素材备注", 20, 500),
+    resources: normalizeResourceLinks(body.resources, current.resources ?? [])
+  };
+}
+
+function normalizeTemplatePayload(body, existing = null) {
+  if (!isPlainObject(body)) throw validationError("请求体必须是 JSON 对象。");
+  const current = existing
+    ? {
+        id: existing.id,
+        title: existing.title,
+        format: existing.format,
+        channels: parseJson(existing.channels_json),
+        structure: parseJson(existing.structure_json),
+        hook: existing.hook,
+        length: existing.length,
+        notes: parseJson(existing.notes_json),
+        resources: parseJson(existing.resources_json)
+      }
+    : {};
+  const required = !existing;
+  return {
+    id: existing?.id ?? normalizeRecordId(body.id, `template-${randomUUID().slice(0, 8)}`),
+    title: normalizeStringField(body.title, current.title, "模板标题", 160, required),
+    format: normalizeStringField(body.format, current.format, "模板格式", 120, required),
+    channels: normalizeStringArray(body.channels, current.channels ?? ["X"], "模板渠道", 12, 40),
+    structure: normalizeStringArray(body.structure, current.structure ?? [], "模板结构", 30, 180),
+    hook: normalizeStringField(body.hook, current.hook, "模板开场", 500, required),
+    length: normalizeStringField(body.length, current.length, "模板长度", 80, required),
+    notes: normalizeStringArray(body.notes, current.notes ?? [], "模板备注", 20, 500),
+    resources: normalizeResourceLinks(body.resources, current.resources ?? [])
+  };
+}
+
+function createAssetRecord(body) {
+  const asset = normalizeAssetPayload(body);
+  if (db.prepare("SELECT id FROM assets WHERE id = ?").get(asset.id)) {
+    throw validationError("素材 ID 已存在。", 409);
+  }
+  db.prepare(`
+    INSERT INTO assets
+      (id, title, theme, source, format, freshness, score, tags_json, summary, owner, palette, notes_json, resources_json)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(
+    asset.id,
+    asset.title,
+    asset.theme,
+    asset.source,
+    asset.format,
+    asset.freshness,
+    asset.score,
+    json(asset.tags),
+    asset.summary,
+    asset.owner,
+    asset.palette,
+    json(asset.notes),
+    json(asset.resources)
+  );
+  return getAsset(asset.id);
+}
+
+function updateAssetRecord(assetId, body) {
+  const current = db.prepare("SELECT * FROM assets WHERE id = ?").get(assetId);
+  if (!current) return null;
+  const asset = normalizeAssetPayload(body, current);
+  db.prepare(`
+    UPDATE assets
+    SET title = ?,
+        theme = ?,
+        source = ?,
+        format = ?,
+        freshness = ?,
+        score = ?,
+        tags_json = ?,
+        summary = ?,
+        owner = ?,
+        palette = ?,
+        notes_json = ?,
+        resources_json = ?
+    WHERE id = ?
+  `).run(
+    asset.title,
+    asset.theme,
+    asset.source,
+    asset.format,
+    asset.freshness,
+    asset.score,
+    json(asset.tags),
+    asset.summary,
+    asset.owner,
+    asset.palette,
+    json(asset.notes),
+    json(asset.resources),
+    assetId
+  );
+  return getAsset(assetId);
+}
+
+function deleteAssetRecord(assetId) {
+  const current = db.prepare("SELECT id FROM assets WHERE id = ?").get(assetId);
+  if (!current) return false;
+  const references = db.prepare("SELECT COUNT(*) AS count FROM contents WHERE asset_id = ?").get(assetId).count;
+  if (references > 0) {
+    throw validationError("该素材已有内容记录引用，不能直接删除。", 409);
+  }
+  db.prepare("DELETE FROM assets WHERE id = ?").run(assetId);
+  return true;
+}
+
+function createTemplateRecord(body) {
+  const template = normalizeTemplatePayload(body);
+  if (db.prepare("SELECT id FROM templates WHERE id = ?").get(template.id)) {
+    throw validationError("模板 ID 已存在。", 409);
+  }
+  db.prepare(`
+    INSERT INTO templates
+      (id, title, format, channels_json, structure_json, hook, length, notes_json, resources_json)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(
+    template.id,
+    template.title,
+    template.format,
+    json(template.channels),
+    json(template.structure),
+    template.hook,
+    template.length,
+    json(template.notes),
+    json(template.resources)
+  );
+  return getTemplate(template.id);
+}
+
+function updateTemplateRecord(templateId, body) {
+  const current = db.prepare("SELECT * FROM templates WHERE id = ?").get(templateId);
+  if (!current) return null;
+  const template = normalizeTemplatePayload(body, current);
+  db.prepare(`
+    UPDATE templates
+    SET title = ?,
+        format = ?,
+        channels_json = ?,
+        structure_json = ?,
+        hook = ?,
+        length = ?,
+        notes_json = ?,
+        resources_json = ?
+    WHERE id = ?
+  `).run(
+    template.title,
+    template.format,
+    json(template.channels),
+    json(template.structure),
+    template.hook,
+    template.length,
+    json(template.notes),
+    json(template.resources),
+    templateId
+  );
+  return getTemplate(templateId);
+}
+
+function deleteTemplateRecord(templateId) {
+  const current = db.prepare("SELECT id FROM templates WHERE id = ?").get(templateId);
+  if (!current) return false;
+  const references = db.prepare("SELECT COUNT(*) AS count FROM contents WHERE template_id = ?").get(templateId).count;
+  if (references > 0) {
+    throw validationError("该模板已有内容记录引用，不能直接删除。", 409);
+  }
+  db.prepare("DELETE FROM templates WHERE id = ?").run(templateId);
+  return true;
+}
+
+function normalizeContentBody(value, fallback = "") {
+  if (value === undefined || value === null) return fallback;
+  if (typeof value !== "string") throw validationError("正文必须是字符串。");
+  if (value.length > maxContentBodyLength) throw validationError(`正文不能超过 ${maxContentBodyLength} 字。`);
+  return value.trim();
+}
+
+function normalizeContentStatus(value, fallback = statusDraft) {
+  if (value === undefined || value === null || value === "") return fallback;
+  const status = String(value).trim();
+  if (!editableContentStatuses.has(status)) {
+    throw validationError("内容状态仅可写入草稿、审核中、已排期；真实发布请使用 platform-update。");
+  }
+  return status;
+}
+
+function normalizeScheduleValue(value, fallback, label) {
+  if (value === undefined || value === null || value === "") return fallback;
+  return normalizeStringField(value, fallback, label, 40, true);
+}
+
+function ensureAssetAndTemplate(assetId, templateId) {
+  const asset = db.prepare("SELECT id, title FROM assets WHERE id = ?").get(assetId);
+  const template = db.prepare("SELECT id, title FROM templates WHERE id = ?").get(templateId);
+  if (!asset || !template) throw validationError("素材或模板不存在。");
+  return { asset, template };
+}
+
+function assertBindableMedia(mediaIds, user) {
+  if (!mediaIds.length) return;
+  const placeholders = mediaIds.map(() => "?").join(", ");
+  const validMediaCount = db
+    .prepare(`SELECT COUNT(*) AS count FROM media_attachments WHERE id IN (${placeholders}) AND owner = ? AND content_id IS NULL`)
+    .get(...mediaIds, user.displayName).count;
+  if (validMediaCount !== mediaIds.length) {
+    throw validationError("存在无法绑定的媒体附件。");
+  }
+}
+
+function bindMediaToContent(mediaIds, user, contentId) {
+  if (!mediaIds.length) return;
+  const placeholders = mediaIds.map(() => "?").join(", ");
+  db.prepare(`UPDATE media_attachments SET content_id = ? WHERE id IN (${placeholders}) AND owner = ? AND content_id IS NULL`).run(
+    contentId,
+    ...mediaIds,
+    user.displayName
+  );
+}
+
+function createContentRecord(body, user, options = {}) {
+  if (!isPlainObject(body)) throw validationError("请求体必须是 JSON 对象。");
+  const title = normalizeStringField(body.title, "", "内容标题", 200, true);
+  const contentBody = normalizeContentBody(body.body, "");
+  const channel = normalizeStringField(body.channel, "", "发布渠道", 20, true);
+  const assetId = normalizeStringField(body.assetId, "", "素材 ID", 80, true);
+  const templateId = normalizeStringField(body.templateId, "", "模板 ID", 80, true);
+  const { asset, template } = ensureAssetAndTemplate(assetId, templateId);
+  const plan = body.planId ? db.prepare("SELECT * FROM plans WHERE id = ?").get(String(body.planId)) : null;
+  const status = options.forceStatus ?? normalizeContentStatus(body.status, statusDraft);
+  const mediaIds = normalizeMediaIds(body.mediaIds);
+  assertBindableMedia(mediaIds, user);
+
+  const id = normalizeRecordId(body.id, `content-${Date.now()}-${randomUUID().slice(0, 6)}`);
+  const existing = db.prepare("SELECT id FROM contents WHERE id = ?").get(id);
+  if (existing) throw validationError("内容 ID 已存在。");
+
+  const savedAt = nowIso();
+  const scheduledDate = normalizeScheduleValue(body.scheduledDate, plan?.date ?? dateFromIso(savedAt), "计划日期");
+  const scheduledTime = normalizeScheduleValue(body.scheduledTime, plan?.slot ?? timeFromIso(savedAt), "计划时间");
+
+  db.prepare(`
+    INSERT INTO contents
+      (id, title, body, channel, status, asset_id, template_id, owner, saved_at, scheduled_date, scheduled_time, published_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL)
+  `).run(id, title, contentBody, channel, status, asset.id, template.id, user.displayName, savedAt, scheduledDate, scheduledTime);
+
+  bindMediaToContent(mediaIds, user, id);
+
+  if (plan) {
+    db.prepare("UPDATE plans SET status = ?, content_id = ? WHERE id = ?").run(statusPlanWorking, id, plan.id);
+  }
+
+  db.prepare("INSERT INTO activities (id, content_id, type, note, time_label, created_at) VALUES (?, ?, ?, ?, ?, ?)").run(
+    `act${Date.now()}`,
+    id,
+    statusActivityUpdate,
+    `从「${asset.title}」和「${template.title}」生成草稿。`,
+    "刚刚",
+    savedAt
+  );
+
+  return getContent(id);
+}
+
+function updateContentRecord(contentId, body, user) {
+  if (!isPlainObject(body)) throw validationError("请求体必须是 JSON 对象。");
+  if (
+    ["publishedAt", "metrics", "views", "likes", "comments", "shares", "saves"].some((field) => Object.prototype.hasOwnProperty.call(body, field))
+  ) {
+    throw validationError("真实发布时间和平台数据请使用 /api/contents/:id/platform-update 更新。");
+  }
+
+  const current = db.prepare("SELECT * FROM contents WHERE id = ?").get(contentId);
+  if (!current) return null;
+
+  const updates = [];
+  const values = [];
+  const setField = (column, value) => {
+    updates.push(`${column} = ?`);
+    values.push(value);
+  };
+
+  if (Object.prototype.hasOwnProperty.call(body, "title")) {
+    setField("title", normalizeStringField(body.title, current.title, "内容标题", 200, true));
+  }
+  if (Object.prototype.hasOwnProperty.call(body, "body")) {
+    setField("body", normalizeContentBody(body.body, current.body ?? ""));
+  }
+  if (Object.prototype.hasOwnProperty.call(body, "channel")) {
+    setField("channel", normalizeStringField(body.channel, current.channel, "发布渠道", 20, true));
+  }
+  if (Object.prototype.hasOwnProperty.call(body, "status")) {
+    if (current.status === statusPublished) {
+      throw validationError("已发布内容的状态请通过平台更新 API 维护。");
+    }
+    setField("status", normalizeContentStatus(body.status, current.status));
+  }
+  if (Object.prototype.hasOwnProperty.call(body, "assetId")) {
+    const assetId = normalizeStringField(body.assetId, current.asset_id, "素材 ID", 80, true);
+    if (!db.prepare("SELECT id FROM assets WHERE id = ?").get(assetId)) throw validationError("素材不存在。");
+    setField("asset_id", assetId);
+  }
+  if (Object.prototype.hasOwnProperty.call(body, "templateId")) {
+    const templateId = normalizeStringField(body.templateId, current.template_id, "模板 ID", 80, true);
+    if (!db.prepare("SELECT id FROM templates WHERE id = ?").get(templateId)) throw validationError("模板不存在。");
+    setField("template_id", templateId);
+  }
+  if (Object.prototype.hasOwnProperty.call(body, "scheduledDate")) {
+    setField("scheduled_date", normalizeScheduleValue(body.scheduledDate, current.scheduled_date, "计划日期"));
+  }
+  if (Object.prototype.hasOwnProperty.call(body, "scheduledTime")) {
+    setField("scheduled_time", normalizeScheduleValue(body.scheduledTime, current.scheduled_time, "计划时间"));
+  }
+
+  const mediaIds = Object.prototype.hasOwnProperty.call(body, "mediaIds") ? normalizeMediaIds(body.mediaIds) : [];
+  if (Object.prototype.hasOwnProperty.call(body, "mediaIds")) {
+    assertBindableMedia(mediaIds, user);
+  }
+
+  if (updates.length) {
+    db.prepare(`UPDATE contents SET ${updates.join(", ")} WHERE id = ?`).run(...values, contentId);
+    db.prepare("INSERT INTO activities (id, content_id, type, note, time_label, created_at) VALUES (?, ?, ?, ?, ?, ?)").run(
+      `act${Date.now()}`,
+      contentId,
+      statusActivityUpdate,
+      "内容正文或基础字段已更新。",
+      "刚刚",
+      nowIso()
+    );
+  }
+  if (Object.prototype.hasOwnProperty.call(body, "mediaIds")) {
+    bindMediaToContent(mediaIds, user, contentId);
+  }
+
+  return getContent(contentId);
+}
+
+function clearContentBody(contentId) {
+  const current = db.prepare("SELECT id FROM contents WHERE id = ?").get(contentId);
+  if (!current) return null;
+  db.prepare("UPDATE contents SET body = '' WHERE id = ?").run(contentId);
+  db.prepare("INSERT INTO activities (id, content_id, type, note, time_label, created_at) VALUES (?, ?, ?, ?, ?, ?)").run(
+    `act${Date.now()}`,
+    contentId,
+    statusActivityUpdate,
+    "内容正文已清空。",
+    "刚刚",
+    nowIso()
+  );
+  return { id: contentId, body: "" };
+}
+
+function deleteContentRecord(contentId) {
+  const current = db.prepare("SELECT id FROM contents WHERE id = ?").get(contentId);
+  if (!current) return false;
+  db.prepare("UPDATE plans SET status = ?, content_id = NULL WHERE content_id = ?").run(statusPlanWaiting, contentId);
+  db.prepare("DELETE FROM contents WHERE id = ?").run(contentId);
+  return true;
+}
+
 function getBootstrap(user) {
-  const assetCounts = assetReferenceCounts();
-  const templateCounts = templateReferenceCounts();
-
-  const assets = db
-    .prepare("SELECT * FROM assets ORDER BY score DESC")
-    .all()
-    .map((row) => ({
-      id: row.id,
-      title: row.title,
-      theme: row.theme,
-      source: row.source,
-      format: row.format,
-      freshness: row.freshness,
-      score: row.score,
-      tags: parseJson(row.tags_json),
-      summary: row.summary,
-      owner: row.owner,
-      palette: row.palette,
-      notes: parseJson(row.notes_json),
-      resources: parseJson(row.resources_json),
-      referenceCount: assetCounts.get(row.id) ?? 0
-    }));
-
-  const templates = db
-    .prepare("SELECT * FROM templates ORDER BY id")
-    .all()
-    .map((row) => ({
-      id: row.id,
-      title: row.title,
-      format: row.format,
-      channels: parseJson(row.channels_json),
-      structure: parseJson(row.structure_json),
-      hook: row.hook,
-      length: row.length,
-      notes: parseJson(row.notes_json),
-      resources: parseJson(row.resources_json),
-      referenceCount: templateCounts.get(row.id) ?? 0
-    }));
-
-  const contents = db
-    .prepare(`
-      SELECT c.*, a.title AS asset_title, t.title AS template_title
-      FROM contents c
-      JOIN assets a ON a.id = c.asset_id
-      JOIN templates t ON t.id = c.template_id
-      ORDER BY datetime(c.saved_at) DESC
-    `)
-    .all()
-    .map((row) => ({
-      id: row.id,
-      title: row.title,
-      channel: row.channel,
-      status: row.status,
-      assetId: row.asset_id,
-      templateId: row.template_id,
-      assetTitle: row.asset_title,
-      templateTitle: row.template_title,
-      owner: row.owner,
-      savedAt: row.saved_at,
-      savedDate: dateFromIso(row.saved_at),
-      savedTime: timeFromIso(row.saved_at),
-      scheduledDate: row.scheduled_date,
-      scheduledTime: row.scheduled_time,
-      publishedAt: row.published_at,
-      publishDate: dateFromIso(row.published_at, row.scheduled_date),
-      publishTime: timeFromIso(row.published_at, row.scheduled_time),
-      metrics: {
-        views: row.views,
-        likes: row.likes,
-        comments: row.comments,
-        shares: row.shares,
-        saves: row.saves
-      },
-      activities: db
-        .prepare("SELECT id, type, note, time_label AS time FROM activities WHERE content_id = ? ORDER BY datetime(created_at) DESC LIMIT 8")
-        .all(row.id)
-    }));
-
   const planItems = db.prepare("SELECT id, date, day, slot, channel, theme, owner, goal, status, content_id AS contentId FROM plans ORDER BY date, slot").all();
 
   return {
     user,
     accounts: getAccounts(),
-    assets,
-    templates,
-    contentPool: contents,
+    assets: listAssets(),
+    templates: listTemplates(),
+    contentPool: listContents(),
     planItems
   };
 }
@@ -1276,6 +1777,111 @@ function getRequestBody(req) {
       }
     });
   });
+}
+
+function getRawBody(req, maxBytes = maxUploadBytes) {
+  return new Promise((resolveBody, rejectBody) => {
+    const chunks = [];
+    let total = 0;
+    let failed = false;
+
+    req.on("data", (chunk) => {
+      if (failed) return;
+      total += chunk.length;
+      if (total > maxBytes) {
+        failed = true;
+        rejectBody(new Error("Request body too large"));
+        req.destroy();
+        return;
+      }
+      chunks.push(chunk);
+    });
+    req.on("end", () => {
+      if (!failed) resolveBody(Buffer.concat(chunks));
+    });
+    req.on("error", rejectBody);
+  });
+}
+
+function parseMultipart(req, body) {
+  const contentType = req.headers["content-type"] ?? "";
+  const boundaryMatch = /boundary=(?:"([^"]+)"|([^;]+))/i.exec(contentType);
+  const boundary = boundaryMatch?.[1] ?? boundaryMatch?.[2];
+  if (!boundary) return [];
+
+  const boundaryBuffer = Buffer.from(`--${boundary}`);
+  const headerSeparator = Buffer.from("\r\n\r\n");
+  const nextBoundaryPrefix = Buffer.from(`\r\n--${boundary}`);
+  const parts = [];
+  let cursor = body.indexOf(boundaryBuffer);
+
+  while (cursor !== -1) {
+    let partStart = cursor + boundaryBuffer.length;
+    const marker = body.subarray(partStart, partStart + 2).toString("utf8");
+    if (marker === "--") break;
+    if (marker === "\r\n") partStart += 2;
+
+    const headerEnd = body.indexOf(headerSeparator, partStart);
+    if (headerEnd === -1) break;
+    const contentStart = headerEnd + headerSeparator.length;
+    const nextBoundary = body.indexOf(nextBoundaryPrefix, contentStart);
+    if (nextBoundary === -1) break;
+
+    const headersText = body.subarray(partStart, headerEnd).toString("utf8");
+    const headers = Object.fromEntries(
+      headersText
+        .split("\r\n")
+        .map((line) => {
+          const separator = line.indexOf(":");
+          if (separator === -1) return null;
+          return [line.slice(0, separator).trim().toLowerCase(), line.slice(separator + 1).trim()];
+        })
+        .filter(Boolean)
+    );
+
+    const disposition = headers["content-disposition"] ?? "";
+    const name = /name="([^"]+)"/i.exec(disposition)?.[1] ?? "";
+    const filename = /filename="([^"]*)"/i.exec(disposition)?.[1] ?? "";
+    parts.push({
+      name,
+      filename,
+      mimeType: headers["content-type"] ?? "application/octet-stream",
+      data: body.subarray(contentStart, nextBoundary)
+    });
+
+    cursor = nextBoundary + 2;
+  }
+
+  return parts;
+}
+
+function sanitizeFileName(value) {
+  const cleaned = String(value ?? "")
+    .replace(/[\\/:*?"<>|]+/g, "-")
+    .replace(/\s+/g, " ")
+    .trim();
+  return cleaned.slice(0, 120) || "upload";
+}
+
+function extensionForUpload(mimeType, originalName) {
+  const originalExtension = extname(originalName).toLowerCase();
+  if (/^\.[a-z0-9]{1,8}$/.test(originalExtension)) return originalExtension;
+  return mimeFallbackExtensions.get(mimeType) ?? (mimeType.startsWith("image/") ? ".img" : ".video");
+}
+
+function isAllowedMediaMime(mimeType) {
+  return (mimeType.startsWith("image/") && mimeType !== "image/svg+xml") || mimeType.startsWith("video/");
+}
+
+function normalizeMediaIds(value) {
+  if (!Array.isArray(value)) return [];
+  return [
+    ...new Set(
+      value
+        .map((item) => String(item).trim())
+        .filter((item) => /^[a-zA-Z0-9_-]{4,80}$/.test(item))
+    )
+  ].slice(0, maxUploadFiles);
 }
 
 function sendJson(res, status, payload, origin) {
@@ -1340,16 +1946,103 @@ function validMetric(value) {
   return Number.isInteger(value) && value >= 0 && value <= 1_000_000_000;
 }
 
+async function storeUploadedMedia(req, user) {
+  const body = await getRawBody(req);
+  const parts = parseMultipart(req, body).filter((part) => part.filename);
+  if (!parts.length) {
+    throw new Error("请选择要上传的图片或视频。");
+  }
+  if (parts.length > maxUploadFiles) {
+    throw new Error(`一次最多上传 ${maxUploadFiles} 个文件。`);
+  }
+
+  const createdAt = nowIso();
+  const insert = db.prepare(`
+    INSERT INTO media_attachments
+      (id, content_id, owner, original_name, mime_type, kind, size, url, created_at)
+    VALUES (?, NULL, ?, ?, ?, ?, ?, ?, ?)
+  `);
+
+  return parts.map((part) => {
+    const mimeType = String(part.mimeType ?? "").toLowerCase();
+    if (!isAllowedMediaMime(mimeType)) {
+      throw new Error("仅支持上传图片或视频文件。");
+    }
+    if (part.data.length > maxUploadFileBytes) {
+      throw new Error("单个文件不能超过 50MB。");
+    }
+
+    const id = `m${Date.now()}-${randomUUID().slice(0, 8)}`;
+    const originalName = sanitizeFileName(part.filename);
+    const kind = mimeType.startsWith("image/") ? "image" : "video";
+    const storedName = `${id}${extensionForUpload(mimeType, originalName)}`;
+    const filePath = join(uploadDir, storedName);
+    const url = `/api/uploads/${storedName}`;
+
+    writeFileSync(filePath, part.data);
+    insert.run(id, user.displayName, originalName, mimeType, kind, part.data.length, url, createdAt);
+
+    return {
+      id,
+      name: originalName,
+      kind,
+      mimeType,
+      size: part.data.length,
+      url,
+      createdAt
+    };
+  });
+}
+
+function serveUploadedMedia(req, res, pathname, origin) {
+  if (req.method !== "GET" && req.method !== "HEAD") {
+    sendError(res, 405, "Method Not Allowed", origin);
+    return true;
+  }
+
+  const rawName = decodeURIComponent(pathname.replace("/api/uploads/", ""));
+  if (!/^[a-zA-Z0-9_.-]+$/.test(rawName)) {
+    sendError(res, 404, "Not Found", origin);
+    return true;
+  }
+
+  const safeRoot = resolve(uploadDir);
+  const filePath = resolve(uploadDir, rawName);
+  if (!filePath.startsWith(`${safeRoot}${sep}`) || !existsSync(filePath)) {
+    sendError(res, 404, "Not Found", origin);
+    return true;
+  }
+
+  const media = db.prepare("SELECT mime_type AS mimeType FROM media_attachments WHERE url = ?").get(`/api/uploads/${rawName}`);
+  const headers = {
+    "Content-Type": media?.mimeType ?? "application/octet-stream",
+    "X-Content-Type-Options": "nosniff",
+    "Cache-Control": "public, max-age=31536000, immutable"
+  };
+  if (origin && allowedOrigins.has(origin)) headers["Access-Control-Allow-Origin"] = origin;
+  res.writeHead(200, headers);
+  if (req.method === "HEAD") {
+    res.end();
+    return true;
+  }
+  res.end(readFileSync(filePath));
+  return true;
+}
+
 async function handleApi(req, res, pathname, origin) {
   if (req.method === "OPTIONS") {
     const headers = {
-      "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
+      "Access-Control-Allow-Methods": "GET,POST,PATCH,DELETE,OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type, Authorization",
       "Access-Control-Max-Age": "86400"
     };
     if (origin && allowedOrigins.has(origin)) headers["Access-Control-Allow-Origin"] = origin;
     res.writeHead(204, headers);
     res.end();
+    return;
+  }
+
+  if (pathname.startsWith("/api/uploads/") && serveUploadedMedia(req, res, pathname, origin)) {
     return;
   }
 
@@ -1406,49 +2099,238 @@ async function handleApi(req, res, pathname, origin) {
     return;
   }
 
+  if (pathname === "/api/assets") {
+    const user = requireAuth(req, res, origin);
+    if (!user) return;
+    if (req.method === "GET") {
+      sendJson(res, 200, { assets: listAssets() }, origin);
+      return;
+    }
+    if (req.method === "POST") {
+      try {
+        const asset = createAssetRecord(await getRequestBody(req));
+        sendJson(res, 201, { asset }, origin);
+      } catch (error) {
+        sendError(res, error.statusCode ?? 400, error instanceof Error ? error.message : "素材创建失败。", origin);
+      }
+      return;
+    }
+  }
+
+  const assetMatch = pathname.match(/^\/api\/assets\/([^/]+)$/);
+  if (assetMatch) {
+    const user = requireAuth(req, res, origin);
+    if (!user) return;
+    const assetId = decodeURIComponent(assetMatch[1]);
+    if (req.method === "GET") {
+      const asset = getAsset(assetId);
+      if (!asset) {
+        sendError(res, 404, "素材不存在。", origin);
+        return;
+      }
+      sendJson(res, 200, { asset }, origin);
+      return;
+    }
+    if (req.method === "PATCH") {
+      try {
+        const asset = updateAssetRecord(assetId, await getRequestBody(req));
+        if (!asset) {
+          sendError(res, 404, "素材不存在。", origin);
+          return;
+        }
+        sendJson(res, 200, { asset }, origin);
+      } catch (error) {
+        sendError(res, error.statusCode ?? 400, error instanceof Error ? error.message : "素材更新失败。", origin);
+      }
+      return;
+    }
+    if (req.method === "DELETE") {
+      try {
+        const deleted = deleteAssetRecord(assetId);
+        if (!deleted) {
+          sendError(res, 404, "素材不存在。", origin);
+          return;
+        }
+        sendJson(res, 200, { deleted: true, assetId }, origin);
+      } catch (error) {
+        sendError(res, error.statusCode ?? 400, error instanceof Error ? error.message : "素材删除失败。", origin);
+      }
+      return;
+    }
+  }
+
+  if (pathname === "/api/templates") {
+    const user = requireAuth(req, res, origin);
+    if (!user) return;
+    if (req.method === "GET") {
+      sendJson(res, 200, { templates: listTemplates() }, origin);
+      return;
+    }
+    if (req.method === "POST") {
+      try {
+        const template = createTemplateRecord(await getRequestBody(req));
+        sendJson(res, 201, { template }, origin);
+      } catch (error) {
+        sendError(res, error.statusCode ?? 400, error instanceof Error ? error.message : "模板创建失败。", origin);
+      }
+      return;
+    }
+  }
+
+  const templateMatch = pathname.match(/^\/api\/templates\/([^/]+)$/);
+  if (templateMatch) {
+    const user = requireAuth(req, res, origin);
+    if (!user) return;
+    const templateId = decodeURIComponent(templateMatch[1]);
+    if (req.method === "GET") {
+      const template = getTemplate(templateId);
+      if (!template) {
+        sendError(res, 404, "模板不存在。", origin);
+        return;
+      }
+      sendJson(res, 200, { template }, origin);
+      return;
+    }
+    if (req.method === "PATCH") {
+      try {
+        const template = updateTemplateRecord(templateId, await getRequestBody(req));
+        if (!template) {
+          sendError(res, 404, "模板不存在。", origin);
+          return;
+        }
+        sendJson(res, 200, { template }, origin);
+      } catch (error) {
+        sendError(res, error.statusCode ?? 400, error instanceof Error ? error.message : "模板更新失败。", origin);
+      }
+      return;
+    }
+    if (req.method === "DELETE") {
+      try {
+        const deleted = deleteTemplateRecord(templateId);
+        if (!deleted) {
+          sendError(res, 404, "模板不存在。", origin);
+          return;
+        }
+        sendJson(res, 200, { deleted: true, templateId }, origin);
+      } catch (error) {
+        sendError(res, error.statusCode ?? 400, error instanceof Error ? error.message : "模板删除失败。", origin);
+      }
+      return;
+    }
+  }
+
+  if (pathname === "/api/contents") {
+    const user = requireAuth(req, res, origin);
+    if (!user) return;
+    if (req.method === "GET") {
+      sendJson(res, 200, { contents: listContents() }, origin);
+      return;
+    }
+    if (req.method === "POST") {
+      try {
+        const content = createContentRecord(await getRequestBody(req), user);
+        sendJson(res, 201, { content }, origin);
+      } catch (error) {
+        sendError(res, error.statusCode ?? 400, error instanceof Error ? error.message : "内容创建失败。", origin);
+      }
+      return;
+    }
+  }
+
+  if (req.method === "POST" && pathname === "/api/uploads") {
+    const user = requireAuth(req, res, origin);
+    if (!user) return;
+    try {
+      const media = await storeUploadedMedia(req, user);
+      sendJson(res, 201, { media }, origin);
+    } catch (error) {
+      sendError(res, 400, error instanceof Error ? error.message : "媒体上传失败。", origin);
+    }
+    return;
+  }
+
   if (req.method === "POST" && pathname === "/api/contents/drafts") {
     const user = requireAuth(req, res, origin);
     if (!user) return;
-    const body = await getRequestBody(req);
-    if (!validateText(body.title) || !validateText(body.channel, 20) || !validateText(body.assetId, 40) || !validateText(body.templateId, 40)) {
-      sendError(res, 400, "草稿字段不完整。", origin);
-      return;
+    try {
+      createContentRecord(await getRequestBody(req), user, { forceStatus: statusDraft });
+      sendJson(res, 201, getBootstrap(user), origin);
+    } catch (error) {
+      sendError(res, error.statusCode ?? 400, error instanceof Error ? error.message : "草稿保存失败。", origin);
     }
-
-    const asset = db.prepare("SELECT id, title FROM assets WHERE id = ?").get(body.assetId);
-    const template = db.prepare("SELECT id, title FROM templates WHERE id = ?").get(body.templateId);
-    const plan = body.planId ? db.prepare("SELECT * FROM plans WHERE id = ?").get(String(body.planId)) : null;
-    if (!asset || !template) {
-      sendError(res, 400, "素材或模板不存在。", origin);
-      return;
-    }
-
-    const id = `c${Date.now()}`;
-    const savedAt = nowIso();
-    const scheduledDate = plan?.date ?? dateFromIso(savedAt);
-    const scheduledTime = plan?.slot ?? timeFromIso(savedAt);
-
-    db.prepare(`
-      INSERT INTO contents
-        (id, title, channel, status, asset_id, template_id, owner, saved_at, scheduled_date, scheduled_time, published_at)
-      VALUES (?, ?, ?, '草稿', ?, ?, ?, ?, ?, ?, NULL)
-    `).run(id, String(body.title).trim(), String(body.channel).trim(), asset.id, template.id, user.displayName, savedAt, scheduledDate, scheduledTime);
-
-    if (plan) {
-      db.prepare("UPDATE plans SET status = '制作中', content_id = ? WHERE id = ?").run(id, plan.id);
-    }
-
-    db.prepare("INSERT INTO activities (id, content_id, type, note, time_label, created_at) VALUES (?, ?, ?, ?, ?, ?)").run(
-      `act${Date.now()}`,
-      id,
-      "状态更新",
-      `从「${asset.title}」和「${template.title}」生成草稿。`,
-      "刚刚",
-      savedAt
-    );
-
-    sendJson(res, 201, getBootstrap(user), origin);
     return;
+  }
+
+  const contentBodyMatch = pathname.match(/^\/api\/contents\/([^/]+)\/body$/);
+  if (contentBodyMatch) {
+    const user = requireAuth(req, res, origin);
+    if (!user) return;
+    const contentId = decodeURIComponent(contentBodyMatch[1]);
+    const content = getContent(contentId);
+    if (!content) {
+      sendError(res, 404, "内容不存在。", origin);
+      return;
+    }
+    if (req.method === "GET") {
+      sendJson(res, 200, { id: content.id, body: content.body ?? "" }, origin);
+      return;
+    }
+    if (req.method === "PATCH") {
+      try {
+        const payload = await getRequestBody(req);
+        if (!Object.prototype.hasOwnProperty.call(payload, "body")) {
+          throw validationError("请提供 body 字段。");
+        }
+        const updated = updateContentRecord(contentId, { body: payload.body }, user);
+        sendJson(res, 200, { id: updated.id, body: updated.body ?? "", content: updated }, origin);
+      } catch (error) {
+        sendError(res, error.statusCode ?? 400, error instanceof Error ? error.message : "正文更新失败。", origin);
+      }
+      return;
+    }
+    if (req.method === "DELETE") {
+      const cleared = clearContentBody(contentId);
+      sendJson(res, 200, cleared, origin);
+      return;
+    }
+  }
+
+  const contentMatch = pathname.match(/^\/api\/contents\/([^/]+)$/);
+  if (contentMatch) {
+    const user = requireAuth(req, res, origin);
+    if (!user) return;
+    const contentId = decodeURIComponent(contentMatch[1]);
+    if (req.method === "GET") {
+      const content = getContent(contentId);
+      if (!content) {
+        sendError(res, 404, "内容不存在。", origin);
+        return;
+      }
+      sendJson(res, 200, { content }, origin);
+      return;
+    }
+    if (req.method === "PATCH") {
+      try {
+        const content = updateContentRecord(contentId, await getRequestBody(req), user);
+        if (!content) {
+          sendError(res, 404, "内容不存在。", origin);
+          return;
+        }
+        sendJson(res, 200, { content }, origin);
+      } catch (error) {
+        sendError(res, error.statusCode ?? 400, error instanceof Error ? error.message : "内容更新失败。", origin);
+      }
+      return;
+    }
+    if (req.method === "DELETE") {
+      const deleted = deleteContentRecord(contentId);
+      if (!deleted) {
+        sendError(res, 404, "内容不存在。", origin);
+        return;
+      }
+      sendJson(res, 200, { deleted: true, contentId }, origin);
+      return;
+    }
   }
 
   const publishMatch = pathname.match(/^\/api\/contents\/([^/]+)\/publish$/);
@@ -1636,7 +2518,8 @@ createSchema();
 migrateSchema();
 seedDatabase();
 upsertPersonaUsers();
-syncVisionTreeDemoData();
+syncVisionTreeReferenceData();
+resetLegacyDemoContentState();
 
 const server = createServer(async (req, res) => {
   const origin = req.headers.origin;
@@ -1648,6 +2531,7 @@ const server = createServer(async (req, res) => {
     }
     serveStatic(req, res, url.pathname);
   } catch (error) {
+    console.error(error);
     sendError(res, 500, "服务器处理失败。", origin);
   }
 });
