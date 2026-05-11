@@ -764,6 +764,82 @@ const visionTreeTemplates = [
         highlights: ["不追自己出圈。", "转发质量最高的矩阵内容。", "补一两句评论。"]
       }
     ]
+  },
+  {
+    id: "tpl-garden-web-video-presentation",
+    title: "网页视频演示工具卡",
+    format: "Tool Card / Web Video",
+    channels: ["B 站", "YouTube", "视频号", "内部演示"],
+    hook: "把文章、口播稿或产品说明转成可录屏的 16:9 点击驱动网页演示。",
+    structure: ["适用范围", "使用边界", "准备输入", "操作流程", "案例截图待补"],
+    length: "3-8 分钟视频；4-8 章；每步一个想法",
+    notes: [
+      "适用范围：长文章、产品说明、技术拆解、认知模型、教程型素材和发布会式讲解素材。",
+      "使用边界：这是创作工具卡，不是最终内容草稿；不得把 VisionTree 写成替人思考、自动决策或成熟 Tree 产品。",
+      "操作方式：先准备原文或口播稿，再产出 script.md 与 outline.md，对齐主题、素材和开发模式后，再制作 16:9 网页演示。",
+      "验收方式：第 1 章必须先做成完整样板，由人工确认视觉气质、节奏、内容密度和禁写边界后再继续。",
+      "后续维护：真实案例截图、录屏链接和项目样板应补充到本卡 resources，不手写 referenceCount。"
+    ],
+    resources: [
+      {
+        id: "tpl-garden-web-video-presentation-source",
+        title: "web-video-presentation 原始 Skill",
+        kind: "web",
+        url: "https://github.com/ConardLi/garden-skills/tree/main/skills/web-video-presentation",
+        source: "GitHub",
+        updated: "2026-05-11",
+        summary: "把文章或口播稿制作成点击驱动网页演示，并可录屏为视频的工作流。",
+        highlights: ["16:9 固定舞台。", "口播节拍驱动 step。", "第 1 章强制人工验收。"]
+      },
+      {
+        id: "tpl-garden-web-video-presentation-prep",
+        title: "creator-prep 同步模板",
+        kind: "web",
+        url: "https://github.com/ConardLi/garden-skills/tree/main/skills/web-video-presentation",
+        source: "creator-prep-workspace/03-template-library",
+        updated: "2026-05-11",
+        summary: "准备区已整理为 tpl-garden-web-video-presentation，供内容系统作为介绍卡片展示。",
+        highlights: ["写明适用账号。", "写明禁忌和人工判断点。", "后续补真实案例截图。"]
+      }
+    ]
+  },
+  {
+    id: "tool-garden-gpt-image-2",
+    title: "GPT Image 2 视觉生成工具卡",
+    format: "Tool Card / Image Generation",
+    channels: ["X", "B 站", "YouTube", "视频号", "小红书", "官网素材"],
+    hook: "先判断环境能否出图，再把视觉需求转成可复用、可归档、可执行的结构化 prompt。",
+    structure: ["适用范围", "运行模式", "操作方式", "发布边界", "案例截图待补"],
+    length: "单张图一个主视觉目标；复杂任务拆成 3-6 张系列图",
+    notes: [
+      "适用范围：封面图、信息图、技术图解、产品概念图、社媒配图、头像和主页资产、分镜板、UI 样机、视觉文档。",
+      "使用边界：生成图不能当作真实产品截图、真实用户证据或已验证案例；不得虚构客户、指标、融资或产品成熟度。",
+      "操作方式：先判断本地 API、宿主图像工具或纯提示词顾问模式，再选择最贴近的模板，补齐主体、场景、构图、文字和约束字段。",
+      "发布前检查：所有画面文字、产品状态、平台截图和数据都必须人工复核；概念视觉要明确标注，不能冒充真实状态。",
+      "后续维护：真实案例截图、prompt 文件和可复用视觉样板应补充到本卡 resources，不手写 referenceCount。"
+    ],
+    resources: [
+      {
+        id: "tool-garden-gpt-image-2-source",
+        title: "gpt-image-2 原始 Skill",
+        kind: "web",
+        url: "https://github.com/ConardLi/garden-skills/tree/main/skills/gpt-image-2",
+        source: "GitHub",
+        updated: "2026-05-11",
+        summary: "面向 GPT Image 2 和 OpenAI 兼容图像接口的生成、编辑与提示词工作流。",
+        highlights: ["先判断运行模式。", "18 类视觉模板。", "prompt 默认归档。"]
+      },
+      {
+        id: "tool-garden-gpt-image-2-prep",
+        title: "creator-prep 同步工具模板",
+        kind: "web",
+        url: "https://github.com/ConardLi/garden-skills/tree/main/skills/gpt-image-2",
+        source: "creator-prep-workspace/03-template-library",
+        updated: "2026-05-11",
+        summary: "准备区已整理为 tool-garden-gpt-image-2，供内容系统作为介绍卡片展示。",
+        highlights: ["写明模式判断。", "写明生成图使用边界。", "后续补真实案例截图。"]
+      }
+    ]
   }
 ];
 
