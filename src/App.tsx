@@ -58,6 +58,7 @@ type UserAccount = {
   avoid?: string[];
   cadence?: string;
   interactionTarget?: string;
+  creatorProfile?: PersonaPrepProfile | null;
 };
 
 type BootstrapData = {
@@ -67,6 +68,147 @@ type BootstrapData = {
   templates: Template[];
   contentPool: ContentItem[];
   planItems: PlanItem[];
+};
+
+type PersonaPrepProfile = {
+  roleLine: string;
+  backgroundStory: string;
+  writeFor: string[];
+  doNotWrite: string[];
+  driftRisks: string[];
+  styleNotes: string[];
+  signatureLines: string[];
+  writingEntries: { title: string; structure: string }[];
+  referenceAccounts: string[];
+  weeklyFocus: string;
+};
+
+const personaPrepProfiles: Record<string, PersonaPrepProfile> = {
+  "thinking-lab": {
+    roleLine: "把抽象判断问题变成一张图、一个选择题或一个两分钟小实验。",
+    backgroundStory: "它像一个视觉实验室主持人：不急着解释大道理，而是把读者拉到一个小场景里，让他们先做一次判断，再意识到自己的框架。",
+    writeFor: ["思维模型图解", "决策对比图", "概念卡", "投票和偏差识别", "两分钟决策实验"],
+    doNotWrite: ["长篇理论解释", "塞满文字的信息海报", "没有动作的问题", "自我介绍式评论"],
+    driftRisks: ["变成泛泛科普号", "把图做成 PPT 截图", "互动题只像问卷，没有认知发现"],
+    styleNotes: ["三秒看懂", "视觉先行，文字只补关键判断", "用第二人称邀请读者选择", "少解释，多给动作"],
+    signatureLines: ["Pick one before reading the answer.", "Here is the trap in one picture.", "Two minutes. One decision."],
+    writingEntries: [
+      { title: "一图解释", structure: "一个概念 -> 一张对比图 -> 一句判断 -> 一个问题" },
+      { title: "两分钟实验", structure: "给场景 -> 要求选择 -> 揭示偏差 -> 邀请回复" },
+      { title: "概念卡", structure: "命名概念 -> 视觉符号 -> 使用场景 -> 不要误用" }
+    ],
+    referenceAccounts: ["Maggie Appleton", "Visualize Value", "The Decision Lab", "Farnam Street"],
+    weeklyFocus: "优先留下两张图、两个实验、一张概念卡，让主页立刻有视觉记忆点。"
+  },
+  milo: {
+    roleLine: "用工程取舍证明 VisionTree 是认真做出来的，不是一个漂亮口号。",
+    backgroundStory: "他像一个正在公开搭建认知增强产品的工程师，常常站在两个都不完美的方案之间，解释为什么选择更能保留人的判断位置。",
+    writeFor: ["真实技术选择", "产品取舍复盘", "我们面临了什么选项", "为什么没做某个更酷的功能", "AI 产品里的判断节点设计"],
+    doNotWrite: ["品牌口号", "粉丝式吹捧", "只说结论不讲代价", "颠覆行业式宏大表达"],
+    driftRisks: ["写成官方 PR", "写成工程黑话", "只展示聪明选择，不承认约束"],
+    styleNotes: ["短句", "克制", "第一人称可以出现，但要像工作笔记", "先讲约束，再讲选择", "术语要服务取舍"],
+    signatureLines: ["We had two options.", "The tempting version was worse for judgment.", "We chose the boring path for a reason."],
+    writingEntries: [
+      { title: "工程取舍短帖", structure: "真实问题 -> 两个选项 -> 最终选择 -> 为什么" },
+      { title: "没做什么", structure: "看起来该做的功能 -> 不做的理由 -> 保护的用户判断" },
+      { title: "构建笔记", structure: "今天的约束 -> 试过的方案 -> 学到的边界" }
+    ],
+    referenceAccounts: ["Simon Willison", "Dan Shipper", "Mckay Wrigley", "Lenny Rachitsky"],
+    weeklyFocus: "写 3-4 条工程师视角短帖，在技术圈和 AI 产品讨论下留下有判断的评论。"
+  },
+  "ai-doubt": {
+    roleLine: "在 AI 热潮里指出被跳过的前提，让读者读完停一下。",
+    backgroundStory: "它像一本公开怀疑笔记：不是反技术，而是每次看到过度承诺时，冷静写下“这里的判断被谁拿走了”。",
+    writeFor: ["AI 效率神话拆解", "认知外包观察", "引用不等于可信", "AI 工具发布帖下的短评"],
+    doNotWrite: ["阴谋论", "人身攻击", "AI 毁灭恐慌", "只有情绪没有事实"],
+    driftRisks: ["变成反 AI 情绪号", "为了刺而刺", "把复杂问题写成二元对立"],
+    styleNotes: ["短", "刺", "冷静", "事实先于判断", "允许冷幽默，但不能阴阳怪气"],
+    signatureLines: ["The citation is not the verification.", "Faster is not always clearer.", "Who made the judgment here?"],
+    writingEntries: [
+      { title: "三句短帖", structure: "一句观察 -> 一句反问 -> 一句判断" },
+      { title: "工具发布短评", structure: "承诺是什么 -> 代价在哪里 -> 需要验证什么" },
+      { title: "认知外包观察", structure: "便利动作 -> 被替换的判断 -> 风险边界" }
+    ],
+    referenceAccounts: ["Gary Marcus", "Emily M. Bender", "Simon Willison", "Benedict Evans"],
+    weeklyFocus: "准备 5-6 条短、刺、有事实的短帖，每条只抓一个被忽略的前提。"
+  },
+  nora: {
+    roleLine: "把普通人试 AI 的真实困惑写出来，降低 VisionTree 叙事的进入门槛。",
+    backgroundStory: "她像一个认真尝试 AI 工具的普通知识工作者：确实省了时间，也确实不确定自己有没有想得更清楚。",
+    writeFor: ["AI 工具真实使用感受", "我没看懂的功能", "省了时间但不确定花得更好", "普通人视角评论"],
+    doNotWrite: ["工具排行榜", "专家教程", "技术术语堆砌", "假装已经理解"],
+    driftRisks: ["写成工具评测专家", "为了真实而抱怨", "把普通体验写得太戏剧化"],
+    styleNotes: ["日常", "第一人称", "允许迟疑", "句子自然，不要太顺滑", "少下结论，多留问题"],
+    signatureLines: ["I saved time, but I am not sure I thought better.", "This helped. This also confused me.", "Maybe I am using it wrong, but..."],
+    writingEntries: [
+      { title: "试用日记", structure: "今天用了什么 -> 哪里卡住 -> 哪里有帮助 -> 留下什么不确定" },
+      { title: "普通人短评", structure: "看到的功能 -> 第一反应 -> 不懂的地方" },
+      { title: "小发现", structure: "原本以为 -> 实际发现 -> 还没确定的事" }
+    ],
+    referenceAccounts: ["Anne-Laure Le Cunff", "Dan Shipper", "Every.to", "Julie Zhuo"],
+    weeklyFocus: "写 2-3 条真实试用感受，重点不是评测工具，而是记录判断感受。"
+  },
+  eli: {
+    roleLine: "为 AI 时代的判断问题命名，用少量深帖建立思想密度。",
+    backgroundStory: "他像一个慢概念作者，不追热点本身，而是追问热点背后的默认假设，并给模糊体验一个可讨论的名字。",
+    writeFor: ["月度概念词", "同一概念的不同场景", "热点背后的默认假设", "认知、判断、价值相关长帖"],
+    doNotWrite: ["轻飘金句", "纯热点跟风", "频繁低密度发言", "把愿景写成产品事实"],
+    driftRisks: ["为了深而绕", "概念没有场景", "像哲学宣言而不是社媒内容"],
+    styleNotes: ["慢", "稳", "不用感叹号", "概念必须落到场景", "可以长，但每段只推进一个判断"],
+    signatureLines: ["A useful name changes what you can notice.", "The hidden assumption is...", "This is not a tool problem. It is a judgment problem."],
+    writingEntries: [
+      { title: "月度概念词", structure: "命名 -> 现象 -> 场景 -> 边界" },
+      { title: "默认假设拆解", structure: "热门说法 -> 被默认的前提 -> 换一个框架" },
+      { title: "慢概念 Thread", structure: "概念定义 -> 三个场景 -> 一个判断边界" }
+    ],
+    referenceAccounts: ["Venkatesh Rao", "Anne-Laure Le Cunff", "Ethan Mollick", "Farnam Street"],
+    weeklyFocus: "围绕同一个概念发 3 条帖子，比高频更新更重要。"
+  },
+  "thinking-tree": {
+    roleLine: "用一棵树的慢视角，把认知沉淀和判断成长讲得可记住。",
+    backgroundStory: "它不是人，也不是吉祥物。它像一棵安静观察人类思考的树，看到年轮、根系、枝叶如何对应经验、框架和判断。",
+    writeFor: ["树的成长日记", "树的观察", "年轮故事", "和其他账号互动", "认知沉淀隐喻"],
+    doNotWrite: ["卖萌", "装可爱", "证明 Tree 已成熟", "把树写成产品功能"],
+    driftRisks: ["变成品牌吉祥物", "隐喻过满", "诗性太重但没有判断"],
+    styleNotes: ["平静", "第一人称可以出现", "淡淡幽默", "少解释产品，多保留隐喻", "每条只讲一个观察"],
+    signatureLines: ["Today I grew a new leaf.", "Roots remember what branches forget.", "A tree does not rush a judgment."],
+    writingEntries: [
+      { title: "树的独白", structure: "树的动作 -> 一个思维模型 -> 隐喻 -> 一句观察" },
+      { title: "年轮故事", structure: "一个旧经验 -> 沉淀成什么 -> 如何复用" },
+      { title: "矩阵互动", structure: "回应其他账号 -> 用树的隐喻收一层意思" }
+    ],
+    referenceAccounts: ["The Cultural Tutor", "Farnam Street", "Visualize Value", "Every"],
+    weeklyFocus: "发 2-3 条树的独白，建立记忆点，但不要把 Tree 讲成当前成熟卖点。"
+  },
+  visiontree: {
+    roleLine: "负责把六个账号的表达收拢成清楚、克制、可重复的 VisionTree 定义。",
+    backgroundStory: "它像一个品类定义者，不追热点，不抢个人号的戏，只在关键位置说明 VisionTree 不是什么、是什么，以及为什么现在需要认知增强。",
+    writeFor: ["品类定义帖", "不是什么 / 是什么", "矩阵转发点评", "官方叙事汇总"],
+    doNotWrite: ["空泛 slogan", "普通效率工具表达", "抢个人号故事", "虚构成熟能力或数据"],
+    driftRisks: ["像 SaaS 官号", "讲成自动决策工具", "把认知增强说成营销词"],
+    styleNotes: ["清楚", "克制", "定义感", "少发但每条要能收束", "不用夸张承诺"],
+    signatureLines: ["VisionTree is not here to think for you.", "Cognitive augmentation, not cognitive outsourcing.", "The point is not a longer answer. It is a clearer judgment."],
+    writingEntries: [
+      { title: "品类定义", structure: "不是什么 -> 是什么 -> 为什么重要 -> 当前边界" },
+      { title: "矩阵转发", structure: "转发内容 -> 补一句定义 -> 指向共同主张" },
+      { title: "对比式表达", structure: "普通 AI 工具 -> VisionTree 视角 -> 用户判断位置" }
+    ],
+    referenceAccounts: ["Linear", "Farnam Street", "Notion", "Anthropic"],
+    weeklyFocus: "发 3-4 条品类定义帖，转发其他六个账号中最能代表主张的内容。"
+  }
+};
+
+const defaultPersonaPrepProfile: PersonaPrepProfile = {
+  roleLine: "帮助创作者快速理解这个账号在 VisionTree 矩阵中的表达任务。",
+  backgroundStory: "这个账号服务于 VisionTree 的认知增强叙事，创作时需要先守住角色位置，再选择具体内容入口。",
+  writeFor: ["账号定位", "内容类型", "语气边界"],
+  doNotWrite: ["替人思考", "自动决策", "成熟第二大脑", "虚构产品能力"],
+  driftRisks: ["和其他账号声音趋同", "为了传播牺牲口径准确性"],
+  styleNotes: ["先对齐账号定位", "再选择素材和模板", "最后检查禁写边界"],
+  signatureLines: ["Cognitive augmentation, not cognitive outsourcing."],
+  writingEntries: [{ title: "基础入口", structure: "账号角色 -> 可写主题 -> 禁写边界" }],
+  referenceAccounts: ["Farnam Street", "Ethan Mollick", "Linear"],
+  weeklyFocus: "先用短帖验证账号声音，再扩展为长内容。"
 };
 
 type ResourceLink = {
@@ -638,6 +780,7 @@ function App() {
 
   const applyBootstrap = (data: BootstrapData) => {
     setCurrentUser(data.user);
+    localStorage.setItem("content-system-user", JSON.stringify(data.user));
     setAccounts(data.accounts);
     setAssets(data.assets);
     setTemplates(data.templates);
@@ -731,6 +874,30 @@ function App() {
     setDetailTarget(null);
     localStorage.removeItem("content-system-token");
     localStorage.removeItem("content-system-user");
+  };
+
+  const saveProfile = async (accountName: string, payload: Partial<UserAccount>) => {
+    if (!authToken) throw new Error("请先登录。");
+    setAppError("");
+    setIsMutating(true);
+    try {
+      const data = await apiRequest<{ account: UserAccount; accounts: UserAccount[] }>(`/accounts/${encodeURIComponent(accountName)}/profile`, {
+        method: "PATCH",
+        token: authToken,
+        body: JSON.stringify(payload)
+      });
+      setAccounts(data.accounts);
+      if (currentUser?.accountName === data.account.accountName) {
+        setCurrentUser(data.account);
+        localStorage.setItem("content-system-user", JSON.stringify(data.account));
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "个人主页更新失败";
+      setAppError(message);
+      throw error;
+    } finally {
+      setIsMutating(false);
+    }
   };
 
   const selectedAsset = assets.find((asset) => asset.id === selectedAssetId) ?? assets[0] ?? fallbackAssets[0];
@@ -1406,7 +1573,7 @@ function App() {
 
     if (activeView === "profile") {
       if (!currentUser) return null;
-      return <ProfileView currentUser={currentUser} accounts={accounts} />;
+      return <ProfileView currentUser={currentUser} accounts={accounts} isSaving={isMutating} onSave={saveProfile} />;
     }
 
     return (
@@ -1708,13 +1875,118 @@ function MediaAttachmentStrip({ media, compact = false }: { media: MediaAttachme
   );
 }
 
-function ProfileView({ currentUser, accounts }: { currentUser: UserAccount; accounts: UserAccount[] }) {
+function arrayToLines(items: string[] = []) {
+  return items.join("\n");
+}
+
+function linesToArray(value: string) {
+  return value
+    .split(/\r?\n/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function entriesToLines(entries: PersonaPrepProfile["writingEntries"] = []) {
+  return entries.map((entry) => `${entry.title} | ${entry.structure}`).join("\n");
+}
+
+function linesToEntries(value: string) {
+  return value
+    .split(/\r?\n/)
+    .map((line) => {
+      const [title, ...rest] = line.split("|");
+      return { title: title?.trim() ?? "", structure: rest.join("|").trim() };
+    })
+    .filter((entry) => entry.title && entry.structure);
+}
+
+function profileFormFromUser(user: UserAccount, profile: PersonaPrepProfile) {
+  return {
+    displayName: user.displayName,
+    handle: user.handle ?? "",
+    profileUrl: user.profileUrl ?? "",
+    positioning: user.positioning ?? "",
+    personaRole: user.personaRole ?? "",
+    voice: arrayToLines(user.voice ?? []),
+    contentTypes: arrayToLines(user.contentTypes ?? []),
+    avoid: arrayToLines(user.avoid ?? []),
+    cadence: user.cadence ?? "",
+    interactionTarget: user.interactionTarget ?? "",
+    roleLine: profile.roleLine,
+    backgroundStory: profile.backgroundStory,
+    writeFor: arrayToLines(profile.writeFor),
+    doNotWrite: arrayToLines(profile.doNotWrite),
+    driftRisks: arrayToLines(profile.driftRisks),
+    styleNotes: arrayToLines(profile.styleNotes),
+    signatureLines: arrayToLines(profile.signatureLines),
+    writingEntries: entriesToLines(profile.writingEntries),
+    referenceAccounts: arrayToLines(profile.referenceAccounts),
+    weeklyFocus: profile.weeklyFocus
+  };
+}
+
+function ProfileView({
+  currentUser,
+  accounts,
+  isSaving,
+  onSave
+}: {
+  currentUser: UserAccount;
+  accounts: UserAccount[];
+  isSaving: boolean;
+  onSave: (accountName: string, payload: Partial<UserAccount>) => Promise<void>;
+}) {
+  const prep = currentUser.creatorProfile ?? personaPrepProfiles[currentUser.accountName] ?? defaultPersonaPrepProfile;
+  const activeAccounts = accounts.length;
+  const [isEditing, setIsEditing] = useState(false);
+  const [editStatus, setEditStatus] = useState("");
+  const [form, setForm] = useState(() => profileFormFromUser(currentUser, prep));
+
+  useEffect(() => {
+    setForm(profileFormFromUser(currentUser, currentUser.creatorProfile ?? personaPrepProfiles[currentUser.accountName] ?? defaultPersonaPrepProfile));
+    setEditStatus("");
+    setIsEditing(false);
+  }, [currentUser]);
+
+  const updateField = (field: keyof typeof form, value: string) => setForm((current) => ({ ...current, [field]: value }));
+
+  const submitProfile = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const creatorProfile: PersonaPrepProfile = {
+      roleLine: form.roleLine.trim(),
+      backgroundStory: form.backgroundStory.trim(),
+      writeFor: linesToArray(form.writeFor),
+      doNotWrite: linesToArray(form.doNotWrite),
+      driftRisks: linesToArray(form.driftRisks),
+      styleNotes: linesToArray(form.styleNotes),
+      signatureLines: linesToArray(form.signatureLines),
+      writingEntries: linesToEntries(form.writingEntries),
+      referenceAccounts: linesToArray(form.referenceAccounts),
+      weeklyFocus: form.weeklyFocus.trim()
+    };
+    await onSave(currentUser.accountName, {
+      displayName: form.displayName.trim(),
+      handle: form.handle.trim(),
+      profileUrl: form.profileUrl.trim(),
+      positioning: form.positioning.trim(),
+      personaRole: form.personaRole.trim(),
+      voice: linesToArray(form.voice),
+      contentTypes: linesToArray(form.contentTypes),
+      avoid: linesToArray(form.avoid),
+      cadence: form.cadence.trim(),
+      interactionTarget: form.interactionTarget.trim(),
+      creatorProfile
+    });
+    setEditStatus("已保存到数据库");
+    setIsEditing(false);
+  };
+
   return (
     <section className="profile-view">
       <div className="workspace-panel profile-hero">
         <div className="profile-avatar">{currentUser.displayName.slice(0, 2)}</div>
         <div className="profile-copy">
-          <span className="eyebrow">Account Home</span>
+          <span className="eyebrow">Creator Brief</span>
           <h2>{currentUser.displayName}</h2>
           <p>{currentUser.personaRole || "负责 VisionTree V2 七账号矩阵中的一个内容位置。"}</p>
           <div className="detail-meta">
@@ -1724,24 +1996,134 @@ function ProfileView({ currentUser, accounts }: { currentUser: UserAccount; acco
             </strong>
           </div>
         </div>
-        <a className="primary-button" href={currentUser.profileUrl || "#"} target="_blank" rel="noreferrer">
-          <ExternalLink size={17} />
-          打开 X 主页
-        </a>
+        <div className="profile-actions">
+          <button className="ghost-button" type="button" onClick={() => setIsEditing((value) => !value)}>
+            <PenLine size={17} />
+            {isEditing ? "收起编辑" : "编辑主页"}
+          </button>
+          <a className="primary-button" href={currentUser.profileUrl || "#"} target="_blank" rel="noreferrer">
+            <ExternalLink size={17} />
+            打开 X 主页
+          </a>
+        </div>
       </div>
 
-      <div className="workspace-panel profile-panel">
-        <PanelTitle icon={BookOpenText} title="账号设定" meta="内容边界" />
-        <div className="profile-sections">
-          <ProfileSection title="语气" items={currentUser.voice ?? []} />
-          <ProfileSection title="内容类型" items={currentUser.contentTypes ?? []} />
-          <ProfileSection title="不要写" items={currentUser.avoid ?? []} />
+      {isEditing ? (
+        <form className="workspace-panel profile-editor" onSubmit={submitProfile}>
+          <PanelTitle icon={PenLine} title="编辑个人主页" meta="保存后写入数据库" />
+          <div className="profile-editor-grid">
+            <label>
+              <span>展示名</span>
+              <input value={form.displayName} onChange={(event) => updateField("displayName", event.target.value)} />
+            </label>
+            <label>
+              <span>Handle</span>
+              <input value={form.handle} onChange={(event) => updateField("handle", event.target.value)} />
+            </label>
+            <label className="wide-field">
+              <span>X 主页链接</span>
+              <input value={form.profileUrl} onChange={(event) => updateField("profileUrl", event.target.value)} />
+            </label>
+            <label className="wide-field">
+              <span>账号定位</span>
+              <input value={form.positioning} onChange={(event) => updateField("positioning", event.target.value)} />
+            </label>
+            <label className="wide-field">
+              <span>矩阵角色说明</span>
+              <textarea value={form.personaRole} onChange={(event) => updateField("personaRole", event.target.value)} rows={3} />
+            </label>
+            <label className="wide-field">
+              <span>账号角色一句话</span>
+              <textarea value={form.roleLine} onChange={(event) => updateField("roleLine", event.target.value)} rows={2} />
+            </label>
+            <label className="wide-field">
+              <span>同类背景故事</span>
+              <textarea value={form.backgroundStory} onChange={(event) => updateField("backgroundStory", event.target.value)} rows={3} />
+            </label>
+            <ProfileTextarea label="语气标签" value={form.voice} onChange={(value) => updateField("voice", value)} />
+            <ProfileTextarea label="内容类型" value={form.contentTypes} onChange={(value) => updateField("contentTypes", value)} />
+            <ProfileTextarea label="禁写边界" value={form.avoid} onChange={(value) => updateField("avoid", value)} />
+            <ProfileTextarea label="适合写什么" value={form.writeFor} onChange={(value) => updateField("writeFor", value)} />
+            <ProfileTextarea label="不适合写什么" value={form.doNotWrite} onChange={(value) => updateField("doNotWrite", value)} />
+            <ProfileTextarea label="常见跑偏" value={form.driftRisks} onChange={(value) => updateField("driftRisks", value)} />
+            <ProfileTextarea label="风格判断" value={form.styleNotes} onChange={(value) => updateField("styleNotes", value)} />
+            <ProfileTextarea label="典型句式" value={form.signatureLines} onChange={(value) => updateField("signatureLines", value)} />
+            <ProfileTextarea label="可参考账号" value={form.referenceAccounts} onChange={(value) => updateField("referenceAccounts", value)} />
+            <label className="wide-field">
+              <span>创作入口与栏目（每行：标题 | 结构）</span>
+              <textarea value={form.writingEntries} onChange={(event) => updateField("writingEntries", event.target.value)} rows={5} />
+            </label>
+            <label className="wide-field">
+              <span>本周优先</span>
+              <textarea value={form.weeklyFocus} onChange={(event) => updateField("weeklyFocus", event.target.value)} rows={2} />
+            </label>
+            <label className="wide-field">
+              <span>发布节奏</span>
+              <textarea value={form.cadence} onChange={(event) => updateField("cadence", event.target.value)} rows={2} />
+            </label>
+            <label className="wide-field">
+              <span>互动目标</span>
+              <textarea value={form.interactionTarget} onChange={(event) => updateField("interactionTarget", event.target.value)} rows={2} />
+            </label>
+          </div>
+          <div className="profile-editor-actions">
+            {editStatus ? <span>{editStatus}</span> : <span>每个多值字段一行一条。</span>}
+            <button type="button" onClick={() => setIsEditing(false)}>
+              取消
+            </button>
+            <button className="primary-button" type="submit" disabled={isSaving}>
+              <CheckCircle2 size={16} />
+              保存到数据库
+            </button>
+          </div>
+        </form>
+      ) : null}
+
+      <div className="workspace-panel profile-panel profile-brief-panel">
+        <PanelTitle icon={BookOpenText} title="创作者速读" meta="30 秒进入角色" />
+        <div className="profile-brief">
+          <article className="profile-callout">
+            <span>账号角色一句话</span>
+            <strong>{prep.roleLine}</strong>
+          </article>
+          <article className="profile-story">
+            <span>同类背景故事</span>
+            <p>{prep.backgroundStory}</p>
+          </article>
+          <ProfileSection title="适合写什么" items={prep.writeFor} />
+          <ProfileSection title="不适合写什么" items={prep.doNotWrite} />
+          <ProfileSection title="常见跑偏" items={prep.driftRisks} />
         </div>
       </div>
 
       <div className="workspace-panel profile-panel">
-        <PanelTitle icon={RadioTower} title="首周运营" meta="X 启动计划" />
+        <PanelTitle icon={PenLine} title="内容风格与语气" meta="写作判断" />
+        <div className="profile-style-board">
+          <ProfileSection title="API 语气标签" items={currentUser.voice ?? []} />
+          <ProfileSection title="风格判断" items={prep.styleNotes} />
+          <ProfileSection title="典型句式" items={prep.signatureLines} />
+        </div>
+      </div>
+
+      <div className="workspace-panel profile-panel">
+        <PanelTitle icon={LayoutTemplate} title="创作入口与栏目" meta="从这里开写" />
+        <div className="profile-entry-list">
+          {prep.writingEntries.map((entry) => (
+            <article key={entry.title}>
+              <span>{entry.title}</span>
+              <strong>{entry.structure}</strong>
+            </article>
+          ))}
+        </div>
+      </div>
+
+      <div className="workspace-panel profile-panel">
+        <PanelTitle icon={RadioTower} title="本周创作抓手" meta="发布与互动" />
         <div className="profile-ops">
+          <article>
+            <span>本周优先</span>
+            <strong>{prep.weeklyFocus}</strong>
+          </article>
           <article>
             <span>发布节奏</span>
             <strong>{currentUser.cadence || "待配置"}</strong>
@@ -1753,18 +2135,32 @@ function ProfileView({ currentUser, accounts }: { currentUser: UserAccount; acco
         </div>
       </div>
 
-      <div className="workspace-panel profile-roster">
-        <PanelTitle icon={UsersRound} title="V2 账号矩阵" meta={`${accounts.length} 个账号`} />
-        <div className="persona-grid">
-          {accounts.map((account) => (
-            <article className={account.accountName === currentUser.accountName ? "active" : ""} key={account.accountName}>
-              <strong>{account.displayName}</strong>
-              <span>{account.positioning || account.role}</span>
-              <small>
-                {account.platform || "X"} · {account.handle || account.accountName}
-              </small>
+      <div className="workspace-panel profile-panel">
+        <PanelTitle icon={FileSearch} title="可参考账号" meta="真实账号占位" />
+        <div className="profile-reference-grid">
+          {prep.referenceAccounts.map((account) => (
+            <article key={account}>
+              <span>{account}</span>
             </article>
           ))}
+        </div>
+      </div>
+
+      <div className="workspace-panel profile-roster">
+        <PanelTitle icon={UsersRound} title="账号矩阵差异" meta={`${activeAccounts} 个账号 · 防止写串号`} />
+        <div className="persona-grid">
+          {accounts.map((account) => {
+            const accountPrep = personaPrepProfiles[account.accountName] ?? defaultPersonaPrepProfile;
+            return (
+              <article className={account.accountName === currentUser.accountName ? "active" : ""} key={account.accountName}>
+                <strong>{account.displayName}</strong>
+                <span>{account.positioning || account.role}</span>
+                <small>最该写：{accountPrep.writeFor.slice(0, 2).join(" / ")}</small>
+                <small>最不该写：{accountPrep.doNotWrite.slice(0, 2).join(" / ")}</small>
+                <em>{account.accountName === currentUser.accountName ? "当前账号" : `区别：${accountPrep.roleLine}`}</em>
+              </article>
+            );
+          })}
         </div>
       </div>
     </section>
@@ -1779,6 +2175,15 @@ function ProfileSection({ title, items }: { title: string; items: string[] }) {
         {items.length ? items.map((item) => <span key={item}>{item}</span>) : <span>待配置</span>}
       </div>
     </article>
+  );
+}
+
+function ProfileTextarea({ label, value, onChange }: { label: string; value: string; onChange: (value: string) => void }) {
+  return (
+    <label>
+      <span>{label}</span>
+      <textarea value={value} onChange={(event) => onChange(event.target.value)} rows={4} />
+    </label>
   );
 }
 

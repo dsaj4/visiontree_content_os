@@ -176,6 +176,121 @@ const personaUsers = [
   }
 ];
 
+const creatorProfileSeeds = {
+  "thinking-lab": {
+    roleLine: "把抽象判断问题变成一张图、一个选择题或一个两分钟小实验。",
+    backgroundStory: "它像一个视觉实验室主持人：不急着解释大道理，而是把读者拉到一个小场景里，让他们先做一次判断，再意识到自己的框架。",
+    writeFor: ["思维模型图解", "决策对比图", "概念卡", "投票和偏差识别", "两分钟决策实验"],
+    doNotWrite: ["长篇理论解释", "塞满文字的信息海报", "没有动作的问题", "自我介绍式评论"],
+    driftRisks: ["变成泛泛科普号", "把图做成 PPT 截图", "互动题只像问卷，没有认知发现"],
+    styleNotes: ["三秒看懂", "视觉先行，文字只补关键判断", "用第二人称邀请读者选择", "少解释，多给动作"],
+    signatureLines: ["Pick one before reading the answer.", "Here is the trap in one picture.", "Two minutes. One decision."],
+    writingEntries: [
+      { title: "一图解释", structure: "一个概念 -> 一张对比图 -> 一句判断 -> 一个问题" },
+      { title: "两分钟实验", structure: "给场景 -> 要求选择 -> 揭示偏差 -> 邀请回复" },
+      { title: "概念卡", structure: "命名概念 -> 视觉符号 -> 使用场景 -> 不要误用" }
+    ],
+    referenceAccounts: ["Maggie Appleton", "Visualize Value", "The Decision Lab", "Farnam Street"],
+    weeklyFocus: "优先留下两张图、两个实验、一张概念卡，让主页立刻有视觉记忆点。"
+  },
+  milo: {
+    roleLine: "用工程取舍证明 VisionTree 是认真做出来的，不是一个漂亮口号。",
+    backgroundStory: "他像一个正在公开搭建认知增强产品的工程师，常常站在两个都不完美的方案之间，解释为什么选择更能保留人的判断位置。",
+    writeFor: ["真实技术选择", "产品取舍复盘", "我们面临了什么选项", "为什么没做某个更酷的功能", "AI 产品里的判断节点设计"],
+    doNotWrite: ["品牌口号", "粉丝式吹捧", "只说结论不讲代价", "颠覆行业式宏大表达"],
+    driftRisks: ["写成官方 PR", "写成工程黑话", "只展示聪明选择，不承认约束"],
+    styleNotes: ["短句", "克制", "第一人称可以出现，但要像工作笔记", "先讲约束，再讲选择", "术语要服务取舍"],
+    signatureLines: ["We had two options.", "The tempting version was worse for judgment.", "We chose the boring path for a reason."],
+    writingEntries: [
+      { title: "工程取舍短帖", structure: "真实问题 -> 两个选项 -> 最终选择 -> 为什么" },
+      { title: "没做什么", structure: "看起来该做的功能 -> 不做的理由 -> 保护的用户判断" },
+      { title: "构建笔记", structure: "今天的约束 -> 试过的方案 -> 学到的边界" }
+    ],
+    referenceAccounts: ["Simon Willison", "Dan Shipper", "Mckay Wrigley", "Lenny Rachitsky"],
+    weeklyFocus: "写 3-4 条工程师视角短帖，在技术圈和 AI 产品讨论下留下有判断的评论。"
+  },
+  "ai-doubt": {
+    roleLine: "在 AI 热潮里指出被跳过的前提，让读者读完停一下。",
+    backgroundStory: "它像一本公开怀疑笔记：不是反技术，而是每次看到过度承诺时，冷静写下“这里的判断被谁拿走了”。",
+    writeFor: ["AI 效率神话拆解", "认知外包观察", "引用不等于可信", "AI 工具发布帖下的短评"],
+    doNotWrite: ["阴谋论", "人身攻击", "AI 毁灭恐慌", "只有情绪没有事实"],
+    driftRisks: ["变成反 AI 情绪号", "为了刺而刺", "把复杂问题写成二元对立"],
+    styleNotes: ["短", "刺", "冷静", "事实先于判断", "允许冷幽默，但不能阴阳怪气"],
+    signatureLines: ["The citation is not the verification.", "Faster is not always clearer.", "Who made the judgment here?"],
+    writingEntries: [
+      { title: "三句短帖", structure: "一句观察 -> 一句反问 -> 一句判断" },
+      { title: "工具发布短评", structure: "承诺是什么 -> 代价在哪里 -> 需要验证什么" },
+      { title: "认知外包观察", structure: "便利动作 -> 被替换的判断 -> 风险边界" }
+    ],
+    referenceAccounts: ["Gary Marcus", "Emily M. Bender", "Simon Willison", "Benedict Evans"],
+    weeklyFocus: "准备 5-6 条短、刺、有事实的短帖，每条只抓一个被忽略的前提。"
+  },
+  nora: {
+    roleLine: "把普通人试 AI 的真实困惑写出来，降低 VisionTree 叙事的进入门槛。",
+    backgroundStory: "她像一个认真尝试 AI 工具的普通知识工作者：确实省了时间，也确实不确定自己有没有想得更清楚。",
+    writeFor: ["AI 工具真实使用感受", "我没看懂的功能", "省了时间但不确定花得更好", "普通人视角评论"],
+    doNotWrite: ["工具排行榜", "专家教程", "技术术语堆砌", "假装已经理解"],
+    driftRisks: ["写成工具评测专家", "为了真实而抱怨", "把普通体验写得太戏剧化"],
+    styleNotes: ["日常", "第一人称", "允许迟疑", "句子自然，不要太顺滑", "少下结论，多留问题"],
+    signatureLines: ["I saved time, but I am not sure I thought better.", "This helped. This also confused me.", "Maybe I am using it wrong, but..."],
+    writingEntries: [
+      { title: "试用日记", structure: "今天用了什么 -> 哪里卡住 -> 哪里有帮助 -> 留下什么不确定" },
+      { title: "普通人短评", structure: "看到的功能 -> 第一反应 -> 不懂的地方" },
+      { title: "小发现", structure: "原本以为 -> 实际发现 -> 还没确定的事" }
+    ],
+    referenceAccounts: ["Anne-Laure Le Cunff", "Dan Shipper", "Every.to", "Julie Zhuo"],
+    weeklyFocus: "写 2-3 条真实试用感受，重点不是评测工具，而是记录判断感受。"
+  },
+  eli: {
+    roleLine: "为 AI 时代的判断问题命名，用少量深帖建立思想密度。",
+    backgroundStory: "他像一个慢概念作者，不追热点本身，而是追问热点背后的默认假设，并给模糊体验一个可讨论的名字。",
+    writeFor: ["月度概念词", "同一概念的不同场景", "热点背后的默认假设", "认知、判断、价值相关长帖"],
+    doNotWrite: ["轻飘金句", "纯热点跟风", "频繁低密度发言", "把愿景写成产品事实"],
+    driftRisks: ["为了深而绕", "概念没有场景", "像哲学宣言而不是社媒内容"],
+    styleNotes: ["慢", "稳", "不用感叹号", "概念必须落到场景", "可以长，但每段只推进一个判断"],
+    signatureLines: ["A useful name changes what you can notice.", "The hidden assumption is...", "This is not a tool problem. It is a judgment problem."],
+    writingEntries: [
+      { title: "月度概念词", structure: "命名 -> 现象 -> 场景 -> 边界" },
+      { title: "默认假设拆解", structure: "热门说法 -> 被默认的前提 -> 换一个框架" },
+      { title: "慢概念 Thread", structure: "概念定义 -> 三个场景 -> 一个判断边界" }
+    ],
+    referenceAccounts: ["Venkatesh Rao", "Anne-Laure Le Cunff", "Ethan Mollick", "Farnam Street"],
+    weeklyFocus: "围绕同一个概念发 3 条帖子，比高频更新更重要。"
+  },
+  "thinking-tree": {
+    roleLine: "用一棵树的慢视角，把认知沉淀和判断成长讲得可记住。",
+    backgroundStory: "它不是人，也不是吉祥物。它像一棵安静观察人类思考的树，看到年轮、根系、枝叶如何对应经验、框架和判断。",
+    writeFor: ["树的成长日记", "树的观察", "年轮故事", "和其他账号互动", "认知沉淀隐喻"],
+    doNotWrite: ["卖萌", "装可爱", "证明 Tree 已成熟", "把树写成产品功能"],
+    driftRisks: ["变成品牌吉祥物", "隐喻过满", "诗性太重但没有判断"],
+    styleNotes: ["平静", "第一人称可以出现", "淡淡幽默", "少解释产品，多保留隐喻", "每条只讲一个观察"],
+    signatureLines: ["Today I grew a new leaf.", "Roots remember what branches forget.", "A tree does not rush a judgment."],
+    writingEntries: [
+      { title: "树的独白", structure: "树的动作 -> 一个思维模型 -> 隐喻 -> 一句观察" },
+      { title: "年轮故事", structure: "一个旧经验 -> 沉淀成什么 -> 如何复用" },
+      { title: "矩阵互动", structure: "回应其他账号 -> 用树的隐喻收一层意思" }
+    ],
+    referenceAccounts: ["The Cultural Tutor", "Farnam Street", "Visualize Value", "Every"],
+    weeklyFocus: "发 2-3 条树的独白，建立记忆点，但不要把 Tree 讲成当前成熟卖点。"
+  },
+  visiontree: {
+    roleLine: "负责把六个账号的表达收拢成清楚、克制、可重复的 VisionTree 定义。",
+    backgroundStory: "它像一个品类定义者，不追热点，不抢个人号的戏，只在关键位置说明 VisionTree 不是什么、是什么，以及为什么现在需要认知增强。",
+    writeFor: ["品类定义帖", "不是什么 / 是什么", "矩阵转发点评", "官方叙事汇总"],
+    doNotWrite: ["空泛 slogan", "普通效率工具表达", "抢个人号故事", "虚构成熟能力或数据"],
+    driftRisks: ["像 SaaS 官号", "讲成自动决策工具", "把认知增强说成营销词"],
+    styleNotes: ["清楚", "克制", "定义感", "少发但每条要能收束", "不用夸张承诺"],
+    signatureLines: ["VisionTree is not here to think for you.", "Cognitive augmentation, not cognitive outsourcing.", "The point is not a longer answer. It is a clearer judgment."],
+    writingEntries: [
+      { title: "品类定义", structure: "不是什么 -> 是什么 -> 为什么重要 -> 当前边界" },
+      { title: "矩阵转发", structure: "转发内容 -> 补一句定义 -> 指向共同主张" },
+      { title: "对比式表达", structure: "普通 AI 工具 -> VisionTree 视角 -> 用户判断位置" }
+    ],
+    referenceAccounts: ["Linear", "Farnam Street", "Notion", "Anthropic"],
+    weeklyFocus: "发 3-4 条品类定义帖，转发其他六个账号中最能代表主张的内容。"
+  }
+};
+
 const visionTreeAssets = [
   {
     id: "a1",
@@ -433,226 +548,100 @@ const visionTreeAssets = [
 
 const visionTreeTemplates = [
   {
-    id: "t1",
-    title: "图解 + 两分钟实验",
-    format: "Visual / Experiment",
-    channels: ["X"],
-    hook: "One visual. One experiment. Every day.",
-    structure: ["一个模型", "一张干净图", "一句解释", "一个动作问题"],
-    length: "1 图或 3-5 句",
-    notes: ["适合 Thinking Lab。图和互动交替发。", "视觉内容三秒看懂，不要塞太多字。"],
+    id: "tpl-garden-web-video-presentation",
+    title: "网页视频演示工具卡",
+    format: "Tool / Workflow Card · Web Video",
+    channels: ["B 站", "YouTube", "视频号", "内部演示"],
+    hook: "把文章、口播稿或产品说明转成可录屏的 16:9 点击驱动网页演示。",
+    structure: ["适用范围", "使用边界", "准备输入", "操作流程", "案例截图待补"],
+    length: "3-8 分钟视频；4-8 章；每步一个想法",
+    notes: [
+      "标签：工具 / 流程。",
+      "适用范围：长文章、产品说明、技术拆解、认知模型、教程型素材和发布会式讲解素材。",
+      "使用边界：这是创作工具卡，不是最终内容草稿；不得把 VisionTree 写成替人思考、自动决策或成熟 Tree 产品。",
+      "操作方式：先准备原文或口播稿，再产出 script.md 与 outline.md，对齐主题、素材和开发模式后，再制作 16:9 网页演示。",
+      "验收方式：第 1 章必须先做成完整样板，由人工确认视觉气质、节奏、内容密度和禁写边界后再继续。",
+      "后续维护：真实案例截图、录屏链接和项目样板应补充到本卡 resources，不手写 referenceCount。"
+    ],
     resources: [
       {
-        id: "t1-web",
-        title: "Thinking Lab 图解与实验模板页",
+        id: "tpl-garden-web-video-presentation-bilibili",
+        title: "Harness 实践：让 Agent 全自动制作知识讲解视频",
         kind: "web",
-        url: "https://visiontree.example/templates/thinking-lab",
-        source: "网页链接",
-        updated: "2026-05-08",
-        summary: "把思维模型转成图解或两分钟实验的发布模板。",
-        highlights: ["图解只讲一个模型。", "实验题要让人立刻能回复。", "评论区不要自我介绍。"]
+        url: "https://www.bilibili.com/video/BV1ypdgBCE9B/?share_source=copy_web&vd_source=c3f2a17dce62359215ab1773410de02b",
+        source: "B 站来源资料",
+        updated: "2026-05-11",
+        summary: "网页视频演示工作流的实践来源资料，后续可作为案例截图和录屏参考。",
+        highlights: ["知识讲解视频。", "Agent 自动制作。", "后续补真实案例截图。"]
       },
       {
-        id: "t1-pdf",
-        title: "Thinking Lab 内容检查表 PDF",
-        kind: "pdf",
-        url: "https://visiontree.example/files/thinking-lab-template.pdf",
-        source: "PDF",
-        updated: "2026-05-08",
-        summary: "检查模型、图解、互动动作和置顶策略。",
-        highlights: ["两张图。", "两个实验。", "一张概念卡。"]
+        id: "tpl-garden-web-video-presentation-source",
+        title: "web-video-presentation 原始 Skill",
+        kind: "web",
+        url: "https://github.com/ConardLi/garden-skills/tree/main/skills/web-video-presentation",
+        source: "GitHub",
+        updated: "2026-05-11",
+        summary: "把文章或口播稿制作成点击驱动网页演示，并可录屏为视频的工作流。",
+        highlights: ["16:9 固定舞台。", "口播节拍驱动 step。", "第 1 章强制人工验收。"]
+      },
+      {
+        id: "tpl-garden-web-video-presentation-prep",
+        title: "creator-prep 同步模板",
+        kind: "web",
+        url: "https://github.com/ConardLi/garden-skills/tree/main/skills/web-video-presentation",
+        source: "creator-prep-workspace/03-template-library",
+        updated: "2026-05-11",
+        summary: "准备区已整理为 tpl-garden-web-video-presentation，供内容系统作为介绍卡片展示。",
+        highlights: ["写明适用账号。", "写明禁忌和人工判断点。", "后续补真实案例截图。"]
       }
     ]
   },
   {
-    id: "t2",
-    title: "慢概念三帖",
-    format: "Concept Thread",
-    channels: ["X"],
-    hook: "先命名一个概念，再用三个场景慢慢打开它。",
-    structure: ["概念命名", "场景切入", "默认假设", "判断边界"],
-    length: "3-8 段",
-    notes: ["适合 Eli Rowan。第一周发三条就够。", "不要为了热闹牺牲慢和深。"],
+    id: "tool-garden-gpt-image-2",
+    title: "GPT Image 2 视觉生成工具卡",
+    format: "Tool / Workflow Card · Image Generation",
+    channels: ["X", "B 站", "YouTube", "视频号", "小红书", "官网素材"],
+    hook: "先判断环境能否出图，再把视觉需求转成可复用、可归档、可执行的结构化 prompt。",
+    structure: ["适用范围", "运行模式", "操作方式", "发布边界", "案例截图待补"],
+    length: "单张图一个主视觉目标；复杂任务拆成 3-6 张系列图",
+    notes: [
+      "标签：工具 / 流程。",
+      "适用范围：封面图、信息图、技术图解、产品概念图、社媒配图、头像和主页资产、分镜板、UI 样机、视觉文档。",
+      "使用边界：生成图不能当作真实产品截图、真实用户证据或已验证案例；不得虚构客户、指标、融资或产品成熟度。",
+      "操作方式：先判断本地 API、宿主图像工具或纯提示词顾问模式，再选择最贴近的模板，补齐主体、场景、构图、文字和约束字段。",
+      "发布前检查：所有画面文字、产品状态、平台截图和数据都必须人工复核；概念视觉要明确标注，不能冒充真实状态。",
+      "后续维护：真实案例截图、prompt 文件和可复用视觉样板应补充到本卡 resources，不手写 referenceCount。"
+    ],
     resources: [
       {
-        id: "t2-web",
-        title: "Eli 概念帖模板展示页",
+        id: "tool-garden-gpt-image-2-bilibili",
+        title: "GPT-Image2 完全指南：一期讲透主流玩法（附我的生图 Skill）",
         kind: "web",
-        url: "https://visiontree.example/templates/eli-concept",
-        source: "网页链接",
-        updated: "2026-05-08",
-        summary: "围绕同一个概念词准备多角度帖子。",
-        highlights: ["同一概念，不同场景。", "评论要有自己的角度。", "不用感叹号。"]
+        url: "https://www.bilibili.com/video/BV1vi9UBhEKq/?share_source=copy_web&vd_source=c3f2a17dce62359215ab1773410de02b",
+        source: "B 站来源资料",
+        updated: "2026-05-11",
+        summary: "GPT Image 2 主流玩法和生图 Skill 的来源资料，后续可作为工具卡案例参考。",
+        highlights: ["图像生成玩法。", "生图 Skill。", "后续补真实案例截图。"]
       },
       {
-        id: "t2-pdf",
-        title: "慢概念写作检查表 PDF",
-        kind: "pdf",
-        url: "https://visiontree.example/files/eli-template.pdf",
-        source: "PDF",
-        updated: "2026-05-08",
-        summary: "控制语气、密度和发布频率。",
-        highlights: ["慢。", "稳。", "有思想密度。"]
-      }
-    ]
-  },
-  {
-    id: "t3",
-    title: "反 AI 三句短帖",
-    format: "Short Note",
-    channels: ["X"],
-    hook: "让人读完愣一下，但不是情绪宣泄。",
-    structure: ["一句观察", "一句反问", "一句判断"],
-    length: "3-4 句",
-    notes: ["适合 AI Doubt Notes。短、刺、有事实。", "第一周先不发 Grudging Admit。"],
-    resources: [
-      {
-        id: "t3-web",
-        title: "AI Doubt 短帖模板页",
+        id: "tool-garden-gpt-image-2-source",
+        title: "gpt-image-2 原始 Skill",
         kind: "web",
-        url: "https://visiontree.example/templates/ai-doubt",
-        source: "网页链接",
-        updated: "2026-05-08",
-        summary: "把 AI 效率叙事拆成短观察和短反问。",
-        highlights: ["不超过三四句话。", "评论更短。", "有事实，不靠愤怒。"]
+        url: "https://github.com/ConardLi/garden-skills/tree/main/skills/gpt-image-2",
+        source: "GitHub",
+        updated: "2026-05-11",
+        summary: "面向 GPT Image 2 和 OpenAI 兼容图像接口的生成、编辑与提示词工作流。",
+        highlights: ["先判断运行模式。", "18 类视觉模板。", "prompt 默认归档。"]
       },
       {
-        id: "t3-pdf",
-        title: "AI Doubt 语气检查 PDF",
-        kind: "pdf",
-        url: "https://visiontree.example/files/ai-doubt-template.pdf",
-        source: "PDF",
-        updated: "2026-05-08",
-        summary: "避免恐吓、阴谋论和纯情绪。",
-        highlights: ["冷静。", "刺。", "不是恐慌。"]
-      }
-    ]
-  },
-  {
-    id: "t4",
-    title: "工程取舍短帖",
-    format: "Build Note",
-    channels: ["X"],
-    hook: "我们面临了两个选项，最后选了更保留判断的那个。",
-    structure: ["真实问题", "两个选项", "最终选择", "为什么"],
-    length: "4-6 句",
-    notes: ["适合 Milo Reed。写真实取舍，不写发布公告。", "评论要像工程师对工程师说话。"],
-    resources: [
-      {
-        id: "t4-web",
-        title: "Milo 工程取舍模板页",
+        id: "tool-garden-gpt-image-2-prep",
+        title: "creator-prep 同步工具模板",
         kind: "web",
-        url: "https://visiontree.example/templates/milo-build-note",
-        source: "网页链接",
-        updated: "2026-05-08",
-        summary: "把产品建设中的真实技术选择整理为短帖。",
-        highlights: ["选项必须具体。", "判断理由要清楚。", "避免宏大表述。"]
-      },
-      {
-        id: "t4-pdf",
-        title: "工程取舍短帖 PDF",
-        kind: "pdf",
-        url: "https://visiontree.example/files/milo-template.pdf",
-        source: "PDF",
-        updated: "2026-05-08",
-        summary: "辅助检查短帖是否像真实工程记录。",
-        highlights: ["问题。", "选项。", "取舍。"]
-      }
-    ]
-  },
-  {
-    id: "t5",
-    title: "普通人真实试用日记",
-    format: "Diary Note",
-    channels: ["X"],
-    hook: "我没完全看懂，但这个感受是真的。",
-    structure: ["今天用了什么", "哪里卡住", "哪里有帮助", "留下什么不确定"],
-    length: "3-6 句",
-    notes: ["适合 Nora Blake。不要做评测。", "可以承认不懂，也可以承认不确定。"],
-    resources: [
-      {
-        id: "t5-web",
-        title: "Nora 试用日记模板页",
-        kind: "web",
-        url: "https://visiontree.example/templates/nora-diary",
-        source: "网页链接",
-        updated: "2026-05-08",
-        summary: "把普通人的 AI 工具体验写得真实而不装懂。",
-        highlights: ["我也是普通人。", "我也有这个困惑。", "不是工具评测。"]
-      },
-      {
-        id: "t5-pdf",
-        title: "Nora 试用日记 PDF",
-        kind: "pdf",
-        url: "https://visiontree.example/files/nora-template.pdf",
-        source: "PDF",
-        updated: "2026-05-08",
-        summary: "保留困惑、不确定和日常语气。",
-        highlights: ["真实。", "日常。", "不装懂。"]
-      }
-    ]
-  },
-  {
-    id: "t6",
-    title: "树的独白图文",
-    format: "Tree Monologue",
-    channels: ["X"],
-    hook: "Today I grew a new leaf. It is called first principles thinking.",
-    structure: ["树的动作", "一个思维模型", "树的隐喻", "一张图"],
-    length: "1 图 + 1-3 句",
-    notes: ["适合 The Thinking Tree。不是卖萌，是一棵树平静地观察人类。", "视觉可以是发芽、年轮、根系或被风吹弯。"],
-    resources: [
-      {
-        id: "t6-web",
-        title: "树的独白模板页",
-        kind: "web",
-        url: "https://visiontree.example/templates/thinking-tree",
-        source: "网页链接",
-        updated: "2026-05-08",
-        summary: "把思维模型翻译成树的语言。",
-        highlights: ["思维模型是养分。", "判断力是年轮。", "认知偏差是害虫。"]
-      },
-      {
-        id: "t6-pdf",
-        title: "The Thinking Tree 视觉模板 PDF",
-        kind: "pdf",
-        url: "https://visiontree.example/files/tree-template.pdf",
-        source: "PDF",
-        updated: "2026-05-08",
-        summary: "AI 作图方向和树的独白写法。",
-        highlights: ["发芽。", "根系。", "年轮截面。"]
-      }
-    ]
-  },
-  {
-    id: "t7",
-    title: "官方对比式品类定义",
-    format: "Category Definition",
-    channels: ["X"],
-    hook: "VisionTree is not here to think for you. It is here to keep you in the act of thinking.",
-    structure: ["不是什么", "是什么", "为什么重要", "转发矩阵账号"],
-    length: "4-7 句",
-    notes: ["适合官方号 VisionTree。第一周 3-4 条就够。", "官方号负责收拢叙事，不抢其他账号的戏。"],
-    resources: [
-      {
-        id: "t7-web",
-        title: "官方号品类定义模板页",
-        kind: "web",
-        url: "https://visiontree.example/templates/official-category",
-        source: "网页链接",
-        updated: "2026-05-08",
-        summary: "用对比式写法解释 VisionTree 不是什么、是什么。",
-        highlights: ["不是普通效率工具。", "不是自动替你思考。", "是认知增强项目。"]
-      },
-      {
-        id: "t7-pdf",
-        title: "VisionTree 官方帖检查表 PDF",
-        kind: "pdf",
-        url: "https://visiontree.example/files/official-template.pdf",
-        source: "PDF",
-        updated: "2026-05-08",
-        summary: "保证官方文案清楚、克制、收拢叙事。",
-        highlights: ["不追自己出圈。", "转发质量最高的矩阵内容。", "补一两句评论。"]
+        url: "https://github.com/ConardLi/garden-skills/tree/main/skills/gpt-image-2",
+        source: "creator-prep-workspace/03-template-library",
+        updated: "2026-05-11",
+        summary: "准备区已整理为 tool-garden-gpt-image-2，供内容系统作为介绍卡片展示。",
+        highlights: ["写明模式判断。", "写明生成图使用边界。", "后续补真实案例截图。"]
       }
     ]
   }
@@ -713,7 +702,8 @@ function createSchema() {
       content_types_json TEXT,
       avoid_json TEXT,
       cadence TEXT,
-      interaction_target TEXT
+      interaction_target TEXT,
+      creator_profile_json TEXT
     );
 
     CREATE TABLE IF NOT EXISTS sessions (
@@ -824,7 +814,8 @@ function migrateSchema() {
     ["content_types_json", "TEXT"],
     ["avoid_json", "TEXT"],
     ["cadence", "TEXT"],
-    ["interaction_target", "TEXT"]
+    ["interaction_target", "TEXT"],
+    ["creator_profile_json", "TEXT"]
   ].forEach(([name, definition]) => ensureColumn("users", name, definition));
   ensureColumn("contents", "body", "TEXT NOT NULL DEFAULT ''");
 }
@@ -833,22 +824,14 @@ function upsertPersonaUsers() {
   const upsertUser = db.prepare(`
     INSERT INTO users
       (id, account_name, display_name, role, platform, handle, profile_url, positioning, persona_role,
-       voice_json, content_types_json, avoid_json, cadence, interaction_target)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    ON CONFLICT(id) DO UPDATE SET
-      account_name = excluded.account_name,
-      display_name = excluded.display_name,
-      role = excluded.role,
-      platform = excluded.platform,
-      handle = excluded.handle,
-      profile_url = excluded.profile_url,
-      positioning = excluded.positioning,
-      persona_role = excluded.persona_role,
-      voice_json = excluded.voice_json,
-      content_types_json = excluded.content_types_json,
-      avoid_json = excluded.avoid_json,
-      cadence = excluded.cadence,
-      interaction_target = excluded.interaction_target
+       voice_json, content_types_json, avoid_json, cadence, interaction_target, creator_profile_json)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ON CONFLICT(id) DO NOTHING
+  `);
+  const fillCreatorProfile = db.prepare(`
+    UPDATE users
+    SET creator_profile_json = ?
+    WHERE id = ? AND (creator_profile_json IS NULL OR creator_profile_json = '')
   `);
 
   personaUsers.forEach((user) =>
@@ -866,9 +849,11 @@ function upsertPersonaUsers() {
       json(user.contentTypes),
       json(user.avoid),
       user.cadence,
-      user.interactionTarget
+      user.interactionTarget,
+      json(creatorProfileSeeds[user.accountName] ?? null)
     )
   );
+  personaUsers.forEach((user) => fillCreatorProfile.run(json(creatorProfileSeeds[user.accountName] ?? null), user.id));
 
   const ownerMap = [
     ["Mia", "Milo Reed"],
@@ -955,6 +940,12 @@ function syncVisionTreeReferenceData() {
       json(template.resources)
     )
   );
+  const activeTemplateIds = new Set(visionTreeTemplates.map((template) => template.id));
+  db.prepare("SELECT id FROM templates").all().forEach((row) => {
+    if (activeTemplateIds.has(row.id)) return;
+    const references = db.prepare("SELECT COUNT(*) AS count FROM contents WHERE template_id = ?").get(row.id).count;
+    if (references === 0) db.prepare("DELETE FROM templates WHERE id = ?").run(row.id);
+  });
 
   const upsertPlan = db.prepare(`
     INSERT INTO plans (id, date, day, slot, channel, theme, owner, goal, status, content_id)
@@ -1026,8 +1017,75 @@ function mapUser(row) {
     contentTypes: parseJson(row.contentTypesJson),
     avoid: parseJson(row.avoidJson),
     cadence: row.cadence ?? "",
-    interactionTarget: row.interactionTarget ?? ""
+    interactionTarget: row.interactionTarget ?? "",
+    creatorProfile: parseJson(row.creatorProfileJson, creatorProfileSeeds[row.accountName] ?? null)
   };
+}
+
+function normalizeLooseStringArray(value, maxItems = 12) {
+  if (Array.isArray(value)) {
+    return value.map((item) => String(item ?? "").trim()).filter(Boolean).slice(0, maxItems);
+  }
+  if (typeof value === "string") {
+    return value
+      .split(/\r?\n|[,，]/)
+      .map((item) => item.trim())
+      .filter(Boolean)
+      .slice(0, maxItems);
+  }
+  return [];
+}
+
+function normalizeWritingEntries(value) {
+  if (!Array.isArray(value)) return [];
+  return value
+    .map((item) => ({
+      title: String(item?.title ?? "").trim(),
+      structure: String(item?.structure ?? "").trim()
+    }))
+    .filter((item) => item.title && item.structure)
+    .slice(0, 8);
+}
+
+function normalizeCreatorProfile(value, fallback = {}) {
+  const profile = value && typeof value === "object" ? value : {};
+  return {
+    roleLine: String(profile.roleLine ?? fallback.roleLine ?? "").trim(),
+    backgroundStory: String(profile.backgroundStory ?? fallback.backgroundStory ?? "").trim(),
+    writeFor: normalizeLooseStringArray(profile.writeFor ?? fallback.writeFor),
+    doNotWrite: normalizeLooseStringArray(profile.doNotWrite ?? fallback.doNotWrite),
+    driftRisks: normalizeLooseStringArray(profile.driftRisks ?? fallback.driftRisks),
+    styleNotes: normalizeLooseStringArray(profile.styleNotes ?? fallback.styleNotes),
+    signatureLines: normalizeLooseStringArray(profile.signatureLines ?? fallback.signatureLines),
+    writingEntries: normalizeWritingEntries(profile.writingEntries ?? fallback.writingEntries),
+    referenceAccounts: normalizeLooseStringArray(profile.referenceAccounts ?? fallback.referenceAccounts),
+    weeklyFocus: String(profile.weeklyFocus ?? fallback.weeklyFocus ?? "").trim()
+  };
+}
+
+function getAccountByName(accountName) {
+  return db
+    .prepare(
+      `SELECT
+        id,
+        account_name AS accountName,
+        display_name AS displayName,
+        role,
+        platform,
+        handle,
+        profile_url AS profileUrl,
+        positioning,
+        persona_role AS personaRole,
+        voice_json AS voiceJson,
+        content_types_json AS contentTypesJson,
+        avoid_json AS avoidJson,
+        cadence,
+        interaction_target AS interactionTarget,
+        creator_profile_json AS creatorProfileJson
+      FROM users
+      WHERE account_name = ?`
+    )
+    .get(accountName);
 }
 
 function mapMedia(row) {
@@ -1753,7 +1811,8 @@ function getAccounts() {
         content_types_json AS contentTypesJson,
         avoid_json AS avoidJson,
         cadence,
-        interaction_target AS interactionTarget
+        interaction_target AS interactionTarget,
+        creator_profile_json AS creatorProfileJson
       FROM users
       ORDER BY id
     `)
@@ -1926,7 +1985,8 @@ function authenticate(req) {
           u.content_types_json AS contentTypesJson,
           u.avoid_json AS avoidJson,
           u.cadence,
-          u.interaction_target AS interactionTarget
+          u.interaction_target AS interactionTarget,
+          u.creator_profile_json AS creatorProfileJson
         FROM sessions s
         JOIN users u ON u.id = s.user_id
         WHERE s.token = ?
@@ -1950,6 +2010,64 @@ function validateText(value, maxLength = 200) {
 
 function validMetric(value) {
   return Number.isInteger(value) && value >= 0 && value <= 1_000_000_000;
+}
+
+function updateAccountProfile(accountName, body) {
+  const current = getAccountByName(accountName);
+  if (!current) throw validationError("账号不存在。", 404);
+  const currentUser = mapUser(current);
+  const base = {
+    displayName: String(body.displayName ?? currentUser.displayName).trim().slice(0, 80),
+    role: String(body.role ?? currentUser.role).trim().slice(0, 120),
+    platform: String(body.platform ?? currentUser.platform ?? "X").trim().slice(0, 40),
+    handle: String(body.handle ?? currentUser.handle ?? "").trim().slice(0, 80),
+    profileUrl: String(body.profileUrl ?? currentUser.profileUrl ?? "").trim().slice(0, 300),
+    positioning: String(body.positioning ?? currentUser.positioning ?? "").trim().slice(0, 160),
+    personaRole: String(body.personaRole ?? currentUser.personaRole ?? "").trim().slice(0, 500),
+    voice: normalizeLooseStringArray(body.voice ?? currentUser.voice, 16),
+    contentTypes: normalizeLooseStringArray(body.contentTypes ?? currentUser.contentTypes, 16),
+    avoid: normalizeLooseStringArray(body.avoid ?? currentUser.avoid, 16),
+    cadence: String(body.cadence ?? currentUser.cadence ?? "").trim().slice(0, 300),
+    interactionTarget: String(body.interactionTarget ?? currentUser.interactionTarget ?? "").trim().slice(0, 300),
+    creatorProfile: normalizeCreatorProfile(body.creatorProfile ?? currentUser.creatorProfile, currentUser.creatorProfile ?? creatorProfileSeeds[accountName] ?? {})
+  };
+
+  if (!base.displayName || !base.role) throw validationError("展示名和角色不能为空。");
+
+  db.prepare(
+    `UPDATE users
+     SET display_name = ?,
+         role = ?,
+         platform = ?,
+         handle = ?,
+         profile_url = ?,
+         positioning = ?,
+         persona_role = ?,
+         voice_json = ?,
+         content_types_json = ?,
+         avoid_json = ?,
+         cadence = ?,
+         interaction_target = ?,
+         creator_profile_json = ?
+     WHERE account_name = ?`
+  ).run(
+    base.displayName,
+    base.role,
+    base.platform,
+    base.handle,
+    base.profileUrl,
+    base.positioning,
+    base.personaRole,
+    json(base.voice),
+    json(base.contentTypes),
+    json(base.avoid),
+    base.cadence,
+    base.interactionTarget,
+    json(base.creatorProfile),
+    accountName
+  );
+
+  return mapUser(getAccountByName(accountName));
 }
 
 async function storeUploadedMedia(req, user) {
@@ -2057,6 +2175,22 @@ async function handleApi(req, res, pathname, origin) {
     return;
   }
 
+  const accountProfileMatch = pathname.match(/^\/api\/accounts\/([^/]+)\/profile$/);
+  if (accountProfileMatch) {
+    const user = requireAuth(req, res, origin);
+    if (!user) return;
+    const accountName = decodeURIComponent(accountProfileMatch[1]).trim().toLowerCase();
+    if (req.method === "PATCH") {
+      try {
+        const account = updateAccountProfile(accountName, await getRequestBody(req));
+        sendJson(res, 200, { account, accounts: getAccounts() }, origin);
+      } catch (error) {
+        sendError(res, error.statusCode ?? 400, error instanceof Error ? error.message : "个人主页更新失败。", origin);
+      }
+      return;
+    }
+  }
+
   if (req.method === "POST" && pathname === "/api/login") {
     const body = await getRequestBody(req);
     const accountName = String(body.accountName ?? "").trim().toLowerCase();
@@ -2081,7 +2215,8 @@ async function handleApi(req, res, pathname, origin) {
           content_types_json AS contentTypesJson,
           avoid_json AS avoidJson,
           cadence,
-          interaction_target AS interactionTarget
+          interaction_target AS interactionTarget,
+          creator_profile_json AS creatorProfileJson
         FROM users
         WHERE account_name = ? OR lower(display_name) = ?`
       )

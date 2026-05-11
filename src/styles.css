@@ -1068,7 +1068,10 @@ textarea:focus {
   grid-template-columns: minmax(320px, 0.85fr) minmax(380px, 1fr);
   grid-template-areas:
     "hero hero"
-    "persona ops"
+    "editor editor"
+    "brief style"
+    "entries ops"
+    "references references"
     "roster roster";
   gap: 16px;
 }
@@ -1080,6 +1083,13 @@ textarea:focus {
   gap: 18px;
   align-items: center;
   padding: 16px;
+}
+
+.profile-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
 }
 
 .profile-avatar {
@@ -1113,20 +1123,104 @@ textarea:focus {
   line-height: 1.65;
 }
 
-.profile-panel:nth-of-type(2) {
-  grid-area: persona;
+.profile-brief-panel {
+  grid-area: brief;
 }
 
 .profile-panel:nth-of-type(3) {
+  grid-area: style;
+}
+
+.profile-panel:nth-of-type(4) {
+  grid-area: entries;
+}
+
+.profile-panel:nth-of-type(5) {
   grid-area: ops;
+}
+
+.profile-panel:nth-of-type(6) {
+  grid-area: references;
 }
 
 .profile-roster {
   grid-area: roster;
 }
 
-.profile-sections,
+.profile-editor {
+  grid-area: editor;
+  display: grid;
+  gap: 0;
+}
+
+.profile-editor-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  padding: 14px;
+}
+
+.profile-editor-grid label {
+  display: grid;
+  gap: 7px;
+}
+
+.profile-editor-grid label span {
+  color: var(--green);
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.profile-editor-grid input,
+.profile-editor-grid textarea {
+  width: 100%;
+  min-width: 0;
+  color: var(--ink);
+  background: #fffdf4;
+  border: 1px solid var(--line);
+  padding: 10px 11px;
+  resize: vertical;
+}
+
+.profile-editor-grid textarea {
+  line-height: 1.5;
+}
+
+.profile-editor-grid .wide-field {
+  grid-column: 1 / -1;
+}
+
+.profile-editor-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 0 14px 14px;
+}
+
+.profile-editor-actions > span {
+  margin-right: auto;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.profile-editor-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 14px;
+  color: var(--ink);
+  background: var(--paper-strong);
+  border: 1px solid var(--line);
+}
+
+.profile-brief,
 .profile-ops,
+.profile-style-board,
+.profile-entry-list,
+.profile-reference-grid,
 .persona-grid {
   display: grid;
   gap: 10px;
@@ -1134,7 +1228,11 @@ textarea:focus {
 }
 
 .profile-section,
+.profile-callout,
 .profile-ops article,
+.profile-style-board article,
+.profile-entry-list article,
+.profile-reference-grid article,
 .persona-grid article {
   display: grid;
   gap: 10px;
@@ -1144,16 +1242,67 @@ textarea:focus {
 }
 
 .profile-section > span,
-.profile-ops span {
+.profile-callout > span,
+.profile-story > span,
+.profile-ops span,
+.profile-entry-list span,
+.profile-reference-grid span {
   color: var(--green);
   font-size: 0.78rem;
   font-weight: 900;
 }
 
-.profile-ops strong {
+.profile-callout strong,
+.profile-ops strong,
+.profile-entry-list strong {
   color: var(--muted);
   font-size: 0.95rem;
   line-height: 1.55;
+}
+
+.profile-callout {
+  background: #eaf6f1;
+  border-color: rgba(39, 115, 93, 0.28);
+}
+
+.profile-story {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  background: #fffdf4;
+  border: 1px solid var(--line);
+}
+
+.profile-story p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.profile-style-board {
+  grid-template-columns: 1fr;
+}
+
+.profile-entry-list {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.profile-entry-list article {
+  min-height: 128px;
+}
+
+.profile-reference-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.profile-reference-grid article {
+  min-height: 66px;
+  align-content: center;
+  background: #f4f0df;
+}
+
+.profile-reference-grid span {
+  overflow-wrap: anywhere;
 }
 
 .persona-grid {
@@ -1167,14 +1316,21 @@ textarea:focus {
 
 .persona-grid strong,
 .persona-grid span,
-.persona-grid small {
+.persona-grid small,
+.persona-grid em {
   overflow-wrap: anywhere;
 }
 
 .persona-grid span,
-.persona-grid small {
+.persona-grid small,
+.persona-grid em {
   color: var(--muted);
   line-height: 1.45;
+}
+
+.persona-grid em {
+  font-style: normal;
+  font-size: 0.82rem;
 }
 
 .detail-hero {
@@ -1992,12 +2148,18 @@ textarea:focus {
     grid-template-columns: 1fr;
     grid-template-areas:
       "hero"
-      "persona"
+      "editor"
+      "brief"
+      "style"
+      "entries"
       "ops"
+      "references"
       "roster";
   }
 
-  .persona-grid {
+  .persona-grid,
+  .profile-entry-list,
+  .profile-reference-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -2115,6 +2277,10 @@ textarea:focus {
     grid-template-columns: 1fr;
   }
 
+  .profile-actions {
+    justify-content: flex-start;
+  }
+
   .detail-hero-copy h2 {
     font-size: 1.45rem;
   }
@@ -2125,6 +2291,17 @@ textarea:focus {
 
   .persona-grid {
     grid-template-columns: 1fr;
+  }
+
+  .profile-entry-list,
+  .profile-reference-grid,
+  .profile-editor-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-editor-actions {
+    align-items: stretch;
+    flex-direction: column;
   }
 
   .pdf-frame {

@@ -305,6 +305,20 @@ GROUP BY template_id;
 - 前端当前把 `structure` 作为展示标签和草稿生成结构使用。
 - 接入前请决定：模板是完整内容格式，模块是模板内的结构片段，二者不要混用同一个 ID 空间。
 
+### 准备区工具同步为介绍卡片
+
+当 `creator-prep-workspace/03-template-library` 中新增真实工具、外部 Skill 或复杂工作流时，`content-system` 使用 `templates` 表新增一张介绍卡片：
+
+- 当前模板库只保留 `工具 / 流程` 类介绍卡片；旧账号写法模板不再作为 `templates` 种子数据同步。
+- `title` 写工具卡片名。
+- `format` 使用 `Tool / Workflow Card · ...`。
+- `channels` 写可服务的平台或内部用途。
+- `structure` 固定覆盖适用范围、使用边界、操作方式和案例截图待补。
+- `notes` 必须写清使用边界、适用范围、操作方式、发布前检查和后续维护。
+- `resources` 先放源工具链接和准备区来源说明；真实案例截图、录屏或 prompt 样板后续再补。
+
+该方式只同步介绍卡片，不代表 `content-system` 已具备执行该工具的运行能力。
+
 ## 内容记录对接
 
 当前内容记录来自 SQLite `contents` 表，前端类型为：
