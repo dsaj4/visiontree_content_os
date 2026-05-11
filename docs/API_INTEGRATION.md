@@ -309,8 +309,9 @@ GROUP BY template_id;
 
 当 `creator-prep-workspace/03-template-library` 中新增真实工具、外部 Skill 或复杂工作流时，`content-system` 使用 `templates` 表新增一张介绍卡片：
 
+- 当前模板库只保留 `工具 / 流程` 类介绍卡片；旧账号写法模板不再作为 `templates` 种子数据同步。
 - `title` 写工具卡片名。
-- `format` 使用 `Tool Card / ...`。
+- `format` 使用 `Tool / Workflow Card · ...`。
 - `channels` 写可服务的平台或内部用途。
 - `structure` 固定覆盖适用范围、使用边界、操作方式和案例截图待补。
 - `notes` 必须写清使用边界、适用范围、操作方式、发布前检查和后续维护。

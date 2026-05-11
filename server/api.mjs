@@ -542,238 +542,15 @@ const visionTreeAssets = [
 
 const visionTreeTemplates = [
   {
-    id: "t1",
-    title: "图解 + 两分钟实验",
-    format: "Visual / Experiment",
-    channels: ["X"],
-    hook: "One visual. One experiment. Every day.",
-    structure: ["一个模型", "一张干净图", "一句解释", "一个动作问题"],
-    length: "1 图或 3-5 句",
-    notes: ["适合 Thinking Lab。图和互动交替发。", "视觉内容三秒看懂，不要塞太多字。"],
-    resources: [
-      {
-        id: "t1-web",
-        title: "Thinking Lab 图解与实验模板页",
-        kind: "web",
-        url: "https://visiontree.example/templates/thinking-lab",
-        source: "网页链接",
-        updated: "2026-05-08",
-        summary: "把思维模型转成图解或两分钟实验的发布模板。",
-        highlights: ["图解只讲一个模型。", "实验题要让人立刻能回复。", "评论区不要自我介绍。"]
-      },
-      {
-        id: "t1-pdf",
-        title: "Thinking Lab 内容检查表 PDF",
-        kind: "pdf",
-        url: "https://visiontree.example/files/thinking-lab-template.pdf",
-        source: "PDF",
-        updated: "2026-05-08",
-        summary: "检查模型、图解、互动动作和置顶策略。",
-        highlights: ["两张图。", "两个实验。", "一张概念卡。"]
-      }
-    ]
-  },
-  {
-    id: "t2",
-    title: "慢概念三帖",
-    format: "Concept Thread",
-    channels: ["X"],
-    hook: "先命名一个概念，再用三个场景慢慢打开它。",
-    structure: ["概念命名", "场景切入", "默认假设", "判断边界"],
-    length: "3-8 段",
-    notes: ["适合 Eli Rowan。第一周发三条就够。", "不要为了热闹牺牲慢和深。"],
-    resources: [
-      {
-        id: "t2-web",
-        title: "Eli 概念帖模板展示页",
-        kind: "web",
-        url: "https://visiontree.example/templates/eli-concept",
-        source: "网页链接",
-        updated: "2026-05-08",
-        summary: "围绕同一个概念词准备多角度帖子。",
-        highlights: ["同一概念，不同场景。", "评论要有自己的角度。", "不用感叹号。"]
-      },
-      {
-        id: "t2-pdf",
-        title: "慢概念写作检查表 PDF",
-        kind: "pdf",
-        url: "https://visiontree.example/files/eli-template.pdf",
-        source: "PDF",
-        updated: "2026-05-08",
-        summary: "控制语气、密度和发布频率。",
-        highlights: ["慢。", "稳。", "有思想密度。"]
-      }
-    ]
-  },
-  {
-    id: "t3",
-    title: "反 AI 三句短帖",
-    format: "Short Note",
-    channels: ["X"],
-    hook: "让人读完愣一下，但不是情绪宣泄。",
-    structure: ["一句观察", "一句反问", "一句判断"],
-    length: "3-4 句",
-    notes: ["适合 AI Doubt Notes。短、刺、有事实。", "第一周先不发 Grudging Admit。"],
-    resources: [
-      {
-        id: "t3-web",
-        title: "AI Doubt 短帖模板页",
-        kind: "web",
-        url: "https://visiontree.example/templates/ai-doubt",
-        source: "网页链接",
-        updated: "2026-05-08",
-        summary: "把 AI 效率叙事拆成短观察和短反问。",
-        highlights: ["不超过三四句话。", "评论更短。", "有事实，不靠愤怒。"]
-      },
-      {
-        id: "t3-pdf",
-        title: "AI Doubt 语气检查 PDF",
-        kind: "pdf",
-        url: "https://visiontree.example/files/ai-doubt-template.pdf",
-        source: "PDF",
-        updated: "2026-05-08",
-        summary: "避免恐吓、阴谋论和纯情绪。",
-        highlights: ["冷静。", "刺。", "不是恐慌。"]
-      }
-    ]
-  },
-  {
-    id: "t4",
-    title: "工程取舍短帖",
-    format: "Build Note",
-    channels: ["X"],
-    hook: "我们面临了两个选项，最后选了更保留判断的那个。",
-    structure: ["真实问题", "两个选项", "最终选择", "为什么"],
-    length: "4-6 句",
-    notes: ["适合 Milo Reed。写真实取舍，不写发布公告。", "评论要像工程师对工程师说话。"],
-    resources: [
-      {
-        id: "t4-web",
-        title: "Milo 工程取舍模板页",
-        kind: "web",
-        url: "https://visiontree.example/templates/milo-build-note",
-        source: "网页链接",
-        updated: "2026-05-08",
-        summary: "把产品建设中的真实技术选择整理为短帖。",
-        highlights: ["选项必须具体。", "判断理由要清楚。", "避免宏大表述。"]
-      },
-      {
-        id: "t4-pdf",
-        title: "工程取舍短帖 PDF",
-        kind: "pdf",
-        url: "https://visiontree.example/files/milo-template.pdf",
-        source: "PDF",
-        updated: "2026-05-08",
-        summary: "辅助检查短帖是否像真实工程记录。",
-        highlights: ["问题。", "选项。", "取舍。"]
-      }
-    ]
-  },
-  {
-    id: "t5",
-    title: "普通人真实试用日记",
-    format: "Diary Note",
-    channels: ["X"],
-    hook: "我没完全看懂，但这个感受是真的。",
-    structure: ["今天用了什么", "哪里卡住", "哪里有帮助", "留下什么不确定"],
-    length: "3-6 句",
-    notes: ["适合 Nora Blake。不要做评测。", "可以承认不懂，也可以承认不确定。"],
-    resources: [
-      {
-        id: "t5-web",
-        title: "Nora 试用日记模板页",
-        kind: "web",
-        url: "https://visiontree.example/templates/nora-diary",
-        source: "网页链接",
-        updated: "2026-05-08",
-        summary: "把普通人的 AI 工具体验写得真实而不装懂。",
-        highlights: ["我也是普通人。", "我也有这个困惑。", "不是工具评测。"]
-      },
-      {
-        id: "t5-pdf",
-        title: "Nora 试用日记 PDF",
-        kind: "pdf",
-        url: "https://visiontree.example/files/nora-template.pdf",
-        source: "PDF",
-        updated: "2026-05-08",
-        summary: "保留困惑、不确定和日常语气。",
-        highlights: ["真实。", "日常。", "不装懂。"]
-      }
-    ]
-  },
-  {
-    id: "t6",
-    title: "树的独白图文",
-    format: "Tree Monologue",
-    channels: ["X"],
-    hook: "Today I grew a new leaf. It is called first principles thinking.",
-    structure: ["树的动作", "一个思维模型", "树的隐喻", "一张图"],
-    length: "1 图 + 1-3 句",
-    notes: ["适合 The Thinking Tree。不是卖萌，是一棵树平静地观察人类。", "视觉可以是发芽、年轮、根系或被风吹弯。"],
-    resources: [
-      {
-        id: "t6-web",
-        title: "树的独白模板页",
-        kind: "web",
-        url: "https://visiontree.example/templates/thinking-tree",
-        source: "网页链接",
-        updated: "2026-05-08",
-        summary: "把思维模型翻译成树的语言。",
-        highlights: ["思维模型是养分。", "判断力是年轮。", "认知偏差是害虫。"]
-      },
-      {
-        id: "t6-pdf",
-        title: "The Thinking Tree 视觉模板 PDF",
-        kind: "pdf",
-        url: "https://visiontree.example/files/tree-template.pdf",
-        source: "PDF",
-        updated: "2026-05-08",
-        summary: "AI 作图方向和树的独白写法。",
-        highlights: ["发芽。", "根系。", "年轮截面。"]
-      }
-    ]
-  },
-  {
-    id: "t7",
-    title: "官方对比式品类定义",
-    format: "Category Definition",
-    channels: ["X"],
-    hook: "VisionTree is not here to think for you. It is here to keep you in the act of thinking.",
-    structure: ["不是什么", "是什么", "为什么重要", "转发矩阵账号"],
-    length: "4-7 句",
-    notes: ["适合官方号 VisionTree。第一周 3-4 条就够。", "官方号负责收拢叙事，不抢其他账号的戏。"],
-    resources: [
-      {
-        id: "t7-web",
-        title: "官方号品类定义模板页",
-        kind: "web",
-        url: "https://visiontree.example/templates/official-category",
-        source: "网页链接",
-        updated: "2026-05-08",
-        summary: "用对比式写法解释 VisionTree 不是什么、是什么。",
-        highlights: ["不是普通效率工具。", "不是自动替你思考。", "是认知增强项目。"]
-      },
-      {
-        id: "t7-pdf",
-        title: "VisionTree 官方帖检查表 PDF",
-        kind: "pdf",
-        url: "https://visiontree.example/files/official-template.pdf",
-        source: "PDF",
-        updated: "2026-05-08",
-        summary: "保证官方文案清楚、克制、收拢叙事。",
-        highlights: ["不追自己出圈。", "转发质量最高的矩阵内容。", "补一两句评论。"]
-      }
-    ]
-  },
-  {
     id: "tpl-garden-web-video-presentation",
     title: "网页视频演示工具卡",
-    format: "Tool Card / Web Video",
+    format: "Tool / Workflow Card · Web Video",
     channels: ["B 站", "YouTube", "视频号", "内部演示"],
     hook: "把文章、口播稿或产品说明转成可录屏的 16:9 点击驱动网页演示。",
     structure: ["适用范围", "使用边界", "准备输入", "操作流程", "案例截图待补"],
     length: "3-8 分钟视频；4-8 章；每步一个想法",
     notes: [
+      "标签：工具 / 流程。",
       "适用范围：长文章、产品说明、技术拆解、认知模型、教程型素材和发布会式讲解素材。",
       "使用边界：这是创作工具卡，不是最终内容草稿；不得把 VisionTree 写成替人思考、自动决策或成熟 Tree 产品。",
       "操作方式：先准备原文或口播稿，再产出 script.md 与 outline.md，对齐主题、素材和开发模式后，再制作 16:9 网页演示。",
@@ -781,6 +558,16 @@ const visionTreeTemplates = [
       "后续维护：真实案例截图、录屏链接和项目样板应补充到本卡 resources，不手写 referenceCount。"
     ],
     resources: [
+      {
+        id: "tpl-garden-web-video-presentation-bilibili",
+        title: "Harness 实践：让 Agent 全自动制作知识讲解视频",
+        kind: "web",
+        url: "https://www.bilibili.com/video/BV1ypdgBCE9B/?share_source=copy_web&vd_source=c3f2a17dce62359215ab1773410de02b",
+        source: "B 站来源资料",
+        updated: "2026-05-11",
+        summary: "网页视频演示工作流的实践来源资料，后续可作为案例截图和录屏参考。",
+        highlights: ["知识讲解视频。", "Agent 自动制作。", "后续补真实案例截图。"]
+      },
       {
         id: "tpl-garden-web-video-presentation-source",
         title: "web-video-presentation 原始 Skill",
@@ -806,12 +593,13 @@ const visionTreeTemplates = [
   {
     id: "tool-garden-gpt-image-2",
     title: "GPT Image 2 视觉生成工具卡",
-    format: "Tool Card / Image Generation",
+    format: "Tool / Workflow Card · Image Generation",
     channels: ["X", "B 站", "YouTube", "视频号", "小红书", "官网素材"],
     hook: "先判断环境能否出图，再把视觉需求转成可复用、可归档、可执行的结构化 prompt。",
     structure: ["适用范围", "运行模式", "操作方式", "发布边界", "案例截图待补"],
     length: "单张图一个主视觉目标；复杂任务拆成 3-6 张系列图",
     notes: [
+      "标签：工具 / 流程。",
       "适用范围：封面图、信息图、技术图解、产品概念图、社媒配图、头像和主页资产、分镜板、UI 样机、视觉文档。",
       "使用边界：生成图不能当作真实产品截图、真实用户证据或已验证案例；不得虚构客户、指标、融资或产品成熟度。",
       "操作方式：先判断本地 API、宿主图像工具或纯提示词顾问模式，再选择最贴近的模板，补齐主体、场景、构图、文字和约束字段。",
@@ -819,6 +607,16 @@ const visionTreeTemplates = [
       "后续维护：真实案例截图、prompt 文件和可复用视觉样板应补充到本卡 resources，不手写 referenceCount。"
     ],
     resources: [
+      {
+        id: "tool-garden-gpt-image-2-bilibili",
+        title: "GPT-Image2 完全指南：一期讲透主流玩法（附我的生图 Skill）",
+        kind: "web",
+        url: "https://www.bilibili.com/video/BV1vi9UBhEKq/?share_source=copy_web&vd_source=c3f2a17dce62359215ab1773410de02b",
+        source: "B 站来源资料",
+        updated: "2026-05-11",
+        summary: "GPT Image 2 主流玩法和生图 Skill 的来源资料，后续可作为工具卡案例参考。",
+        highlights: ["图像生成玩法。", "生图 Skill。", "后续补真实案例截图。"]
+      },
       {
         id: "tool-garden-gpt-image-2-source",
         title: "gpt-image-2 原始 Skill",
@@ -1136,6 +934,12 @@ function syncVisionTreeReferenceData() {
       json(template.resources)
     )
   );
+  const activeTemplateIds = new Set(visionTreeTemplates.map((template) => template.id));
+  db.prepare("SELECT id FROM templates").all().forEach((row) => {
+    if (activeTemplateIds.has(row.id)) return;
+    const references = db.prepare("SELECT COUNT(*) AS count FROM contents WHERE template_id = ?").get(row.id).count;
+    if (references === 0) db.prepare("DELETE FROM templates WHERE id = ?").run(row.id);
+  });
 
   const upsertPlan = db.prepare(`
     INSERT INTO plans (id, date, day, slot, channel, theme, owner, goal, status, content_id)

@@ -35,7 +35,7 @@ VisionTree 主项目当前应被理解为一个“帮助人更会思考”的认
 
 - 7 个演示账号 / persona：`thinking-lab`、`milo`、`ai-doubt`、`nora`、`eli`、`thinking-tree`、`visiontree`。
 - 24 条素材记录，其中包含从 VT 素材库同步来的网页、PDF、图片、笔记等资料。
-- 9 个模板 / 工具介绍卡片，对应图解、短帖、概念长帖、工程取舍、普通人试用、树的独白、官方品类定义，以及从 `creator-prep-workspace/03-template-library` 同步来的网页视频演示和 GPT Image 2 视觉生成工具卡。
+- 2 个工具 / 流程介绍卡片，从 `creator-prep-workspace/03-template-library` 同步来的网页视频演示和 GPT Image 2 视觉生成工具卡；原有账号写法模板已从模板库移除。
 - 11 条第一周发布计划。
 - 内容池目前为空，表示正式内容沉淀刚开始，还没有稳定的已发布内容记录和平台数据。
 
