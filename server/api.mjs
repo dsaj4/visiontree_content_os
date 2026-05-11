@@ -12,6 +12,12 @@ const uploadDir = join(dataDir, "uploads");
 const distDir = join(rootDir, "dist");
 const dbPath = join(dataDir, "content-system.sqlite");
 const port = Number(process.env.API_PORT ?? 8787);
+const normalizeBasePath = (value) => {
+  if (!value || value === "/") return "";
+  const trimmed = String(value).trim().replace(/^\/+|\/+$/g, "");
+  return trimmed ? `/${trimmed}` : "";
+};
+const basePath = normalizeBasePath(process.env.APP_BASE_PATH);
 const allowedOrigins = new Set(["http://localhost:5173", "http://127.0.0.1:5173"]);
 
 mkdirSync(dataDir, { recursive: true });
@@ -2521,15 +2527,27 @@ upsertPersonaUsers();
 syncVisionTreeReferenceData();
 resetLegacyDemoContentState();
 
+const stripBasePath = (pathname) => {
+  if (!basePath) return pathname;
+  if (pathname === basePath) return "/";
+  if (pathname.startsWith(`${basePath}/`)) return pathname.slice(basePath.length) || "/";
+  return null;
+};
+
 const server = createServer(async (req, res) => {
   const origin = req.headers.origin;
   try {
     const url = new URL(req.url ?? "/", `http://${req.headers.host ?? "localhost"}`);
-    if (url.pathname.startsWith("/api/")) {
-      await handleApi(req, res, url.pathname, origin);
+    const pathname = stripBasePath(url.pathname);
+    if (pathname === null) {
+      sendError(res, 404, "页面不存在。", origin);
       return;
     }
-    serveStatic(req, res, url.pathname);
+    if (pathname.startsWith("/api/")) {
+      await handleApi(req, res, pathname, origin);
+      return;
+    }
+    serveStatic(req, res, pathname);
   } catch (error) {
     console.error(error);
     sendError(res, 500, "服务器处理失败。", origin);
@@ -2537,6 +2555,6 @@ const server = createServer(async (req, res) => {
 });
 
 server.listen(port, "0.0.0.0", () => {
-  console.log(`Content System API listening on http://localhost:${port}`);
+  console.log(`Content System API listening on http://localhost:${port}${basePath || ""}`);
   console.log(`SQLite database: ${dbPath}`);
 });

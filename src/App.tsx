@@ -527,7 +527,8 @@ const statusClass: Record<ContentStatus | PlanStatus, string> = {
   已完成: "success"
 };
 
-const API_BASE = "/api";
+const APP_BASE = ((import.meta as ImportMeta & { env?: { BASE_URL?: string } }).env?.BASE_URL || "/").replace(/\/$/, "");
+const API_BASE = `${APP_BASE}/api`;
 
 async function apiRequest<T>(path: string, options: RequestInit & { token?: string } = {}): Promise<T> {
   const { token, headers, ...requestOptions } = options;
