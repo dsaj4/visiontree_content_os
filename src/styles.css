@@ -1063,6 +1063,16 @@ textarea:focus {
   gap: 16px;
 }
 
+.template-detail-view {
+  display: grid;
+  grid-template-columns: minmax(320px, 0.9fr) minmax(420px, 1.1fr);
+  grid-template-areas:
+    "hero hero"
+    "readout runbook"
+    "outcome resources";
+  gap: 16px;
+}
+
 .profile-view {
   display: grid;
   grid-template-columns: minmax(320px, 0.85fr) minmax(380px, 1fr);
@@ -1387,6 +1397,81 @@ textarea:focus {
 .detail-notes {
   grid-area: notes;
   align-self: start;
+}
+
+.template-readout {
+  grid-area: readout;
+}
+
+.template-runbook {
+  grid-area: runbook;
+  align-self: start;
+}
+
+.template-outcome {
+  grid-area: outcome;
+  align-self: start;
+}
+
+.template-readout-grid,
+.template-note-stack {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+}
+
+.template-flow {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 14px 14px 0 46px;
+}
+
+.template-flow li {
+  padding-left: 4px;
+  color: var(--ink);
+  font-weight: 850;
+  line-height: 1.55;
+}
+
+.template-note-block {
+  display: grid;
+  gap: 8px;
+  padding: 13px;
+  border: 1px solid var(--line);
+  background: #fffdf4;
+}
+
+.template-runbook .template-note-block {
+  margin: 14px;
+}
+
+.template-note-block strong {
+  font-size: 0.9rem;
+  color: var(--ink);
+}
+
+.template-note-block p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.62;
+  overflow-wrap: anywhere;
+}
+
+.template-note-block.good {
+  border-left: 4px solid var(--green);
+}
+
+.template-note-block.warning {
+  border-left: 4px solid var(--amber);
+}
+
+.template-note-block.neutral {
+  border-left: 4px solid #9fb7cf;
+}
+
+.template-note-block.muted {
+  border-left: 4px solid #cfc6ad;
 }
 
 .resource-panel {
@@ -2142,6 +2227,16 @@ textarea:focus {
       "hero"
       "resources"
       "notes";
+  }
+
+  .template-detail-view {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "hero"
+      "readout"
+      "runbook"
+      "outcome"
+      "resources";
   }
 
   .profile-view {

@@ -49,6 +49,7 @@ type UserAccount = {
   displayName: string;
   role: string;
   platform?: string;
+  loginEmail?: string;
   handle?: string;
   profileUrl?: string;
   positioning?: string;
@@ -1157,17 +1158,9 @@ function App() {
       const template = templates.find((item) => item.id === detailTarget.id);
       if (template) {
         return (
-          <DetailView
+          <TemplateDetailView
             key={`template-${template.id}`}
-            kindLabel="模板详情"
-            title={template.title}
-            subtitle={`${template.format} · ${template.length} · ${template.channels.join(" / ")}`}
-            badge={`格式模板 · 已发布引用 ${template.referenceCount ?? 0} 次`}
-            summary={template.hook}
-            tags={template.structure}
-            notes={template.notes}
-            resources={template.resources}
-            primaryActionLabel="套用模板"
+            template={template}
             onBack={() => setDetailTarget(null)}
             onPrimaryAction={() => {
               setSelectedTemplateId(template.id);
@@ -1619,7 +1612,7 @@ function App() {
           <span>VT</span>
           <div>
             <strong>VisionTree V2 内容工作台</strong>
-            <small>Seven-account launch OS</small>
+            <small>Account launch OS</small>
           </div>
         </div>
         <nav>
@@ -1723,20 +1716,20 @@ function LoginScreen({
           <span>VT</span>
           <div>
             <strong>VisionTree V2 内容工作台</strong>
-            <small>Seven-account launch OS</small>
+            <small>Account launch OS</small>
           </div>
         </div>
         <div className="login-copy">
           <span className="eyebrow">Account Login</span>
           <h1>选择一个 VisionTree V2 账号进入系统</h1>
-          <p>当前演示版不需要密码，仅允许 7 个账号登录。六个人负责具体账号，官方号负责把内容收拢到同一条叙事里。</p>
+          <p>当前演示版不需要密码，可用账号名、显示名或登录邮箱进入。个人号负责具体表达，官方号负责把内容收拢到同一条叙事里。</p>
         </div>
         <form className="login-form" onSubmit={onLogin}>
           <label>
-            <span>账号名</span>
+            <span>账号名 / 邮箱</span>
             <input
               value={loginName}
-              placeholder="例如 thinking-lab、milo、visiontree"
+              placeholder="例如 thinking-lab、milo 或邮箱"
               onChange={(event) => onLoginNameChange(event.target.value)}
             />
           </label>
@@ -1903,6 +1896,7 @@ function linesToEntries(value: string) {
 function profileFormFromUser(user: UserAccount, profile: PersonaPrepProfile) {
   return {
     displayName: user.displayName,
+    loginEmail: user.loginEmail ?? "",
     handle: user.handle ?? "",
     profileUrl: user.profileUrl ?? "",
     positioning: user.positioning ?? "",
@@ -1966,6 +1960,7 @@ function ProfileView({
     };
     await onSave(currentUser.accountName, {
       displayName: form.displayName.trim(),
+      loginEmail: form.loginEmail.trim(),
       handle: form.handle.trim(),
       profileUrl: form.profileUrl.trim(),
       positioning: form.positioning.trim(),
@@ -1994,6 +1989,7 @@ function ProfileView({
             <strong>
               {currentUser.platform || "X"} · {currentUser.handle || currentUser.accountName}
             </strong>
+            {currentUser.loginEmail ? <span>{currentUser.loginEmail}</span> : null}
           </div>
         </div>
         <div className="profile-actions">
@@ -2019,6 +2015,10 @@ function ProfileView({
             <label>
               <span>Handle</span>
               <input value={form.handle} onChange={(event) => updateField("handle", event.target.value)} />
+            </label>
+            <label className="wide-field">
+              <span>登录邮箱</span>
+              <input value={form.loginEmail} onChange={(event) => updateField("loginEmail", event.target.value)} />
             </label>
             <label className="wide-field">
               <span>X 主页链接</span>
@@ -2385,6 +2385,138 @@ function TemplateLibraryView({
   );
 }
 
+const templateDisplaySections = [
+  { key: "适用范围", title: "适合什么素材", tone: "good" },
+  { key: "准备输入", title: "开始前要准备", tone: "neutral" },
+  { key: "使用边界", title: "不要怎么误用", tone: "warning" },
+  { key: "操作方式", title: "怎么开始", tone: "neutral" },
+  { key: "运行效果", title: "最后会做成什么", tone: "good" },
+  { key: "验收方式", title: "什么时候该停下来确认", tone: "neutral" },
+  { key: "最新案例", title: "真实例证", tone: "good" },
+  { key: "同步边界", title: "前台展示边界", tone: "muted" }
+] as const;
+
+function splitDisplayNote(note: string) {
+  const match = note.match(/^([^：:]{2,12})[：:]\s*(.+)$/);
+  if (!match) return { label: "其他提示", body: note };
+  return { label: match[1], body: match[2] };
+}
+
+function groupedDisplayNotes(notes: string[]) {
+  const grouped = new Map<string, string[]>();
+  notes.forEach((note) => {
+    const { label, body } = splitDisplayNote(note);
+    grouped.set(label, [...(grouped.get(label) ?? []), body]);
+  });
+  return grouped;
+}
+
+function noteBodies(grouped: Map<string, string[]>, key: string) {
+  return grouped.get(key) ?? [];
+}
+
+function TemplateDetailView({
+  template,
+  onBack,
+  onPrimaryAction
+}: {
+  template: Template;
+  onBack: () => void;
+  onPrimaryAction: () => void;
+}) {
+  const groupedNotes = groupedDisplayNotes(template.notes);
+  const quickSections = templateDisplaySections.slice(0, 3);
+  const resultSections = templateDisplaySections.slice(4);
+  const knownNoteKeys = new Set<string>([...templateDisplaySections.map((section) => section.key), "标签", "其他提示"]);
+  const additionalSections = Array.from(groupedNotes.entries()).filter(([label]) => !knownNoteKeys.has(label));
+
+  return (
+    <section className="template-detail-view">
+      <div className="workspace-panel detail-hero template-detail-hero">
+        <button className="back-button" onClick={onBack}>
+          <ArrowLeft size={17} />
+          返回
+        </button>
+        <div className="detail-hero-copy">
+          <span className="eyebrow">模板详情</span>
+          <h2>{template.title}</h2>
+          <p>{template.hook}</p>
+          <div className="detail-meta">
+            <span>{template.format}</span>
+            <span>{template.length}</span>
+            <strong>已发布引用 {template.referenceCount ?? 0} 次</strong>
+          </div>
+          <div className="tag-row">
+            {template.channels.map((channel) => (
+              <span key={channel}>{channel}</span>
+            ))}
+          </div>
+        </div>
+        <button className="primary-button" onClick={onPrimaryAction}>
+          <Plus size={18} />
+          套用模板
+        </button>
+      </div>
+
+      <div className="workspace-panel template-readout">
+        <PanelTitle icon={ListChecks} title="创作者快速判断" meta="先判断能不能套用" />
+        <div className="template-readout-grid">
+          {quickSections.map((section) => (
+            <TemplateNoteBlock
+              key={section.key}
+              title={section.title}
+              tone={section.tone}
+              items={noteBodies(groupedNotes, section.key)}
+            />
+          ))}
+        </div>
+      </div>
+
+      <div className="workspace-panel template-runbook">
+        <PanelTitle icon={MousePointer2} title="开始使用" meta={`${template.structure.length} 步路径`} />
+        <ol className="template-flow">
+          {template.structure.map((step) => (
+            <li key={step}>{step}</li>
+          ))}
+        </ol>
+        <TemplateNoteBlock title="操作方式" tone="neutral" items={noteBodies(groupedNotes, "操作方式")} />
+      </div>
+
+      <div className="workspace-panel template-outcome">
+        <PanelTitle icon={Video} title="运行效果与验收" meta="看结果，不看字段" />
+        <div className="template-note-stack">
+          {resultSections.map((section) => (
+            <TemplateNoteBlock
+              key={section.key}
+              title={section.title}
+              tone={section.tone}
+              items={noteBodies(groupedNotes, section.key)}
+            />
+          ))}
+          {additionalSections.map(([label, items]) => (
+            <TemplateNoteBlock key={label} title={label} tone="muted" items={items} />
+          ))}
+          <TemplateNoteBlock title="其他提示" tone="muted" items={noteBodies(groupedNotes, "其他提示")} />
+        </div>
+      </div>
+
+      <ResourceBrowser resources={template.resources} title="真实案例与来源" meta={`${template.resources.length} 个资源`} />
+    </section>
+  );
+}
+
+function TemplateNoteBlock({ title, tone, items }: { title: string; tone: string; items: string[] }) {
+  if (!items.length) return null;
+  return (
+    <article className={`template-note-block ${tone}`}>
+      <strong>{title}</strong>
+      {items.map((item) => (
+        <p key={item}>{item}</p>
+      ))}
+    </article>
+  );
+}
+
 function DetailView({
   kindLabel,
   title,
@@ -2410,9 +2542,6 @@ function DetailView({
   onBack: () => void;
   onPrimaryAction: () => void;
 }) {
-  const [activeResourceId, setActiveResourceId] = useState(resources[0]?.id ?? "");
-  const activeResource = resources.find((resource) => resource.id === activeResourceId) ?? resources[0];
-
   return (
     <section className="detail-view">
       <div className="workspace-panel detail-hero">
@@ -2452,98 +2581,107 @@ function DetailView({
         </div>
       </div>
 
-      <div className="workspace-panel resource-panel">
-        <PanelTitle icon={FileSearch} title="来源资料" meta={`${resources.length} 个链接 / PDF`} />
-        {activeResource ? (
-          <div className="resource-layout">
-            <div className="resource-list">
-              {resources.map((resource) => {
-                const Icon = resource.kind === "pdf" ? FileText : Globe2;
-                return (
-                  <button
-                    className={`resource-item ${activeResource.id === resource.id ? "active" : ""}`}
-                    key={resource.id}
-                    onClick={() => setActiveResourceId(resource.id)}
-                  >
-                    <Icon size={18} />
-                    <span>
-                      <strong>{resource.title}</strong>
-                      <small>
-                        {resource.source} · {resource.updated}
-                      </small>
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-
-            <div className="resource-preview">
-              <div className="preview-topline">
-                <span className={`status-pill ${activeResource.kind === "pdf" ? "accent" : "success"}`}>
-                  {activeResource.kind === "pdf" ? "PDF" : "网页"}
-                </span>
-                <a href={activeResource.url} target="_blank" rel="noreferrer">
-                  打开原链接
-                  <ExternalLink size={15} />
-                </a>
-              </div>
-
-              {activeResource.kind === "web" ? (
-                <div className="web-frame">
-                  <div className="browser-strip">
-                    <i />
-                    <i />
-                    <i />
-                    <span>{activeResource.url}</span>
-                  </div>
-                  <div className="web-document">
-                    <span>网页摘要</span>
-                    <h3>{activeResource.title}</h3>
-                    <p>{activeResource.summary}</p>
-                    <div className="web-lines">
-                      <i />
-                      <i />
-                      <i />
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div className="pdf-frame">
-                  <div className="pdf-page">
-                    <span>PDF</span>
-                    <h3>{activeResource.title}</h3>
-                    <p>{activeResource.summary}</p>
-                    <i />
-                    <i />
-                    <i />
-                  </div>
-                  <div className="pdf-thumbs">
-                    <span>01</span>
-                    <span>02</span>
-                    <span>03</span>
-                  </div>
-                </div>
-              )}
-
-              <div className="highlight-list">
-                {activeResource.highlights.map((highlight) => (
-                  <article key={highlight}>
-                    <CheckCircle2 size={16} />
-                    <span>{highlight}</span>
-                  </article>
-                ))}
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div className="empty-state">
-            <FileSearch size={22} />
-            <strong>暂无配套资料</strong>
-            <span>这个条目还没有录入网页链接或 PDF。</span>
-          </div>
-        )}
-      </div>
+      <ResourceBrowser resources={resources} title="来源资料" meta={`${resources.length} 个链接 / PDF`} />
     </section>
+  );
+}
+
+function ResourceBrowser({ resources, title, meta }: { resources: ResourceLink[]; title: string; meta: string }) {
+  const [activeResourceId, setActiveResourceId] = useState(resources[0]?.id ?? "");
+  const activeResource = resources.find((resource) => resource.id === activeResourceId) ?? resources[0];
+
+  return (
+    <div className="workspace-panel resource-panel">
+      <PanelTitle icon={FileSearch} title={title} meta={meta} />
+      {activeResource ? (
+        <div className="resource-layout">
+          <div className="resource-list">
+            {resources.map((resource) => {
+              const Icon = resource.kind === "pdf" ? FileText : Globe2;
+              return (
+                <button
+                  className={`resource-item ${activeResource.id === resource.id ? "active" : ""}`}
+                  key={resource.id}
+                  onClick={() => setActiveResourceId(resource.id)}
+                >
+                  <Icon size={18} />
+                  <span>
+                    <strong>{resource.title}</strong>
+                    <small>
+                      {resource.source} · {resource.updated}
+                    </small>
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="resource-preview">
+            <div className="preview-topline">
+              <span className={`status-pill ${activeResource.kind === "pdf" ? "accent" : "success"}`}>
+                {activeResource.kind === "pdf" ? "PDF" : "网页"}
+              </span>
+              <a href={activeResource.url} target="_blank" rel="noreferrer">
+                打开原链接
+                <ExternalLink size={15} />
+              </a>
+            </div>
+
+            {activeResource.kind === "web" ? (
+              <div className="web-frame">
+                <div className="browser-strip">
+                  <i />
+                  <i />
+                  <i />
+                  <span>{activeResource.url}</span>
+                </div>
+                <div className="web-document">
+                  <span>网页摘要</span>
+                  <h3>{activeResource.title}</h3>
+                  <p>{activeResource.summary}</p>
+                  <div className="web-lines">
+                    <i />
+                    <i />
+                    <i />
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="pdf-frame">
+                <div className="pdf-page">
+                  <span>PDF</span>
+                  <h3>{activeResource.title}</h3>
+                  <p>{activeResource.summary}</p>
+                  <i />
+                  <i />
+                  <i />
+                </div>
+                <div className="pdf-thumbs">
+                  <span>01</span>
+                  <span>02</span>
+                  <span>03</span>
+                </div>
+              </div>
+            )}
+
+            <div className="highlight-list">
+              {activeResource.highlights.map((highlight) => (
+                <article key={highlight}>
+                  <CheckCircle2 size={16} />
+                  <span>{highlight}</span>
+                </article>
+              ))}
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="empty-state">
+          <FileSearch size={22} />
+          <strong>暂无配套资料</strong>
+          <span>这个条目还没有录入网页链接或 PDF。</span>
+        </div>
+      )}
+    </div>
   );
 }
 

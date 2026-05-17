@@ -68,8 +68,9 @@ const personaUsers = [
     displayName: "Milo Reed",
     role: "负责人：余同洲",
     platform: "X",
-    handle: "@milo_reed_vt",
-    profileUrl: "https://x.com/milo_reed_vt",
+    loginEmail: "tz.yu@visiontreeai.com",
+    handle: "@VTmiloreedo118",
+    profileUrl: "https://x.com/VTmiloreedo118",
     positioning: "工程师号 / 产品建设者",
     personaRole: "发工程师视角的真实技术选择和产品取舍，让人相信 VisionTree 是认真做出来的。",
     voice: ["短句", "克制", "工程师对工程师说话", "说清楚选项与取舍"],
@@ -84,6 +85,7 @@ const personaUsers = [
     displayName: "AI Doubt Notes",
     role: "负责人：石盛楠",
     platform: "X",
+    loginEmail: "sn.shi@visiontreeai.com",
     handle: "@ai_doubt_notes",
     profileUrl: "https://x.com/ai_doubt_notes",
     positioning: "反 AI 怀疑者 / 公开怀疑笔记",
@@ -100,8 +102,9 @@ const personaUsers = [
     displayName: "Nora Blake",
     role: "负责人：许畅",
     platform: "X",
-    handle: "@nora_tries_ai",
-    profileUrl: "https://x.com/nora_tries_ai",
+    loginEmail: "c.xu@visiontreeai.com",
+    handle: "@Nora__Blake",
+    profileUrl: "https://x.com/Nora__Blake",
     positioning: "普通人试用号 / 非技术用户",
     personaRole: "真实记录 AI 工具里的困惑、不确定和小发现，不装懂也不做评测。",
     voice: ["真实", "日常", "不装懂", "有一点普通人的迟疑"],
@@ -132,8 +135,9 @@ const personaUsers = [
     displayName: "Thinking Lab",
     role: "负责人：武新悦",
     platform: "X",
-    handle: "@thinking_lab_vt",
-    profileUrl: "https://x.com/thinking_lab_vt",
+    loginEmail: "thinklab-xinyue.wu@visiontreeai.com",
+    handle: "@ThinkingLab_ai",
+    profileUrl: "https://x.com/ThinkingLab_ai",
     positioning: "视觉 + 互动实验室",
     personaRole: "原 Thinking in Frames 和 Decision Lab 合并。用图解释模型，也用两分钟小实验让人动手想。",
     voice: ["视觉优先", "实验感", "三秒看懂", "少解释多动作"],
@@ -145,11 +149,12 @@ const personaUsers = [
   {
     id: "u6",
     accountName: "thinking-tree",
-    displayName: "The Thinking Tree",
+    displayName: "thinking-tree",
     role: "负责人：马文博",
     platform: "X",
-    handle: "@thinking_tree_vt",
-    profileUrl: "https://x.com/thinking_tree_vt",
+    loginEmail: "dsaj02@outlook.com",
+    handle: "@thinkingtreeee",
+    profileUrl: "https://x.com/thinkingtreeee",
     positioning: "一棵会说话的树",
     personaRole: "它不是一个人。它把 VisionTree 的 Tree 变成活的隐喻，用树的口吻讲思维模型、认知偏差和结构化思考。",
     voice: ["平静", "像活了很久的树", "淡淡幽默", "不卖萌", "不装可爱"],
@@ -173,6 +178,23 @@ const personaUsers = [
     avoid: ["发太多", "自己抢矩阵账号的戏", "空泛 slogan", "把 VisionTree 讲成普通效率工具"],
     cadence: "第一周 3-4 条品类定义帖；转发其他六个号中质量最高的帖子并补一句评论。",
     interactionTarget: "把七个账号收拢到同一条 VisionTree 叙事里。"
+  },
+  {
+    id: "u8",
+    accountName: "franc",
+    displayName: "franc_chan",
+    role: "待确认负责人",
+    platform: "X",
+    loginEmail: "dsaj01@outlook.com",
+    handle: "@franc_chany",
+    profileUrl: "https://x.com/franc_chany",
+    positioning: "待确认账号 / 新注册账号",
+    personaRole: "新注册账号，等待确认是否归入现有人设矩阵或作为独立运营账号。",
+    voice: ["待确认"],
+    contentTypes: ["待确认"],
+    avoid: ["未确认前不发布高风险内容", "不与矩阵号互刷互动"],
+    cadence: "待确认。",
+    interactionTarget: "待确认。"
   }
 ];
 
@@ -550,18 +572,21 @@ const visionTreeTemplates = [
   {
     id: "tpl-garden-web-video-presentation",
     title: "网页视频演示工具卡",
-    format: "Tool / Workflow Card · Web Video",
+    format: "网页视频 / 工具流程",
     channels: ["B 站", "YouTube", "视频号", "内部演示"],
-    hook: "把文章、口播稿或产品说明转成可录屏的 16:9 点击驱动网页演示。",
-    structure: ["适用范围", "使用边界", "准备输入", "操作流程", "案例截图待补"],
-    length: "3-8 分钟视频；4-8 章；每步一个想法",
+    hook: "把文章、口播稿或产品说明变成可录屏的 16:9 点击驱动网页演示。",
+    structure: ["判断素材", "准备输入", "拆口播节拍", "做第 1 章样板", "完整制作与录屏"],
+    length: "3-8 分钟视频；4-8 章；每个 step 一个想法",
     notes: [
       "标签：工具 / 流程。",
       "适用范围：长文章、产品说明、技术拆解、认知模型、教程型素材和发布会式讲解素材。",
-      "使用边界：这是创作工具卡，不是最终内容草稿；不得把 VisionTree 写成替人思考、自动决策或成熟 Tree 产品。",
-      "操作方式：先准备原文或口播稿，再产出 script.md 与 outline.md，对齐主题、素材和开发模式后，再制作 16:9 网页演示。",
+      "准备输入：至少需要原文或口播稿、推荐视觉方向、素材清单、目标渠道和是否需要录屏成片的判断。",
+      "使用边界：只有一句主题、没有论证材料或视觉素材时不要直接套用；这张卡不是最终内容草稿，也不代表 content-system 已自动具备网页视频制作能力。",
+      "操作方式：先判断素材是否值得视频化，再拆出口播节拍和章节 outline；第 1 章做成样板确认后，再扩展为完整 16:9 网页演示。",
+      "运行效果：最终应是一套点击或方向键推进的网页舞台，画面像为录屏设计的视频，而不是传统 PPT 或营销落地页。",
       "验收方式：第 1 章必须先做成完整样板，由人工确认视觉气质、节奏、内容密度和禁写边界后再继续。",
-      "后续维护：真实案例截图、录屏链接和项目样板应补充到本卡 resources，不手写 referenceCount。"
+      "最新案例：劳动教育结课报告已整理为 9 章网页视频示例，证明该模板适合把课程报告、经历复盘和实践总结视频化。",
+      "同步边界：完整脚手架、分镜和案例细节保留在 creator-prep-workspace；前端只展示创作者判断所需的边界、方法、效果和案例入口。"
     ],
     resources: [
       {
@@ -586,13 +611,23 @@ const visionTreeTemplates = [
       },
       {
         id: "tpl-garden-web-video-presentation-prep",
-        title: "creator-prep 同步模板",
+        title: "creator-prep 模板说明",
         kind: "web",
         url: "https://github.com/ConardLi/garden-skills/tree/main/skills/web-video-presentation",
         source: "creator-prep-workspace/03-template-library",
-        updated: "2026-05-11",
-        summary: "准备区已整理为 tpl-garden-web-video-presentation，供内容系统作为介绍卡片展示。",
-        highlights: ["写明适用账号。", "写明禁忌和人工判断点。", "后续补真实案例截图。"]
+        updated: "2026-05-17",
+        summary: "准备区已整理模板边界、使用方法、运行效果和 content-system 前端展示映射。",
+        highlights: ["列表卡用于快速判断。", "详情页展示边界和方法。", "案例细节留在准备区。"]
+      },
+      {
+        id: "tpl-garden-web-video-presentation-labor-case",
+        title: "劳动教育结课报告网页视频示例",
+        kind: "web",
+        url: "https://github.com/dsaj4/visiontree_creator_prep",
+        source: "creator-prep-workspace/examples",
+        updated: "2026-05-17",
+        summary: "把一份课程结课报告整理成 9 章点击驱动网页演示，包含口播稿、提词台本、分镜、视觉风格、素材清单和截图。",
+        highlights: ["9 章点击驱动舞台。", "3-5 分钟录屏口径。", "适合报告和经历复盘视频化。"]
       }
     ]
   },
@@ -694,6 +729,7 @@ function createSchema() {
       display_name TEXT NOT NULL,
       role TEXT NOT NULL,
       platform TEXT,
+      login_email TEXT,
       handle TEXT,
       profile_url TEXT,
       positioning TEXT,
@@ -806,6 +842,7 @@ function ensureColumn(table, name, definition) {
 function migrateSchema() {
   [
     ["platform", "TEXT"],
+    ["login_email", "TEXT"],
     ["handle", "TEXT"],
     ["profile_url", "TEXT"],
     ["positioning", "TEXT"],
@@ -823,10 +860,20 @@ function migrateSchema() {
 function upsertPersonaUsers() {
   const upsertUser = db.prepare(`
     INSERT INTO users
-      (id, account_name, display_name, role, platform, handle, profile_url, positioning, persona_role,
+      (id, account_name, display_name, role, platform, login_email, handle, profile_url, positioning, persona_role,
        voice_json, content_types_json, avoid_json, cadence, interaction_target, creator_profile_json)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ON CONFLICT(id) DO NOTHING
+  `);
+  const syncAccountBasics = db.prepare(`
+    UPDATE users
+    SET display_name = ?,
+        role = ?,
+        platform = ?,
+        login_email = ?,
+        handle = ?,
+        profile_url = ?
+    WHERE id = ?
   `);
   const fillCreatorProfile = db.prepare(`
     UPDATE users
@@ -841,6 +888,7 @@ function upsertPersonaUsers() {
       user.displayName,
       user.role,
       user.platform,
+      user.loginEmail ?? "",
       user.handle,
       user.profileUrl,
       user.positioning,
@@ -851,6 +899,17 @@ function upsertPersonaUsers() {
       user.cadence,
       user.interactionTarget,
       json(creatorProfileSeeds[user.accountName] ?? null)
+    )
+  );
+  personaUsers.forEach((user) =>
+    syncAccountBasics.run(
+      user.displayName,
+      user.role,
+      user.platform,
+      user.loginEmail ?? "",
+      user.handle,
+      user.profileUrl,
+      user.id
     )
   );
   personaUsers.forEach((user) => fillCreatorProfile.run(json(creatorProfileSeeds[user.accountName] ?? null), user.id));
@@ -1009,6 +1068,7 @@ function mapUser(row) {
     displayName: row.displayName,
     role: row.role,
     platform: row.platform ?? "X",
+    loginEmail: row.loginEmail ?? "",
     handle: row.handle ?? "",
     profileUrl: row.profileUrl ?? "",
     positioning: row.positioning ?? "",
@@ -1072,6 +1132,7 @@ function getAccountByName(accountName) {
         display_name AS displayName,
         role,
         platform,
+        login_email AS loginEmail,
         handle,
         profile_url AS profileUrl,
         positioning,
@@ -1112,9 +1173,9 @@ function seedDatabase() {
 
   const insertUser = db.prepare(`
     INSERT INTO users
-      (id, account_name, display_name, role, platform, handle, profile_url, positioning, persona_role,
+      (id, account_name, display_name, role, platform, login_email, handle, profile_url, positioning, persona_role,
        voice_json, content_types_json, avoid_json, cadence, interaction_target)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `);
   users.forEach((user) =>
     insertUser.run(
@@ -1123,6 +1184,7 @@ function seedDatabase() {
       user.displayName,
       user.role,
       user.platform,
+      user.loginEmail ?? "",
       user.handle,
       user.profileUrl,
       user.positioning,
@@ -1803,6 +1865,7 @@ function getAccounts() {
         display_name AS displayName,
         role,
         platform,
+        login_email AS loginEmail,
         handle,
         profile_url AS profileUrl,
         positioning,
@@ -1977,6 +2040,7 @@ function authenticate(req) {
           u.display_name AS displayName,
           u.role,
           u.platform,
+          u.login_email AS loginEmail,
           u.handle,
           u.profile_url AS profileUrl,
           u.positioning,
@@ -2020,6 +2084,7 @@ function updateAccountProfile(accountName, body) {
     displayName: String(body.displayName ?? currentUser.displayName).trim().slice(0, 80),
     role: String(body.role ?? currentUser.role).trim().slice(0, 120),
     platform: String(body.platform ?? currentUser.platform ?? "X").trim().slice(0, 40),
+    loginEmail: String(body.loginEmail ?? currentUser.loginEmail ?? "").trim().slice(0, 160),
     handle: String(body.handle ?? currentUser.handle ?? "").trim().slice(0, 80),
     profileUrl: String(body.profileUrl ?? currentUser.profileUrl ?? "").trim().slice(0, 300),
     positioning: String(body.positioning ?? currentUser.positioning ?? "").trim().slice(0, 160),
@@ -2039,6 +2104,7 @@ function updateAccountProfile(accountName, body) {
      SET display_name = ?,
          role = ?,
          platform = ?,
+         login_email = ?,
          handle = ?,
          profile_url = ?,
          positioning = ?,
@@ -2054,6 +2120,7 @@ function updateAccountProfile(accountName, body) {
     base.displayName,
     base.role,
     base.platform,
+    base.loginEmail,
     base.handle,
     base.profileUrl,
     base.positioning,
@@ -2193,9 +2260,9 @@ async function handleApi(req, res, pathname, origin) {
 
   if (req.method === "POST" && pathname === "/api/login") {
     const body = await getRequestBody(req);
-    const accountName = String(body.accountName ?? "").trim().toLowerCase();
-    if (!accountName || accountName.length > 40) {
-      sendError(res, 400, "请输入有效账号名。", origin);
+    const loginName = String(body.accountName ?? "").trim().toLowerCase();
+    if (!loginName || loginName.length > 160) {
+      sendError(res, 400, "请输入有效账号名或登录邮箱。", origin);
       return;
     }
 
@@ -2207,6 +2274,7 @@ async function handleApi(req, res, pathname, origin) {
           display_name AS displayName,
           role,
           platform,
+          login_email AS loginEmail,
           handle,
           profile_url AS profileUrl,
           positioning,
@@ -2218,9 +2286,9 @@ async function handleApi(req, res, pathname, origin) {
           interaction_target AS interactionTarget,
           creator_profile_json AS creatorProfileJson
         FROM users
-        WHERE account_name = ? OR lower(display_name) = ?`
+        WHERE account_name = ? OR lower(display_name) = ? OR lower(login_email) = ?`
       )
-      .get(accountName, accountName);
+      .get(loginName, loginName, loginName);
     const user = mapUser(userRow);
     if (!user) {
       sendError(res, 404, "账号不存在。", origin);
