@@ -149,7 +149,7 @@ const personaPrepProfiles: Record<string, PersonaPrepProfile> = {
     referenceAccounts: ["Anne-Laure Le Cunff", "Dan Shipper", "Every.to", "Julie Zhuo"],
     weeklyFocus: "写 2-3 条真实试用感受，重点不是评测工具，而是记录判断感受。"
   },
-  eli: {
+  franc: {
     roleLine: "为 AI 时代的判断问题命名，用少量深帖建立思想密度。",
     backgroundStory: "他像一个慢概念作者，不追热点本身，而是追问热点背后的默认假设，并给模糊体验一个可讨论的名字。",
     writeFor: ["月度概念词", "同一概念的不同场景", "热点背后的默认假设", "认知、判断、价值相关长帖"],
@@ -356,23 +356,23 @@ const fallbackAssets: Asset[] = [
   },
   {
     id: "a2",
-    title: "Eli Rowan 月度概念词素材",
+    title: "franc_chan 月度概念词素材",
     theme: "慢思考",
     source: "V2 账号启动计划",
     format: "概念长帖",
     freshness: "昨天 18:40",
     score: 90,
-    tags: ["Eli Rowan", "概念词", "慢思考"],
-    summary: "Eli 第一周只做一件事：选好这个月的主推概念词，用不同场景切入发三条。",
-    owner: "Eli Rowan",
+    tags: ["franc_chan", "概念词", "慢思考"],
+    summary: "franc 第一周只做一件事：选好这个月的主推概念词，用不同场景切入发三条。",
+    owner: "franc_chan",
     palette: "amber",
-    notes: ["Eli 的调性是慢和深，第一周发太多反而不对。", "评论要有自己的角度，不要只说同意。"],
+    notes: ["franc 的调性是慢和深，第一周发太多反而不对。", "评论要有自己的角度，不要只说同意。"],
     resources: [
       {
         id: "a2-web",
-        title: "Eli 第一周概念准备页",
+        title: "franc 第一周概念准备页",
         kind: "web",
-        url: "https://visiontree.example/v2/eli-concept-month",
+        url: "https://visiontree.example/v2/franc-concept-month",
         source: "网页链接",
         updated: "2026-05-07",
         summary: "围绕同一个概念词准备三到四条帖子，每条从不同场景切入。",
@@ -380,9 +380,9 @@ const fallbackAssets: Asset[] = [
       },
       {
         id: "a2-pdf",
-        title: "Eli 概念帖检查表 PDF",
+        title: "franc 概念帖检查表 PDF",
         kind: "pdf",
-        url: "https://visiontree.example/files/eli-concept-checklist.pdf",
+        url: "https://visiontree.example/files/franc-concept-checklist.pdf",
         source: "PDF",
         updated: "2026-05-06",
         summary: "检查概念是否足够清楚、场景是否有差异、语气是否慢而稳。",
@@ -529,7 +529,7 @@ const fallbackTemplates: Template[] = [
     hook: "先命名一个概念，再用三个场景慢慢打开它。",
     structure: ["概念命名", "场景切入", "默认假设", "判断边界"],
     length: "3-8 段",
-    notes: ["适合 Eli Rowan。第一周发三条就够。", "不要为了热闹牺牲慢和深。"],
+    notes: ["适合 franc_chan。第一周发三条就够。", "不要为了热闹牺牲慢和深。"],
     resources: []
   },
   {

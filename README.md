@@ -33,7 +33,7 @@ VisionTree 主项目当前应被理解为一个“帮助人更会思考”的认
 
 当前已有：
 
-- 7 个演示账号 / persona：`thinking-lab`、`milo`、`ai-doubt`、`nora`、`eli`、`thinking-tree`、`visiontree`。
+- 7 个演示账号 / persona：`thinking-lab`、`milo`、`ai-doubt`、`nora`、`franc`、`thinking-tree`、`visiontree`。
 - 24 条素材记录，其中包含从 VT 素材库同步来的网页、PDF、图片、笔记等资料。
 - 2 个工具 / 流程介绍卡片，从 `creator-prep-workspace/03-template-library` 同步来的网页视频演示和 GPT Image 2 视觉生成工具卡；原有账号写法模板已从模板库移除。
 - 11 条第一周发布计划。
@@ -90,13 +90,13 @@ npm run serve
 
 ## 演示账号
 
-当前登录方式是演示用无密码登录，只允许输入以下 7 个账号名：
+当前登录方式是演示用无密码登录，只允许输入以下 7 个账号名或对应登录邮箱：
 
 - `thinking-lab`
 - `milo`
 - `ai-doubt`
 - `nora`
-- `eli`
+- `franc`
 - `thinking-tree`
 - `visiontree`
 

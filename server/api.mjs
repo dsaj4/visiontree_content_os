@@ -115,12 +115,13 @@ const personaUsers = [
   },
   {
     id: "u4",
-    accountName: "eli",
-    displayName: "Eli Rowan",
+    accountName: "franc",
+    displayName: "franc_chan",
     role: "负责人：陈政霖",
     platform: "X",
-    handle: "@eli_rowan_vt",
-    profileUrl: "https://x.com/eli_rowan_vt",
+    loginEmail: "dsaj01@outlook.com",
+    handle: "@franc_chany",
+    profileUrl: "https://x.com/franc_chany",
     positioning: "造概念的慢思考号",
     personaRole: "为 VisionTree 叙事造第一个月的主推概念词，用少量深帖建立思想密度。",
     voice: ["慢", "稳", "有思想密度", "不用感叹号"],
@@ -178,23 +179,6 @@ const personaUsers = [
     avoid: ["发太多", "自己抢矩阵账号的戏", "空泛 slogan", "把 VisionTree 讲成普通效率工具"],
     cadence: "第一周 3-4 条品类定义帖；转发其他六个号中质量最高的帖子并补一句评论。",
     interactionTarget: "把七个账号收拢到同一条 VisionTree 叙事里。"
-  },
-  {
-    id: "u8",
-    accountName: "franc",
-    displayName: "franc_chan",
-    role: "待确认负责人",
-    platform: "X",
-    loginEmail: "dsaj01@outlook.com",
-    handle: "@franc_chany",
-    profileUrl: "https://x.com/franc_chany",
-    positioning: "待确认账号 / 新注册账号",
-    personaRole: "新注册账号，等待确认是否归入现有人设矩阵或作为独立运营账号。",
-    voice: ["待确认"],
-    contentTypes: ["待确认"],
-    avoid: ["未确认前不发布高风险内容", "不与矩阵号互刷互动"],
-    cadence: "待确认。",
-    interactionTarget: "待确认。"
   }
 ];
 
@@ -263,7 +247,7 @@ const creatorProfileSeeds = {
     referenceAccounts: ["Anne-Laure Le Cunff", "Dan Shipper", "Every.to", "Julie Zhuo"],
     weeklyFocus: "写 2-3 条真实试用感受，重点不是评测工具，而是记录判断感受。"
   },
-  eli: {
+  franc: {
     roleLine: "为 AI 时代的判断问题命名，用少量深帖建立思想密度。",
     backgroundStory: "他像一个慢概念作者，不追热点本身，而是追问热点背后的默认假设，并给模糊体验一个可讨论的名字。",
     writeFor: ["月度概念词", "同一概念的不同场景", "热点背后的默认假设", "认知、判断、价值相关长帖"],
@@ -352,23 +336,23 @@ const visionTreeAssets = [
   },
   {
     id: "a2",
-    title: "Eli Rowan 月度概念词素材",
+    title: "franc_chan 月度概念词素材",
     theme: "慢思考",
     source: "V2 账号启动计划",
     format: "概念长帖",
     freshness: "昨天 18:40",
     score: 90,
-    tags: ["Eli Rowan", "概念词", "慢思考"],
-    summary: "Eli 第一周只做一件事：选好这个月的主推概念词，用不同场景切入发三条。",
-    owner: "Eli Rowan",
+    tags: ["franc_chan", "概念词", "慢思考"],
+    summary: "franc 第一周只做一件事：选好这个月的主推概念词，用不同场景切入发三条。",
+    owner: "franc_chan",
     palette: "amber",
-    notes: ["Eli 的调性是慢和深，第一周发太多反而不对。", "评论要有自己的角度，不要只说同意。"],
+    notes: ["franc 的调性是慢和深，第一周发太多反而不对。", "评论要有自己的角度，不要只说同意。"],
     resources: [
       {
         id: "a2-web",
-        title: "Eli 第一周概念准备页",
+        title: "franc 第一周概念准备页",
         kind: "web",
-        url: "https://visiontree.example/v2/eli-concept-month",
+        url: "https://visiontree.example/v2/franc-concept-month",
         source: "网页链接",
         updated: "2026-05-07",
         summary: "围绕同一个概念词准备三到四条帖子，每条从不同场景切入。",
@@ -376,9 +360,9 @@ const visionTreeAssets = [
       },
       {
         id: "a2-pdf",
-        title: "Eli 概念帖检查表 PDF",
+        title: "franc 概念帖检查表 PDF",
         kind: "pdf",
-        url: "https://visiontree.example/files/eli-concept-checklist.pdf",
+        url: "https://visiontree.example/files/franc-concept-checklist.pdf",
         source: "PDF",
         updated: "2026-05-06",
         summary: "检查概念是否足够清楚、场景是否有差异、语气是否慢而稳。",
@@ -690,8 +674,8 @@ const visionTreePlans = [
   ["p2", "2026-05-12", "周二", "10:00", "X", "Thinking Lab：第一个两分钟实验", "Thinking Lab", "引导回复", "待领取", null],
   ["p3", "2026-05-13", "周三", "10:00", "X", "Thinking Lab：AI 答案 vs 保留判断", "Thinking Lab", "形成置顶内容", "待领取", null],
   ["p4", "2026-05-14", "周四", "11:00", "X", "Thinking Lab：决策方式投票", "Thinking Lab", "带来回复", "待领取", null],
-  ["p5", "2026-05-15", "周五", "10:30", "X", "Thinking Lab：Eli 概念卡", "Thinking Lab", "连接矩阵账号", "待领取", null],
-  ["p6", "2026-05-11", "周一", "16:00", "X", "Eli：月度概念词第一帖", "Eli Rowan", "建立慢思考调性", "待领取", null],
+  ["p5", "2026-05-15", "周五", "10:30", "X", "Thinking Lab：franc 概念卡", "Thinking Lab", "连接矩阵账号", "待领取", null],
+  ["p6", "2026-05-11", "周一", "16:00", "X", "franc：月度概念词第一帖", "franc_chan", "建立慢思考调性", "待领取", null],
   ["p7", "2026-05-11", "周一", "12:30", "X", "AI Doubt：反 AI 短帖", "AI Doubt Notes", "铺批判底色", "待领取", null],
   ["p8", "2026-05-12", "周二", "18:00", "X", "Milo：真实技术取舍", "Milo Reed", "建立工程可信度", "待领取", null],
   ["p9", "2026-05-12", "周二", "20:00", "X", "Nora：真实 AI 工具试用", "Nora Blake", "降低普通人门槛", "待领取", null],
@@ -858,6 +842,9 @@ function migrateSchema() {
 }
 
 function upsertPersonaUsers() {
+  db.prepare("DELETE FROM sessions WHERE user_id = ?").run("u8");
+  db.prepare("DELETE FROM users WHERE id = ? OR account_name = ?").run("u8", "eli");
+
   const upsertUser = db.prepare(`
     INSERT INTO users
       (id, account_name, display_name, role, platform, login_email, handle, profile_url, positioning, persona_role,
@@ -867,12 +854,20 @@ function upsertPersonaUsers() {
   `);
   const syncAccountBasics = db.prepare(`
     UPDATE users
-    SET display_name = ?,
+    SET account_name = ?,
+        display_name = ?,
         role = ?,
         platform = ?,
         login_email = ?,
         handle = ?,
-        profile_url = ?
+        profile_url = ?,
+        positioning = ?,
+        persona_role = ?,
+        voice_json = ?,
+        content_types_json = ?,
+        avoid_json = ?,
+        cadence = ?,
+        interaction_target = ?
     WHERE id = ?
   `);
   const fillCreatorProfile = db.prepare(`
@@ -903,12 +898,20 @@ function upsertPersonaUsers() {
   );
   personaUsers.forEach((user) =>
     syncAccountBasics.run(
+      user.accountName,
       user.displayName,
       user.role,
       user.platform,
       user.loginEmail ?? "",
       user.handle,
       user.profileUrl,
+      user.positioning,
+      user.personaRole,
+      json(user.voice),
+      json(user.contentTypes),
+      json(user.avoid),
+      user.cadence,
+      user.interactionTarget,
       user.id
     )
   );
@@ -918,7 +921,8 @@ function upsertPersonaUsers() {
     ["Mia", "Milo Reed"],
     ["Jun", "AI Doubt Notes"],
     ["Hao", "Nora Blake"],
-    ["Lena", "Eli Rowan"],
+    ["Lena", "franc_chan"],
+    ["Eli Rowan", "franc_chan"],
     ["Thinking in Frames", "Thinking Lab"],
     ["The Decision Lab", "Thinking Lab"],
     ["Decision Lab", "Thinking Lab"]
@@ -928,6 +932,14 @@ function upsertPersonaUsers() {
     db.prepare("UPDATE plans SET owner = ? WHERE owner = ?").run(to, from);
     db.prepare("UPDATE assets SET owner = ? WHERE owner = ?").run(to, from);
   });
+
+  db.prepare("UPDATE plans SET theme = ? WHERE id = ?").run("Thinking Lab：franc 概念卡", "p5");
+  db.prepare("UPDATE plans SET theme = ?, owner = ? WHERE id = ?").run("franc：月度概念词第一帖", "franc_chan", "p6");
+  db.prepare("UPDATE assets SET title = ?, owner = ? WHERE title = ?").run(
+    "franc_chan 月度概念词素材",
+    "franc_chan",
+    "Eli Rowan 月度概念词素材"
+  );
 }
 
 function syncVisionTreeReferenceData() {

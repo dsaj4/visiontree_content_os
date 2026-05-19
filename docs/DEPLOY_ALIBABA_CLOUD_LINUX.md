@@ -175,7 +175,7 @@ cp /opt/visiontree/visiontree_content_os/data/content-system.sqlite \
 - `milo`
 - `ai-doubt`
 - `nora`
-- `eli`
+- `franc`
 - `thinking-lab`
 - `thinking-tree`
 - `visiontree`
