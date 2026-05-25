@@ -670,17 +670,12 @@ const legacyDemoContentIds = ["c1", "c2", "c3", "c4", "c5"];
 const legacyDemoActivityIds = ["act1", "act2", "act3", "act4", "act5", "act6"];
 
 const visionTreePlans = [
-  ["p1", "2026-05-11", "周一", "10:00", "X", "Thinking Lab：沉没成本图解", "Thinking Lab", "建立视觉第一印象", "待领取", null],
-  ["p2", "2026-05-12", "周二", "10:00", "X", "Thinking Lab：第一个两分钟实验", "Thinking Lab", "引导回复", "待领取", null],
-  ["p3", "2026-05-13", "周三", "10:00", "X", "Thinking Lab：AI 答案 vs 保留判断", "Thinking Lab", "形成置顶内容", "待领取", null],
-  ["p4", "2026-05-14", "周四", "11:00", "X", "Thinking Lab：决策方式投票", "Thinking Lab", "带来回复", "待领取", null],
-  ["p5", "2026-05-15", "周五", "10:30", "X", "Thinking Lab：franc 概念卡", "Thinking Lab", "连接矩阵账号", "待领取", null],
-  ["p6", "2026-05-11", "周一", "16:00", "X", "franc：月度概念词第一帖", "franc_chan", "建立慢思考调性", "待领取", null],
-  ["p7", "2026-05-11", "周一", "12:30", "X", "AI Doubt：反 AI 短帖", "AI Doubt Notes", "铺批判底色", "待领取", null],
-  ["p8", "2026-05-12", "周二", "18:00", "X", "Milo：真实技术取舍", "Milo Reed", "建立工程可信度", "待领取", null],
-  ["p9", "2026-05-12", "周二", "20:00", "X", "Nora：真实 AI 工具试用", "Nora Blake", "降低普通人门槛", "待领取", null],
-  ["p10", "2026-05-13", "周三", "09:20", "X", "The Thinking Tree：第一片新叶", "The Thinking Tree", "建立记忆点", "待领取", null],
-  ["p11", "2026-05-13", "周三", "20:30", "X", "VisionTree：第一条品类定义", "VisionTree", "收拢官方叙事", "待领取", null]
+  ["p20260526-ai-doubt-01", "2026-05-26", "周二", "09:00", "X", "AI Doubt：第一个 AI 负面事件分析帖", "AI Doubt Notes", "建立冷静怀疑者人设，先保守分析 AI 负面事件", "待领取", null],
+  ["p20260526-thinking-lab-01", "2026-05-26", "周二", "09:00", "X", "Thinking Lab：第一个思维模型图解", "Thinking Lab", "建立视觉化分析账号人设", "待领取", null],
+  ["p20260526-milo-01", "2026-05-26", "周二", "09:00", "X", "Milo：新技术点评或项目开发吐槽总结", "Milo Reed", "建立真实 builder / 工程师视角", "待领取", null],
+  ["p20260526-thinking-tree-01", "2026-05-26", "周二", "09:00", "X", "The Thinking Tree：每日打卡长叶子或掉枝杈", "The Thinking Tree", "建立强记忆点和拟人化账号声音", "待领取", null],
+  ["p20260526-nora-01", "2026-05-26", "周二", "09:00", "X", "Nora：热帖模仿", "Nora Blake", "建立普通人试用 / 跟帖观察人设", "待领取", null],
+  ["p20260526-franc-01", "2026-05-26", "周二", "09:00", "X", "franc_chan：深度思考时事点评", "franc_chan", "建立慢概念 / 思想性账号人设", "待领取", null]
 ];
 
 const nowIso = () => new Date().toISOString();
@@ -766,8 +761,8 @@ function createSchema() {
       body TEXT NOT NULL DEFAULT '',
       channel TEXT NOT NULL,
       status TEXT NOT NULL,
-      asset_id TEXT NOT NULL REFERENCES assets(id),
-      template_id TEXT NOT NULL REFERENCES templates(id),
+      asset_id TEXT REFERENCES assets(id),
+      template_id TEXT REFERENCES templates(id),
       owner TEXT NOT NULL,
       saved_at TEXT NOT NULL,
       scheduled_date TEXT NOT NULL,
@@ -839,6 +834,55 @@ function migrateSchema() {
     ["creator_profile_json", "TEXT"]
   ].forEach(([name, definition]) => ensureColumn("users", name, definition));
   ensureColumn("contents", "body", "TEXT NOT NULL DEFAULT ''");
+  migrateContentOptionalLinks();
+}
+
+function migrateContentOptionalLinks() {
+  const columns = db.prepare("PRAGMA table_info(contents)").all();
+  const assetColumn = columns.find((column) => column.name === "asset_id");
+  const templateColumn = columns.find((column) => column.name === "template_id");
+  if (assetColumn?.notnull === 0 && templateColumn?.notnull === 0) return;
+
+  db.exec("PRAGMA foreign_keys = OFF");
+  try {
+    db.exec(`
+      BEGIN TRANSACTION;
+      CREATE TABLE contents_new (
+        id TEXT PRIMARY KEY,
+        title TEXT NOT NULL,
+        body TEXT NOT NULL DEFAULT '',
+        channel TEXT NOT NULL,
+        status TEXT NOT NULL,
+        asset_id TEXT REFERENCES assets(id),
+        template_id TEXT REFERENCES templates(id),
+        owner TEXT NOT NULL,
+        saved_at TEXT NOT NULL,
+        scheduled_date TEXT NOT NULL,
+        scheduled_time TEXT NOT NULL,
+        published_at TEXT,
+        views INTEGER NOT NULL DEFAULT 0,
+        likes INTEGER NOT NULL DEFAULT 0,
+        comments INTEGER NOT NULL DEFAULT 0,
+        shares INTEGER NOT NULL DEFAULT 0,
+        saves INTEGER NOT NULL DEFAULT 0
+      );
+      INSERT INTO contents_new
+        (id, title, body, channel, status, asset_id, template_id, owner, saved_at, scheduled_date, scheduled_time,
+         published_at, views, likes, comments, shares, saves)
+      SELECT
+        id, title, body, channel, status, asset_id, template_id, owner, saved_at, scheduled_date, scheduled_time,
+        published_at, views, likes, comments, shares, saves
+      FROM contents;
+      DROP TABLE contents;
+      ALTER TABLE contents_new RENAME TO contents;
+      COMMIT;
+    `);
+  } catch (error) {
+    db.exec("ROLLBACK");
+    throw error;
+  } finally {
+    db.exec("PRAGMA foreign_keys = ON");
+  }
 }
 
 function upsertPersonaUsers() {
@@ -1032,6 +1076,11 @@ function syncVisionTreeReferenceData() {
   `);
   if (shouldSeedLegacyMaterial) {
     visionTreePlans.forEach((row) => upsertPlan.run(...row));
+    const activePlanIds = new Set(visionTreePlans.map((plan) => plan[0]));
+    db.prepare("SELECT id, content_id FROM plans").all().forEach((row) => {
+      if (activePlanIds.has(row.id)) return;
+      if (!row.content_id) db.prepare("DELETE FROM plans WHERE id = ?").run(row.id);
+    });
   }
 }
 
@@ -1261,7 +1310,7 @@ function seedDatabase() {
 function assetReferenceCounts() {
   return new Map(
     db
-      .prepare("SELECT asset_id AS id, COUNT(*) AS count FROM contents WHERE status = ? GROUP BY asset_id")
+      .prepare("SELECT asset_id AS id, COUNT(*) AS count FROM contents WHERE status = ? AND asset_id IS NOT NULL GROUP BY asset_id")
       .all(statusPublished)
       .map((row) => [row.id, row.count])
   );
@@ -1270,7 +1319,7 @@ function assetReferenceCounts() {
 function templateReferenceCounts() {
   return new Map(
     db
-      .prepare("SELECT template_id AS id, COUNT(*) AS count FROM contents WHERE status = ? GROUP BY template_id")
+      .prepare("SELECT template_id AS id, COUNT(*) AS count FROM contents WHERE status = ? AND template_id IS NOT NULL GROUP BY template_id")
       .all(statusPublished)
       .map((row) => [row.id, row.count])
   );
@@ -1333,8 +1382,8 @@ function getTemplate(id) {
 const contentSelectSql = `
   SELECT c.*, a.title AS asset_title, t.title AS template_title
   FROM contents c
-  JOIN assets a ON a.id = c.asset_id
-  JOIN templates t ON t.id = c.template_id
+  LEFT JOIN assets a ON a.id = c.asset_id
+  LEFT JOIN templates t ON t.id = c.template_id
 `;
 
 function mapContent(row) {
@@ -1346,8 +1395,8 @@ function mapContent(row) {
     status: row.status,
     assetId: row.asset_id,
     templateId: row.template_id,
-    assetTitle: row.asset_title,
-    templateTitle: row.template_title,
+    assetTitle: row.asset_title ?? "未选择素材",
+    templateTitle: row.template_title ?? "未选择模板",
     owner: row.owner,
     savedAt: row.saved_at,
     savedDate: dateFromIso(row.saved_at),
@@ -1686,10 +1735,16 @@ function normalizeScheduleValue(value, fallback, label) {
   return normalizeStringField(value, fallback, label, 40, true);
 }
 
+function normalizeOptionalLinkId(value, label) {
+  if (value === undefined || value === null || value === "") return null;
+  return normalizeStringField(value, "", label, 80, true);
+}
+
 function ensureAssetAndTemplate(assetId, templateId) {
-  const asset = db.prepare("SELECT id, title FROM assets WHERE id = ?").get(assetId);
-  const template = db.prepare("SELECT id, title FROM templates WHERE id = ?").get(templateId);
-  if (!asset || !template) throw validationError("素材或模板不存在。");
+  const asset = assetId ? db.prepare("SELECT id, title FROM assets WHERE id = ?").get(assetId) : null;
+  const template = templateId ? db.prepare("SELECT id, title FROM templates WHERE id = ?").get(templateId) : null;
+  if (assetId && !asset) throw validationError("素材不存在。");
+  if (templateId && !template) throw validationError("模板不存在。");
   return { asset, template };
 }
 
@@ -1719,8 +1774,8 @@ function createContentRecord(body, user, options = {}) {
   const title = normalizeStringField(body.title, "", "内容标题", 200, true);
   const contentBody = normalizeContentBody(body.body, "");
   const channel = normalizeStringField(body.channel, "", "发布渠道", 20, true);
-  const assetId = normalizeStringField(body.assetId, "", "素材 ID", 80, true);
-  const templateId = normalizeStringField(body.templateId, "", "模板 ID", 80, true);
+  const assetId = normalizeOptionalLinkId(body.assetId, "素材 ID");
+  const templateId = normalizeOptionalLinkId(body.templateId, "模板 ID");
   const { asset, template } = ensureAssetAndTemplate(assetId, templateId);
   const plan = body.planId ? db.prepare("SELECT * FROM plans WHERE id = ?").get(String(body.planId)) : null;
   const status = options.forceStatus ?? normalizeContentStatus(body.status, statusDraft);
@@ -1739,7 +1794,7 @@ function createContentRecord(body, user, options = {}) {
     INSERT INTO contents
       (id, title, body, channel, status, asset_id, template_id, owner, saved_at, scheduled_date, scheduled_time, published_at)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL)
-  `).run(id, title, contentBody, channel, status, asset.id, template.id, user.displayName, savedAt, scheduledDate, scheduledTime);
+  `).run(id, title, contentBody, channel, status, asset?.id ?? null, template?.id ?? null, user.displayName, savedAt, scheduledDate, scheduledTime);
 
   bindMediaToContent(mediaIds, user, id);
 
@@ -1751,7 +1806,7 @@ function createContentRecord(body, user, options = {}) {
     `act${Date.now()}`,
     id,
     statusActivityUpdate,
-    `从「${asset.title}」和「${template.title}」生成草稿。`,
+    `从「${asset?.title ?? "未选择素材"}」和「${template?.title ?? "未选择模板"}」生成草稿。`,
     "刚刚",
     savedAt
   );
@@ -1793,13 +1848,13 @@ function updateContentRecord(contentId, body, user) {
     setField("status", normalizeContentStatus(body.status, current.status));
   }
   if (Object.prototype.hasOwnProperty.call(body, "assetId")) {
-    const assetId = normalizeStringField(body.assetId, current.asset_id, "素材 ID", 80, true);
-    if (!db.prepare("SELECT id FROM assets WHERE id = ?").get(assetId)) throw validationError("素材不存在。");
+    const assetId = normalizeOptionalLinkId(body.assetId, "素材 ID");
+    if (assetId && !db.prepare("SELECT id FROM assets WHERE id = ?").get(assetId)) throw validationError("素材不存在。");
     setField("asset_id", assetId);
   }
   if (Object.prototype.hasOwnProperty.call(body, "templateId")) {
-    const templateId = normalizeStringField(body.templateId, current.template_id, "模板 ID", 80, true);
-    if (!db.prepare("SELECT id FROM templates WHERE id = ?").get(templateId)) throw validationError("模板不存在。");
+    const templateId = normalizeOptionalLinkId(body.templateId, "模板 ID");
+    if (templateId && !db.prepare("SELECT id FROM templates WHERE id = ?").get(templateId)) throw validationError("模板不存在。");
     setField("template_id", templateId);
   }
   if (Object.prototype.hasOwnProperty.call(body, "scheduledDate")) {
@@ -1855,8 +1910,75 @@ function deleteContentRecord(contentId) {
   return true;
 }
 
+function listPlans() {
+  return db.prepare("SELECT id, date, day, slot, channel, theme, owner, goal, status, content_id AS contentId FROM plans ORDER BY date, slot, id").all();
+}
+
+function getPlan(planId) {
+  return db.prepare("SELECT id, date, day, slot, channel, theme, owner, goal, status, content_id AS contentId FROM plans WHERE id = ?").get(planId);
+}
+
+function normalizePlanStatus(value, fallback = statusPlanWaiting) {
+  if (value === undefined || value === null || value === "") return fallback;
+  const status = String(value).trim();
+  if (![statusPlanWaiting, statusPlanWorking, "待发布", "已完成"].includes(status)) {
+    throw validationError("计划状态必须是：待领取、制作中、待发布、已完成。");
+  }
+  return status;
+}
+
+function normalizePlanPayload(body, existing = null) {
+  if (!isPlainObject(body)) throw validationError("请求体必须是 JSON 对象。");
+  return {
+    date: normalizeScheduleValue(body.date, existing?.date ?? "", "计划日期"),
+    day: normalizeStringField(body.day, existing?.day ?? "", "计划星期", 20, true),
+    slot: normalizeScheduleValue(body.slot, existing?.slot ?? "", "计划时间"),
+    channel: normalizeStringField(body.channel, existing?.channel ?? "X", "计划渠道", 40, true),
+    theme: normalizeStringField(body.theme, existing?.theme ?? "", "计划主题", 200, true),
+    owner: normalizeStringField(body.owner, existing?.owner ?? "", "计划负责人", 120, true),
+    goal: normalizeStringField(body.goal, existing?.goal ?? "", "计划目标", 240, true),
+    status: normalizePlanStatus(body.status, existing?.status ?? statusPlanWaiting)
+  };
+}
+
+function createPlanRecord(body) {
+  const id = normalizeRecordId(body?.id, `plan-${Date.now()}-${randomUUID().slice(0, 6)}`);
+  if (db.prepare("SELECT id FROM plans WHERE id = ?").get(id)) {
+    throw validationError("计划 ID 已存在。", 409);
+  }
+  const plan = normalizePlanPayload(body);
+  db.prepare(`
+    INSERT INTO plans (id, date, day, slot, channel, theme, owner, goal, status, content_id)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NULL)
+  `).run(id, plan.date, plan.day, plan.slot, plan.channel, plan.theme, plan.owner, plan.goal, plan.status);
+  return getPlan(id);
+}
+
+function updatePlanRecord(planId, body) {
+  const current = db.prepare("SELECT * FROM plans WHERE id = ?").get(planId);
+  if (!current) return null;
+  if (Object.prototype.hasOwnProperty.call(body, "contentId") || Object.prototype.hasOwnProperty.call(body, "content_id")) {
+    throw validationError("计划 API 不允许绑定内容草稿；请由真人通过内容库创建草稿。");
+  }
+  const plan = normalizePlanPayload(body, current);
+  db.prepare(`
+    UPDATE plans
+    SET date = ?, day = ?, slot = ?, channel = ?, theme = ?, owner = ?, goal = ?, status = ?
+    WHERE id = ?
+  `).run(plan.date, plan.day, plan.slot, plan.channel, plan.theme, plan.owner, plan.goal, plan.status, planId);
+  return getPlan(planId);
+}
+
+function deletePlanRecord(planId) {
+  const current = db.prepare("SELECT id, content_id FROM plans WHERE id = ?").get(planId);
+  if (!current) return false;
+  if (current.content_id) throw validationError("该计划已绑定内容记录，不能直接删除。", 409);
+  db.prepare("DELETE FROM plans WHERE id = ?").run(planId);
+  return true;
+}
+
 function getBootstrap(user) {
-  const planItems = db.prepare("SELECT id, date, day, slot, channel, theme, owner, goal, status, content_id AS contentId FROM plans ORDER BY date, slot").all();
+  const planItems = listPlans();
 
   return {
     user,
@@ -2435,6 +2557,66 @@ async function handleApi(req, res, pathname, origin) {
         sendJson(res, 200, { deleted: true, templateId }, origin);
       } catch (error) {
         sendError(res, error.statusCode ?? 400, error instanceof Error ? error.message : "模板删除失败。", origin);
+      }
+      return;
+    }
+  }
+
+  if (pathname === "/api/plans") {
+    const user = requireAuth(req, res, origin);
+    if (!user) return;
+    if (req.method === "GET") {
+      sendJson(res, 200, { plans: listPlans() }, origin);
+      return;
+    }
+    if (req.method === "POST") {
+      try {
+        const plan = createPlanRecord(await getRequestBody(req));
+        sendJson(res, 201, { plan }, origin);
+      } catch (error) {
+        sendError(res, error.statusCode ?? 400, error instanceof Error ? error.message : "计划创建失败。", origin);
+      }
+      return;
+    }
+  }
+
+  const planMatch = pathname.match(/^\/api\/plans\/([^/]+)$/);
+  if (planMatch) {
+    const user = requireAuth(req, res, origin);
+    if (!user) return;
+    const planId = decodeURIComponent(planMatch[1]);
+    if (req.method === "GET") {
+      const plan = getPlan(planId);
+      if (!plan) {
+        sendError(res, 404, "计划不存在。", origin);
+        return;
+      }
+      sendJson(res, 200, { plan }, origin);
+      return;
+    }
+    if (req.method === "PATCH") {
+      try {
+        const plan = updatePlanRecord(planId, await getRequestBody(req));
+        if (!plan) {
+          sendError(res, 404, "计划不存在。", origin);
+          return;
+        }
+        sendJson(res, 200, { plan }, origin);
+      } catch (error) {
+        sendError(res, error.statusCode ?? 400, error instanceof Error ? error.message : "计划更新失败。", origin);
+      }
+      return;
+    }
+    if (req.method === "DELETE") {
+      try {
+        const deleted = deletePlanRecord(planId);
+        if (!deleted) {
+          sendError(res, 404, "计划不存在。", origin);
+          return;
+        }
+        sendJson(res, 200, { deleted: true, planId }, origin);
+      } catch (error) {
+        sendError(res, error.statusCode ?? 400, error instanceof Error ? error.message : "计划删除失败。", origin);
       }
       return;
     }

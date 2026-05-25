@@ -440,6 +440,9 @@ h1 {
 
 .queue-panel {
   grid-area: queue;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  min-height: 0;
 }
 
 .asset-list,
@@ -963,6 +966,13 @@ textarea:focus {
 .queue-item span:nth-child(2) {
   display: grid;
   gap: 5px;
+}
+
+.queue-list {
+  max-height: min(360px, calc(100vh - 520px));
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 4px;
 }
 
 .queue-toolbar {
@@ -1955,6 +1965,14 @@ textarea:focus {
 
 .calendar-view {
   grid-template-columns: minmax(0, 1fr) 420px;
+  align-items: start;
+}
+
+.calendar-panel,
+.checklist-panel {
+  max-height: calc(100vh - 190px);
+  min-height: 0;
+  overflow: hidden;
 }
 
 .calendar-switch {
@@ -1991,7 +2009,13 @@ textarea:focus {
   grid-template-columns: repeat(5, minmax(150px, 1fr));
   gap: 10px;
   padding: 14px;
-  overflow-x: auto;
+  max-height: calc(100vh - 310px);
+  overflow: auto;
+}
+
+.checklist {
+  max-height: calc(100vh - 250px);
+  overflow-y: auto;
 }
 
 .calendar-day {
@@ -2026,6 +2050,8 @@ textarea:focus {
   grid-template-columns: repeat(2, minmax(260px, 1fr));
   gap: 10px;
   padding: 14px;
+  max-height: calc(100vh - 260px);
+  overflow-y: auto;
 }
 
 .published-card {

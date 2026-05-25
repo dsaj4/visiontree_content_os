@@ -760,8 +760,8 @@ function App() {
   const [appError, setAppError] = useState("");
   const [loginName, setLoginName] = useState("");
   const [activeView, setActiveView] = useState<ViewKey>("studio");
-  const [selectedAssetId, setSelectedAssetId] = useState(fallbackAssets[0].id);
-  const [selectedTemplateId, setSelectedTemplateId] = useState(fallbackTemplates[0].id);
+  const [selectedAssetId, setSelectedAssetId] = useState<string | null>(null);
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null);
   const [selectedPlanId, setSelectedPlanId] = useState(fallbackPlan[2].id);
   const [planScope, setPlanScope] = useState<PlanScope>("mine");
   const [selectedChannel, setSelectedChannel] = useState<Channel>("X");
@@ -788,9 +788,9 @@ function App() {
     setContentPool(data.contentPool);
     setPlanItems(data.planItems);
     const userPlans = data.planItems.filter((plan) => plan.owner === data.user.displayName);
-    setSelectedAssetId((current) => (data.assets.some((asset) => asset.id === current) ? current : data.assets[0]?.id ?? fallbackAssets[0].id));
+    setSelectedAssetId((current) => (current && data.assets.some((asset) => asset.id === current) ? current : null));
     setSelectedTemplateId((current) =>
-      data.templates.some((template) => template.id === current) ? current : data.templates[0]?.id ?? fallbackTemplates[0].id
+      current && data.templates.some((template) => template.id === current) ? current : null
     );
     setSelectedPlanId((current) =>
       userPlans.some((plan) => plan.id === current) ? current : userPlans[0]?.id ?? data.planItems[0]?.id ?? fallbackPlan[0].id
@@ -901,8 +901,8 @@ function App() {
     }
   };
 
-  const selectedAsset = assets.find((asset) => asset.id === selectedAssetId) ?? assets[0] ?? fallbackAssets[0];
-  const selectedTemplate = templates.find((template) => template.id === selectedTemplateId) ?? templates[0] ?? fallbackTemplates[0];
+  const selectedAsset = selectedAssetId ? assets.find((asset) => asset.id === selectedAssetId) ?? null : null;
+  const selectedTemplate = selectedTemplateId ? templates.find((template) => template.id === selectedTemplateId) ?? null : null;
 
   const myPlanItems = useMemo(
     () => (currentUser ? planItems.filter((plan) => plan.owner === currentUser.displayName) : planItems),
@@ -1001,18 +1001,17 @@ function App() {
   );
 
   const generateDraft = () => {
-    const channelText = selectedTemplate.channels.includes(selectedChannel)
-      ? selectedChannel
-      : selectedTemplate.channels[0];
+    const channelText =
+      selectedTemplate && !selectedTemplate.channels.includes(selectedChannel) ? selectedTemplate.channels[0] : selectedChannel;
     setSelectedChannel(channelText);
-    setDraftTitle(`${selectedAsset.theme}｜${selectedTemplate.title}`);
+    setDraftTitle(`${selectedAsset?.theme ?? "自由创作"}｜${selectedTemplate?.title ?? "空白草稿"}`);
     setDraftCopy(
       [
-        `开场：${selectedTemplate.hook}`,
+        selectedTemplate ? `开场：${selectedTemplate.hook}` : "开场：先写一个真实、具体的问题或观察。",
         "",
-        `素材来源：${selectedAsset.title}。${selectedAsset.summary}`,
+        selectedAsset ? `素材来源：${selectedAsset.title}。${selectedAsset.summary}` : "素材来源：未选择素材，可以直接从当前想法开始写。",
         "",
-        `结构：${selectedTemplate.structure.join(" -> ")}。`,
+        selectedTemplate ? `结构：${selectedTemplate.structure.join(" -> ")}。` : "结构：开场判断 -> 具体例子 -> 你的观点 -> 下一步问题。",
         "",
         `发布平台：${channelText}。结尾引导用户评论一个真实问题，便于后续二创。`
       ].join("\n")
@@ -1051,11 +1050,11 @@ function App() {
         method: "POST",
         token: authToken,
         body: JSON.stringify({
-          title: draftTitle.trim() || `${selectedAsset.theme} 内容草稿`,
+          title: draftTitle.trim() || `${selectedAsset?.theme ?? "自由创作"} 内容草稿`,
           channel: selectedChannel,
           body: draftCopy,
-          assetId: selectedAsset.id,
-          templateId: selectedTemplate.id,
+          assetId: selectedAsset?.id ?? null,
+          templateId: selectedTemplate?.id ?? null,
           planId: selectedPlan.id,
           mediaIds: draftMedia.map((item) => item.id)
         })
@@ -1179,18 +1178,18 @@ function App() {
           <div className="workspace-panel material-panel">
             <PanelTitle icon={GalleryHorizontalEnd} title="当前素材" meta={`${assets.length} 个可取用素材`} />
             <div className="selection-card">
-              <span className={`asset-poster ${selectedAsset.palette}`} aria-hidden="true">
-                <span>{selectedAsset.theme.slice(0, 2)}</span>
+              <span className={`asset-poster ${selectedAsset?.palette ?? "neutral"}`} aria-hidden="true">
+                <span>{(selectedAsset?.theme ?? "自由").slice(0, 2)}</span>
               </span>
               <div className="selection-copy">
                 <div className="row-between">
-                  <strong>{selectedAsset.title}</strong>
-                  <em>{selectedAsset.score}</em>
+                  <strong>{selectedAsset?.title ?? "未选择素材"}</strong>
+                  <em>{selectedAsset?.score ?? "自由"}</em>
                 </div>
-                <span className="usage-count">已发布引用 {selectedAsset.referenceCount ?? 0} 次</span>
-                <p>{selectedAsset.summary}</p>
+                <span className="usage-count">{selectedAsset ? `已发布引用 ${selectedAsset.referenceCount ?? 0} 次` : "可以直接写，也可以稍后补素材"}</span>
+                <p>{selectedAsset?.summary ?? "当前草稿不会绑定素材，适合临时想法、现场观察或先写后补资料的内容。"}</p>
                 <div className="tag-row">
-                  {selectedAsset.tags.map((tag) => (
+                  {(selectedAsset?.tags ?? ["自由创作", "未绑定素材"]).map((tag) => (
                     <span key={tag}>{tag}</span>
                   ))}
                 </div>
@@ -1205,26 +1204,34 @@ function App() {
                     <Search size={16} />
                     更换素材
                   </button>
-                  <button className="ghost-button" onClick={() => setDetailTarget({ kind: "asset", id: selectedAsset.id })}>
-                    <FileSearch size={16} />
-                    查看详情
-                  </button>
+                  {selectedAsset ? (
+                    <>
+                      <button className="ghost-button" onClick={() => setDetailTarget({ kind: "asset", id: selectedAsset.id })}>
+                        <FileSearch size={16} />
+                        查看详情
+                      </button>
+                      <button className="ghost-button" onClick={() => setSelectedAssetId(null)}>
+                        <X size={16} />
+                        不选素材
+                      </button>
+                    </>
+                  ) : null}
                 </div>
               </div>
             </div>
           </div>
 
           <div className="workspace-panel template-panel">
-            <PanelTitle icon={LayoutTemplate} title="当前模板" meta={selectedTemplate.length} />
+            <PanelTitle icon={LayoutTemplate} title="当前模板" meta={selectedTemplate?.length ?? "可直接写"} />
             <div className="selection-card template-selection">
-              <span className="template-type">{selectedTemplate.format}</span>
+              <span className="template-type">{selectedTemplate?.format ?? "空白创作"}</span>
               <div className="selection-copy">
-                <strong>{selectedTemplate.title}</strong>
-                <span className="usage-count">已发布引用 {selectedTemplate.referenceCount ?? 0} 次</span>
-                <p>{selectedTemplate.hook}</p>
-                <small>{selectedTemplate.channels.join(" / ")}</small>
+                <strong>{selectedTemplate?.title ?? "未选择模板"}</strong>
+                <span className="usage-count">{selectedTemplate ? `已发布引用 ${selectedTemplate.referenceCount ?? 0} 次` : "可以从空白草稿开始"}</span>
+                <p>{selectedTemplate?.hook ?? "当前草稿不会绑定模板，适合快速记录一个初稿，后续再选择结构化模板。"}</p>
+                <small>{selectedTemplate?.channels.join(" / ") ?? "使用当前发布平台"}</small>
                 <div className="structure-list">
-                  {selectedTemplate.structure.map((step) => (
+                  {(selectedTemplate?.structure ?? ["自由开场", "补充例子", "整理观点"]).map((step) => (
                     <span key={step}>{step}</span>
                   ))}
                 </div>
@@ -1239,10 +1246,18 @@ function App() {
                     <Search size={16} />
                     更换模板
                   </button>
-                  <button className="ghost-button" onClick={() => setDetailTarget({ kind: "template", id: selectedTemplate.id })}>
-                    <FileSearch size={16} />
-                    查看详情
-                  </button>
+                  {selectedTemplate ? (
+                    <>
+                      <button className="ghost-button" onClick={() => setDetailTarget({ kind: "template", id: selectedTemplate.id })}>
+                        <FileSearch size={16} />
+                        查看详情
+                      </button>
+                      <button className="ghost-button" onClick={() => setSelectedTemplateId(null)}>
+                        <X size={16} />
+                        不选模板
+                      </button>
+                    </>
+                  ) : null}
                 </div>
               </div>
             </div>
@@ -1295,9 +1310,9 @@ function App() {
             />
             <div className="composer-footer">
               <div>
-                <strong>{selectedAsset.source}</strong>
+                <strong>{selectedAsset?.source ?? "自由创作"}</strong>
                 <span>
-                  {selectedAsset.freshness} · {selectedTemplate.structure.length} 段结构
+                  {selectedAsset?.freshness ?? "未绑定素材"} · {selectedTemplate ? `${selectedTemplate.structure.length} 段结构` : "未绑定模板"}
                 </span>
               </div>
               <button className="primary-button" onClick={saveDraft} disabled={isMutating || isUploading}>
@@ -2199,7 +2214,7 @@ function AssetLibraryView({
   assets: Asset[];
   totalCount: number;
   query: string;
-  selectedAssetId: string;
+  selectedAssetId: string | null;
   onQueryChange: (query: string) => void;
   onSelectAsset: (asset: Asset) => void;
   onOpenDetail: (asset: Asset) => void;
@@ -2219,7 +2234,7 @@ function AssetLibraryView({
           </label>
           <div className="library-stat">
             <span>当前选中</span>
-            <strong>{assets.find((asset) => asset.id === selectedAssetId)?.title ?? "未在筛选结果中"}</strong>
+            <strong>{selectedAssetId ? assets.find((asset) => asset.id === selectedAssetId)?.title ?? "未在筛选结果中" : "未选择素材"}</strong>
           </div>
         </div>
 
@@ -2306,7 +2321,7 @@ function TemplateLibraryView({
   templates: Template[];
   totalCount: number;
   query: string;
-  selectedTemplateId: string;
+  selectedTemplateId: string | null;
   onQueryChange: (query: string) => void;
   onSelectTemplate: (template: Template) => void;
   onOpenDetail: (template: Template) => void;
@@ -2326,7 +2341,9 @@ function TemplateLibraryView({
           </label>
           <div className="library-stat">
             <span>当前选中</span>
-            <strong>{templates.find((template) => template.id === selectedTemplateId)?.title ?? "未在筛选结果中"}</strong>
+            <strong>
+              {selectedTemplateId ? templates.find((template) => template.id === selectedTemplateId)?.title ?? "未在筛选结果中" : "未选择模板"}
+            </strong>
           </div>
         </div>
 

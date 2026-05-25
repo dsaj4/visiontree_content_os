@@ -99,8 +99,8 @@
   "title": "内容工作标题",
   "body": "正文草稿",
   "channel": "X",
-  "assetId": "asset-external-id",
-  "templateId": "template-external-id",
+  "assetId": "asset-external-id 或 null",
+  "templateId": "template-external-id 或 null",
   "scheduledDate": "2026-05-10",
   "scheduledTime": "09:00",
   "mediaIds": []
@@ -114,6 +114,7 @@
 - 真实发布时间与平台指标继续使用 `POST /api/contents/:id/platform-update`。
 - 新增内容状态只允许 `草稿`、`审核中`、`已排期`；`已发布` 只能由发布/平台回传接口产生。
 - 正文最大长度为 `20000` 字。
+- `assetId` 和 `templateId` 可以为 `null` 或省略，用于空白创作、临时想法和先写后补资料的草稿；返回时 `assetTitle` / `templateTitle` 会显示为“未选择素材 / 未选择模板”。
 
 本文档面向后续接手本项目的 agent/工程师，用于对接真实素材库、模板库和内容记录系统。
 
@@ -259,7 +260,7 @@ type ResourceLink = {
 ```sql
 SELECT asset_id, COUNT(*)
 FROM contents
-WHERE status = '已发布'
+WHERE status = '已发布' AND asset_id IS NOT NULL
 GROUP BY asset_id;
 ```
 
@@ -295,7 +296,7 @@ type Template = {
 ```sql
 SELECT template_id, COUNT(*)
 FROM contents
-WHERE status = '已发布'
+WHERE status = '已发布' AND template_id IS NOT NULL
 GROUP BY template_id;
 ```
 
@@ -383,8 +384,8 @@ type MediaAttachment = {
   "title": "Sunk cost is not about money",
   "body": "正文草稿",
   "channel": "X",
-  "assetId": "a1",
-  "templateId": "t1",
+  "assetId": "a1 或 null",
+  "templateId": "t1 或 null",
   "planId": "p1",
   "mediaIds": ["m1778311400920-c709eb1e"]
 }
@@ -486,6 +487,38 @@ type MediaAttachment = {
 
 将没有关联内容的计划标记为完成。若计划有关联内容，前端当前会优先调用内容发布同步接口。
 
+### 计划日历 CRUD
+
+- `GET /api/plans`：返回 `{ plans }`。
+- `POST /api/plans`：新增计划，返回 `{ plan }`。
+- `GET /api/plans/:id`：返回 `{ plan }`。
+- `PATCH /api/plans/:id`：更新计划字段，返回 `{ plan }`。
+- `DELETE /api/plans/:id`：删除未绑定内容的计划。
+
+计划字段：
+
+```json
+{
+  "id": "p20260526-ai-doubt-01",
+  "date": "2026-05-26",
+  "day": "周二",
+  "slot": "09:00",
+  "channel": "X",
+  "theme": "AI Doubt：第一个 AI 负面事件分析帖",
+  "owner": "AI Doubt Notes",
+  "goal": "建立冷静怀疑者人设，先保守分析 AI 负面事件",
+  "status": "待领取"
+}
+```
+
+计划 API 只允许修改 `plans`。它不会创建、绑定或更新 `contents` 草稿；`PATCH /api/plans/:id` 明确拒绝 `contentId` / `content_id` 字段。内容库草稿必须由真人通过内容库流程创建，或在用户明确要求“创建草稿”时才调用内容接口。
+
+单纯计划修改时禁止使用：
+
+- `POST /api/contents`
+- `POST /api/contents/drafts`
+- `PATCH /api/contents/:id`
+
 ## 数据库表
 
 主要表：
@@ -494,7 +527,7 @@ type MediaAttachment = {
 - `sessions`：演示登录 token。
 - `assets`：素材基础信息和详情资源。
 - `templates`：模板/模块基础信息和详情资源。
-- `contents`：内容池记录、计划时间、真实发布时间、平台指标。
+- `contents`：内容池记录、计划时间、真实发布时间、平台指标。单纯计划修改不得新增记录。
 - `plans`：发布计划日历。
 - `activities`：数据同步、评论、转发、状态更新记录。
 
@@ -503,7 +536,7 @@ type MediaAttachment = {
 - `contents.saved_at`：存入内容池时间。
 - `contents.scheduled_date` / `contents.scheduled_time`：计划时间。
 - `contents.published_at`：真实发布时间。
-- `contents.asset_id` / `contents.template_id`：引用统计来源。
+- `contents.asset_id` / `contents.template_id`：引用统计来源，可为空；为空表示这条草稿是自由创作或尚未绑定素材/模板，不计入素材/模板引用次数。
 
 ## 后续 agent 对接任务建议
 
