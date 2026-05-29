@@ -40,7 +40,7 @@ type PlanStatus = "待领取" | "制作中" | "待发布" | "已完成";
 type ViewKey = "studio" | "assets" | "templates" | "content" | "calendar" | "insights" | "profile";
 type CalendarMode = "planned" | "published";
 type PlanScope = "mine" | "all";
-type DetailTarget = { kind: "asset"; id: string } | { kind: "template"; id: string } | null;
+type DetailTarget = { kind: "asset"; id: string } | { kind: "template"; id: string } | { kind: "content"; id: string } | null;
 type ResourceKind = "web" | "pdf";
 
 type UserAccount = {
@@ -300,6 +300,17 @@ type ContentItem = {
   metrics: Metrics;
   media?: MediaAttachment[];
   activities: Activity[];
+};
+
+type ContentEditorState = {
+  title: string;
+  body: string;
+  channel: Channel;
+  status: ContentStatus;
+  assetId: string;
+  templateId: string;
+  scheduledDate: string;
+  scheduledTime: string;
 };
 
 type PlanItem = {
@@ -743,6 +754,19 @@ function matchesQuery(parts: Array<string | number | undefined>, query: string) 
   return parts.join(" ").toLowerCase().includes(normalizedQuery);
 }
 
+function contentToEditorState(content: ContentItem): ContentEditorState {
+  return {
+    title: content.title,
+    body: content.body ?? "",
+    channel: content.channel,
+    status: content.status,
+    assetId: content.assetId ?? "",
+    templateId: content.templateId ?? "",
+    scheduledDate: content.scheduledDate ?? "",
+    scheduledTime: content.scheduledTime ?? ""
+  };
+}
+
 function getCurrentTimeLabel() {
   return new Date().toLocaleTimeString("zh-CN", {
     hour: "2-digit",
@@ -1104,6 +1128,29 @@ function App() {
     }
   };
 
+  const updateContent = async (contentId: string, payload: Partial<ContentEditorState>) => {
+    setAppError("");
+    setIsMutating(true);
+    try {
+      const data = await apiRequest<{ content: ContentItem }>(`/contents/${contentId}`, {
+        method: "PATCH",
+        token: authToken,
+        body: JSON.stringify({
+          ...payload,
+          assetId: payload.assetId === "" ? null : payload.assetId,
+          templateId: payload.templateId === "" ? null : payload.templateId
+        })
+      });
+      setContentPool((current) => current.map((content) => (content.id === data.content.id ? data.content : content)));
+      return data.content;
+    } catch (error) {
+      setAppError(error instanceof Error ? error.message : "内容保存失败");
+      throw error;
+    } finally {
+      setIsMutating(false);
+    }
+  };
+
   const markPlanDone = async (planId: string) => {
     const plan = planItems.find((item) => item.id === planId);
     if (plan?.contentId) {
@@ -1167,6 +1214,24 @@ function App() {
               setDetailTarget(null);
               setActiveView("studio");
             }}
+          />
+        );
+      }
+    }
+
+    if (detailTarget?.kind === "content") {
+      const content = contentPool.find((item) => item.id === detailTarget.id);
+      if (content) {
+        return (
+          <ContentDetailView
+            key={`content-${content.id}`}
+            content={content}
+            assets={assets}
+            templates={templates}
+            isSaving={isMutating}
+            onBack={() => setDetailTarget(null)}
+            onSave={updateContent}
+            onPublish={() => publishAndSync(content.id)}
           />
         );
       }
@@ -1387,7 +1452,19 @@ function App() {
             <div className="content-table">
               {filteredContent.length ? (
                 filteredContent.map((content) => (
-                  <article className="content-row" key={content.id}>
+                  <article
+                    className="content-row"
+                    key={content.id}
+                    onClick={() => setDetailTarget({ kind: "content", id: content.id })}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        setDetailTarget({ kind: "content", id: content.id });
+                      }
+                    }}
+                  >
                     <div className="content-main">
                       <span className={`status-pill ${statusClass[content.status]}`}>{content.status}</span>
                       <h3>{content.title}</h3>
@@ -1403,15 +1480,33 @@ function App() {
                     </div>
                     <MetricStrip metrics={content.metrics} />
                     <div className="row-actions">
-                      <button onClick={() => publishAndSync(content.id)} disabled={isMutating}>
+                      <button
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          publishAndSync(content.id);
+                        }}
+                        disabled={isMutating}
+                      >
                         <RadioTower size={16} />
                         发布/同步
                       </button>
-                      <button onClick={() => recordInteraction(content.id, "评论记录")} disabled={isMutating}>
+                      <button
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          recordInteraction(content.id, "评论记录");
+                        }}
+                        disabled={isMutating}
+                      >
                         <MessageSquareText size={16} />
                         评论
                       </button>
-                      <button onClick={() => recordInteraction(content.id, "转发记录")} disabled={isMutating}>
+                      <button
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          recordInteraction(content.id, "转发记录");
+                        }}
+                        disabled={isMutating}
+                      >
                         <Repeat2 size={16} />
                         转发
                       </button>
@@ -2237,7 +2332,6 @@ function AssetLibraryView({
             <strong>{selectedAssetId ? assets.find((asset) => asset.id === selectedAssetId)?.title ?? "未在筛选结果中" : "未选择素材"}</strong>
           </div>
         </div>
-
         {assets.length ? (
           <div className="library-results asset-library-grid">
             {assets.map((asset) => {
@@ -2600,6 +2694,232 @@ function DetailView({
 
       <ResourceBrowser resources={resources} title="来源资料" meta={`${resources.length} 个链接 / PDF`} />
     </section>
+  );
+}
+
+function ContentDetailView({
+  content,
+  assets,
+  templates,
+  isSaving,
+  onBack,
+  onSave,
+  onPublish
+}: {
+  content: ContentItem;
+  assets: Asset[];
+  templates: Template[];
+  isSaving: boolean;
+  onBack: () => void;
+  onSave: (contentId: string, payload: Partial<ContentEditorState>) => Promise<ContentItem>;
+  onPublish: () => void;
+}) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editor, setEditor] = useState(() => contentToEditorState(content));
+  const [editError, setEditError] = useState("");
+  const [editStatus, setEditStatus] = useState("");
+
+  useEffect(() => {
+    setEditor(contentToEditorState(content));
+    setEditError("");
+    setEditStatus("");
+    setIsEditing(false);
+  }, [content.id]);
+
+  const updateField = <K extends keyof ContentEditorState>(field: K, value: ContentEditorState[K]) => {
+    setEditor((current) => ({ ...current, [field]: value }));
+    setEditError("");
+    setEditStatus("");
+  };
+
+  const handleSubmit = async (event: FormEvent) => {
+    event.preventDefault();
+    setEditError("");
+    setEditStatus("");
+    try {
+      const payload: Partial<ContentEditorState> = { ...editor };
+      if (content.status === "已发布") delete payload.status;
+      const updated = await onSave(content.id, payload);
+      setEditor(contentToEditorState(updated));
+      setIsEditing(false);
+      setEditStatus("内容已保存。");
+    } catch (error) {
+      setEditError(error instanceof Error ? error.message : "内容保存失败。");
+    }
+  };
+
+  return (
+    <section className="content-detail-view">
+      <div className="workspace-panel detail-hero content-detail-hero">
+        <button className="back-button" onClick={onBack}>
+          <ArrowLeft size={17} />
+          返回
+        </button>
+        <div className="detail-hero-copy">
+          <span className="eyebrow">内容详情</span>
+          <h2>{content.title}</h2>
+          <p>{content.body || "这条内容还没有正文。"}</p>
+          <div className="detail-meta">
+            <span className={`status-pill ${statusClass[content.status]}`}>{content.status}</span>
+            <span>{content.channel}</span>
+            <span>{content.owner}</span>
+            <strong>{content.publishedAt ? `${content.publishDate} ${content.publishTime}` : "待平台回传"}</strong>
+          </div>
+        </div>
+        <div className="detail-action-stack">
+          <button className="primary-button" onClick={() => setIsEditing((current) => !current)}>
+            <PenLine size={18} />
+            {isEditing ? "收起编辑" : "编辑内容"}
+          </button>
+          <button className="ghost-button" onClick={onPublish} disabled={isSaving}>
+            <RadioTower size={17} />
+            发布/同步
+          </button>
+        </div>
+      </div>
+
+      {isEditing ? (
+        <form className="workspace-panel content-edit-panel" onSubmit={handleSubmit}>
+          <PanelTitle icon={PenLine} title="修改内容" meta="保存后写入内容池" />
+          <div className="content-edit-grid">
+            <label>
+              <span>标题</span>
+              <input value={editor.title} onChange={(event) => updateField("title", event.target.value)} />
+            </label>
+            <label>
+              <span>平台</span>
+              <select value={editor.channel} onChange={(event) => updateField("channel", event.target.value as Channel)}>
+                {(["X", "抖音", "小红书", "公众号", "视频号", "B站", "微博", "LinkedIn"] as Channel[]).map((channel) => (
+                  <option key={channel} value={channel}>
+                    {channel}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              <span>状态</span>
+              <select
+                value={editor.status}
+                onChange={(event) => updateField("status", event.target.value as ContentStatus)}
+                disabled={content.status === "已发布"}
+              >
+                {content.status === "已发布" ? <option value="已发布">已发布</option> : null}
+                {(["草稿", "审核中", "已排期"] as ContentStatus[]).map((status) => (
+                  <option key={status} value={status}>
+                    {status}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              <span>计划日期</span>
+              <input value={editor.scheduledDate} onChange={(event) => updateField("scheduledDate", event.target.value)} />
+            </label>
+            <label>
+              <span>计划时间</span>
+              <input value={editor.scheduledTime} onChange={(event) => updateField("scheduledTime", event.target.value)} />
+            </label>
+            <label>
+              <span>绑定素材</span>
+              <select value={editor.assetId} onChange={(event) => updateField("assetId", event.target.value)}>
+                <option value="">未选择素材</option>
+                {assets.map((asset) => (
+                  <option key={asset.id} value={asset.id}>
+                    {asset.title}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              <span>绑定模板</span>
+              <select value={editor.templateId} onChange={(event) => updateField("templateId", event.target.value)}>
+                <option value="">未选择模板</option>
+                {templates.map((template) => (
+                  <option key={template.id} value={template.id}>
+                    {template.title}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+          <label className="content-body-editor">
+            <span>正文</span>
+            <textarea value={editor.body} onChange={(event) => updateField("body", event.target.value)} rows={10} />
+          </label>
+          {editError && <span className="form-error">{editError}</span>}
+          {editStatus && <span className="form-success">{editStatus}</span>}
+          <div className="form-actions">
+            <button className="ghost-button" type="button" onClick={() => setEditor(contentToEditorState(content))} disabled={isSaving}>
+              重置
+            </button>
+            <button className="primary-button" type="submit" disabled={isSaving}>
+              <CheckCircle2 size={17} />
+              {isSaving ? "保存中" : "保存修改"}
+            </button>
+          </div>
+        </form>
+      ) : null}
+
+      <div className="workspace-panel content-body-panel">
+        <PanelTitle icon={FileText} title="正文内容" meta={content.body ? `${content.body.length} 字` : "未填写"} />
+        <pre>{content.body || "暂无正文。"}</pre>
+        <MediaAttachmentStrip media={content.media ?? []} />
+      </div>
+
+      <div className="workspace-panel content-link-panel">
+        <PanelTitle icon={FolderKanban} title="关联信息" meta="素材 / 模板 / 计划" />
+        <div className="content-link-grid">
+          <article>
+            <span>素材</span>
+            <strong>{content.assetTitle}</strong>
+          </article>
+          <article>
+            <span>模板</span>
+            <strong>{content.templateTitle}</strong>
+          </article>
+          <article>
+            <span>计划时间</span>
+            <strong>
+              {content.scheduledDate ?? "-"} {content.scheduledTime ?? ""}
+            </strong>
+          </article>
+          <article>
+            <span>存入时间</span>
+            <strong>
+              {content.savedDate ?? "-"} {content.savedTime ?? ""}
+            </strong>
+          </article>
+        </div>
+        <MetricStrip metrics={content.metrics} />
+      </div>
+
+      <div className="workspace-panel content-activity-panel">
+        <PanelTitle icon={Clock3} title="活动记录" meta={`${content.activities.length} 条`} />
+        <ContentActivityList activities={content.activities} />
+      </div>
+    </section>
+  );
+}
+
+function ContentActivityList({ activities }: { activities: Activity[] }) {
+  return (
+    <div className="activity-list">
+      {activities.length ? (
+        activities.map((activity) => (
+          <article className="activity-item" key={activity.id}>
+            <span>{activity.type}</span>
+            <strong>{activity.time}</strong>
+            <p>{activity.note}</p>
+          </article>
+        ))
+      ) : (
+        <div className="empty-state compact-empty">
+          <RadioTower size={20} />
+          <strong>暂无活动记录</strong>
+          <span>保存修改、发布同步或记录互动后，这里会自动更新。</span>
+        </div>
+      )}
+    </div>
   );
 }
 
